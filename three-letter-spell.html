@@ -37,7 +37,7 @@ header .lede{font-size:clamp(19px,2.4vw,23px);max-width:34ch;margin-top:16px}
 .letter.d{color:var(--sea);border-color:var(--sea)}
 .letter.e{color:var(--ink);border-color:var(--mute)}
 .legend{font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:10px;letter-spacing:.06em}
-section{padding-block:64px;border-top:1px solid var(--line)}
+section{padding-block:64px;border-top:1px solid var(--line);scroll-margin-top:12px}
 
 /* speller */
 .speller{margin-top:26px;background:var(--deep);border:1px solid var(--line);border-radius:6px;padding:20px 18px}
@@ -85,7 +85,7 @@ footer{padding-block:44px 64px;border-top:1px solid var(--line);font-size:15px;c
 </div></header>
 
 <main>
-<section><div class="wrap">
+<section id="alphabet"><div class="wrap">
   <div class="eyebrow">1 · The alphabet</div>
   <h2>A rose and a rock are the <em>same letters</em></h2>
   <p>Two up quarks and a down make a proton. One up and two downs make a neutron. Add electrons and you have every atom there is. A rose, a rock, your hand and a star differ only in how the three letters are arranged.</p>
@@ -112,13 +112,13 @@ footer{padding-block:44px 64px;border-top:1px solid var(--line);font-size:15px;c
   </div>
 </div></section>
 
-<section><div class="wrap">
+<section id="scarce"><div class="wrap">
   <div class="eyebrow">2 · The letters are free</div>
   <h2>What's scarce is the <em>spelling</em></h2>
   <p>The universe hands out the letters almost without limit. What's rare is knowing how to arrange them. An oak builds itself mostly out of air: the carbon in wood comes from carbon dioxide. It runs on sunlight and follows a recipe folded inside an acorn.</p>
 </div></section>
 
-<section><div class="wrap">
+<section id="constructor"><div class="wrap">
   <div class="eyebrow">3 · A machine that builds anything</div>
   <h2>Von Neumann drew life <em>before we saw it</em></h2>
   <p>In 1948 John von Neumann worked out what a machine would need to build anything, including copies of itself. Five years later, the structure of DNA showed that life had been running his design for nearly four billion years.</p>
@@ -129,14 +129,14 @@ footer{padding-block:44px 64px;border-top:1px solid var(--line);font-size:15px;c
   </div>
 </div></section>
 
-<section><div class="wrap">
+<section id="leap"><div class="wrap">
   <div class="eyebrow">4 · The leap</div>
   <h2>Let the idea die <em>instead of you</em></h2>
   <p>Evolution tests every new recipe by letting the failures die. A mind can test a recipe by imagining it. Karl Popper called this letting our hypotheses die in our stead. Imagination is the first way of making new things that doesn't need suffering to test them.</p>
   <p>David Deutsch and Chiara Marletto's constructor theory recasts physics as a list of which transformations are possible and which are impossible. Anything possible is then a matter of knowledge. In that sense, posthuman means closing the gap between imagining a recipe and running it.</p>
 </div></section>
 
-<section><div class="wrap">
+<section id="twist"><div class="wrap">
   <div class="eyebrow">5 · The twist</div>
   <h2>Magic was always <em>a kind of spelling</em></h2>
   <div class="etym">
@@ -150,7 +150,7 @@ footer{padding-block:44px 64px;border-top:1px solid var(--line);font-size:15px;c
 
 <footer><div class="wrap">
   <p>Zoom further: John von Neumann, <i>Theory of Self-Reproducing Automata</i>. Chiara Marletto, <i>The Science of Can and Can't</i>. David Deutsch, <i>The Beginning of Infinity</i>. Richard Feynman, "There's Plenty of Room at the Bottom" (1959). Counts for large objects are rounded estimates.</p>
-  <a class="home" href="./">Back to Glamour Gram</a>
+  <p style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap"><a class="home" href="four-days-old.html">&larr; I · Four Days Old</a><a class="home" href="the-duet.html">III · The Duet &rarr;</a></p>
 </div></footer>
 
 <script>

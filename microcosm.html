@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Microcosm Next Door · Glamour Gram</title>
+<meta name="description" content="Tardigrades in the roof moss, stardust in the gutter, glass houses in the puddle. Zoom from a moss cushion down to DNA.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
+<style>
+/* Layout: spores drifting through the title, then a powers-of-ten zoom instrument with a field card, a record table of extremes, a snow crystal grower, and a field guide for looking yourself. */
+.zoombox{position:relative}
+.scalebar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:12px}
+.scalebar b{color:var(--ink);font-weight:500}
+.card{margin-top:14px;border-top:1px solid var(--line);padding-top:14px;min-height:150px}
+.card h3{font-size:26px}
+.card .size{font-family:var(--mono);font-size:12px;color:var(--dawn);letter-spacing:.06em}
+.card p{font-size:17px;margin:8px 0 6px}
+.card .where{font-size:15px;color:var(--sea)}
+#zoom{width:100%}
+input#zoom{width:100%}
+.steps{display:grid;gap:18px;margin-top:20px;counter-reset:s;padding:0;list-style:none}
+.steps li{display:grid;grid-template-columns:36px 1fr;gap:12px;counter-increment:s}
+.steps li::before{content:counter(s);font-family:var(--mono);font-size:13px;color:var(--dawn);padding-top:3px}
+.steps li > div{min-width:0}
+.guides{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px;margin-top:24px}
+.guides > div{min-width:0}
+</style>
+</head>
+<body>
+<header class="hero" aria-label="Tiny drifting organisms and spores">
+  <canvas id="heroCanvas"></canvas>
+  <a class="home corner" href="./">Glamour Gram</a>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">Glamour Gram · V</div>
+    <h1>The Microcosm Next Door</h1>
+    <p class="lede">Bears in the roof moss, stardust in the gutter, glass houses in a puddle. You only have to look.</p>
+  </div></div>
+</header>
+
+<main>
+<section id="zoom-in"><div class="wrap">
+  <div class="eyebrow">Instrument · powers of ten</div>
+  <h2>From a moss cushion <em>down to DNA</em></h2>
+  <p>Drag the slider to fall from a clump of roof moss, past a tardigrade, a micrometeorite, a diatom and a grain of pollen, onto a bacterium, a virus and finally a strand of DNA. Every size is drawn to scale.</p>
+  <div class="instrument zoombox">
+    <canvas id="zoomCanvas" aria-label="A scale view that zooms from centimetres to nanometres"></canvas>
+    <input type="range" id="zoom" min="0" max="1000" value="0" aria-label="Zoom level" style="margin-top:14px">
+    <div class="scalebar"><span>Field of view <b id="fov">5 cm</b></span><span>Magnification <b id="mag">1×</b></span></div>
+    <div class="card" id="card" aria-live="polite"></div>
+  </div>
+</div></section>
+
+<section id="extremes"><div class="wrap">
+  <div class="eyebrow">The record holders</div>
+  <h2>Life at the <em>edges</em></h2>
+  <p>Polyextremophiles survive several extremes at once. Some of the toughest live in ordinary places: moss, soil, dust.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Extreme</th><th>Record</th><th>Who</th><th>Found</th></tr></thead>
+      <tbody>
+        <tr><td>Heat</td><td class="n">grows at 122 °C</td><td><i>Methanopyrus kandleri</i>, strain 116</td><td>Deep-sea vents (Takai et al., 2008)</td></tr>
+        <tr><td>Cold</td><td class="n">grows at −15 °C</td><td><i>Planococcus halocryophilus</i></td><td>Arctic permafrost (Mykytczuk et al., 2013)</td></tr>
+        <tr><td>Acid</td><td class="n">grows near pH 0</td><td><i>Picrophilus</i></td><td>Hot acidic soils in Japan (Schleper et al., 1995)</td></tr>
+        <tr><td>Radiation</td><td class="n">5,000 Gy, unharmed</td><td><i>Deinococcus radiodurans</i></td><td>Soil and dust; about 5 Gy can kill a person</td></tr>
+        <tr><td>Space</td><td class="n">10 days in orbit</td><td>Tardigrades</td><td>Exposed to vacuum on FOTON-M3 (Jönsson et al., 2008)</td></tr>
+        <tr><td>Time</td><td class="n">~46,000 years</td><td><i>Panagrolaimus kolymaensis</i>, a nematode</td><td>Revived from Siberian permafrost (Shatilovich et al., 2023)</td></tr>
+        <tr><td>Time</td><td class="n">~24,000 years</td><td>Bdelloid rotifers</td><td>Revived from Siberian permafrost (Shmakova et al., 2021)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:22px">Tardigrades survive by drying into a "tun," a shrivelled state with metabolism almost at zero, then wake when water returns. One species makes a protein called Dsup that wraps its DNA. Put into human cells in a dish, Dsup cut X-ray damage by about 40 percent (Hashimoto et al., 2016).</p>
+</div></section>
+
+<section id="snow"><div class="wrap">
+  <div class="eyebrow">Instrument · letters from the sky</div>
+  <h2>A snowflake is a <em>record</em> of its fall</h2>
+  <p>The physicist Ukichiro Nakaya grew the first artificial snow crystals in 1936 and found that their shape is set by temperature and humidity. He wrote that snow crystals are letters sent from the sky. Read one and you know the air it fell through.</p>
+  <div class="instrument">
+    <canvas id="snowCanvas" aria-label="A snow crystal that changes with temperature and humidity"></canvas>
+    <div class="controls">
+      <label for="temp">Temperature <input type="range" id="temp" min="-30" max="-1" step="1" value="-15"> <output id="tempOut" for="temp">−15 °C</output></label>
+      <label for="hum">Humidity <input type="range" id="hum" min="0" max="1" step="0.05" value="0.8"> <output id="humOut" for="hum">high</output></label>
+      <button type="button" id="regrow">Grow another</button>
+    </div>
+    <p class="caption" id="snowType"></p>
+  </div>
+</div></section>
+
+<section id="look"><div class="wrap">
+  <div class="eyebrow">Field guide</div>
+  <h2>Go and <em>look</em></h2>
+  <div class="guides">
+    <div>
+      <h3>Find a tardigrade</h3>
+      <ol class="steps">
+        <li><div>Pick a pinch of dry moss or lichen from a wall, roof or tree trunk.</div></li>
+        <li><div>Soak it in rainwater or bottled water in a shallow dish for a few hours, or overnight.</div></li>
+        <li><div>Squeeze the moss out over the dish and look at the water with a 20–40× stereo microscope, or a clip-on phone macro lens.</div></li>
+        <li><div>Look for slow, plump, eight-legged crawlers clinging to the debris, about half a millimetre long. You will probably also see rotifers and nematodes.</div></li>
+      </ol>
+    </div>
+    <div>
+      <h3>Find stardust</h3>
+      <ol class="steps">
+        <li><div>Scoop sediment from a roof gutter, ideally on a flat roof that hasn't been cleaned in years.</div></li>
+        <li><div>Rinse it in water and draw out the magnetic particles with a magnet in a plastic bag.</div></li>
+        <li><div>Sieve for grains of about 0.2–0.4 mm and search them under a microscope.</div></li>
+        <li><div>Look for tiny glossy spheres with stripes or a crystal pattern. Most magnetic spheres are industrial, so true micrometeorites are rare finds. Jon Larsen, a jazz guitarist, found the first urban ones this way (Genge et al., 2017).</div></li>
+      </ol>
+    </div>
+  </div>
+  <p style="margin-top:28px">Around 5,200 tonnes of extraterrestrial dust reach Earth's surface every year (Rojas et al., 2021). Some of it is on your roof right now. And you are a microcosm too: your body hosts about 38 trillion bacteria, slightly more than the number of your own cells (Sender, Fuchs &amp; Milo, 2016).</p>
+  <p class="closer">The universe isn't only up there. It's in the gutter, waiting for a magnet.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Sources: Jönsson et al., <i>Current Biology</i> (2008). Hashimoto et al., <i>Nature Communications</i> (2016). Shatilovich et al., <i>PLOS Genetics</i> (2023). Shmakova et al., <i>Current Biology</i> (2021). Takai et al., <i>PNAS</i> (2008). Mykytczuk et al., <i>ISME Journal</i> (2013). Schleper et al., <i>Journal of Bacteriology</i> (1995). Genge et al., <i>Geology</i> (2017). Rojas et al., <i>Earth and Planetary Science Letters</i> (2021). Sender, Fuchs &amp; Milo, <i>PLOS Biology</i> (2016). Ukichiro Nakaya, <i>Snow Crystals: Natural and Artificial</i> (1954). Sizes are typical values; real organisms vary.</p>
+  <div class="next"><a href="specious-present.html">← IV · The Specious Present</a><a href="workarounds.html">VI · Nature's Workarounds →</a></div>
+</div></footer>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function fit(cv, aspect){
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = aspect ? Math.round(w*aspect) : cv.clientHeight;
+  if(aspect) cv.style.height = h + "px";
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+
+/* ---------- drawing kit: each organism drawn at centre x,y with radius r (px) ---------- */
+const draw = {
+  moss(ctx,x,y,r,t){
+    for(let i=0;i<70;i++){
+      const a = i*2.399, d = r*0.9*Math.sqrt(i/70);
+      const px = x + d*Math.cos(a), py = y + d*Math.sin(a);
+      ctx.strokeStyle = i%3 ? "#5f8f62" : "#84b07a"; ctx.lineWidth = Math.max(1, r*0.012);
+      for(let k=0;k<5;k++){
+        const b = a + k*1.256 + Math.sin(t*0.5+i)*0.05;
+        ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px + r*0.09*Math.cos(b), py + r*0.09*Math.sin(b)); ctx.stroke();
+      }
+    }
+  },
+  tardigrade(ctx,x,y,r,t){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(-0.25);
+    const L = r, W = r*0.42;
+    ctx.fillStyle = "rgba(233,228,216,0.10)"; ctx.strokeStyle = C("--ink"); ctx.lineWidth = Math.max(1, r*0.02);
+    // legs: four pairs, last pair at the rear
+    for(let i=0;i<4;i++){
+      const lx = -L*0.62 + i*L*0.4 + (i===3 ? L*0.1 : 0);
+      [-1,1].forEach(s=>{
+        const wig = Math.sin(t*3 + i + s)*W*0.08;
+        ctx.beginPath(); ctx.ellipse(lx + wig, s*W*0.95, W*0.16, W*0.32, 0, 0, 7); ctx.fill(); ctx.stroke();
+        for(let c=-1;c<=1;c++){ ctx.beginPath(); ctx.moveTo(lx+wig+c*W*0.07, s*W*1.22); ctx.lineTo(lx+wig+c*W*0.11, s*W*1.38); ctx.stroke(); }
+      });
+    }
+    ctx.beginPath(); ctx.ellipse(0,0,L*0.95,W,0,0,7); ctx.fill(); ctx.stroke();
+    // body segments and head
+    ctx.globalAlpha = 0.5;
+    for(let i=1;i<5;i++){ ctx.beginPath(); ctx.ellipse(-L*0.95 + i*L*0.38, 0, L*0.04, W*0.9, 0, -1.3, 1.3); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = C("--ink"); ctx.beginPath(); ctx.arc(L*0.78, -W*0.28, Math.max(1,r*0.025), 0, 7); ctx.arc(L*0.78, W*0.28, Math.max(1,r*0.025), 0, 7); ctx.fill();
+    ctx.restore();
+  },
+  meteorite(ctx,x,y,r){
+    const g = ctx.createRadialGradient(x-r*0.35,y-r*0.35,r*0.1,x,y,r);
+    g.addColorStop(0,"#9aa0a6"); g.addColorStop(1,"#2b2f35");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill();
+    ctx.save(); ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.clip();
+    ctx.strokeStyle = "rgba(233,228,216,0.35)"; ctx.lineWidth = Math.max(1,r*0.025);
+    for(let i=-6;i<=6;i++){ ctx.beginPath(); ctx.moveTo(x-r, y+i*r*0.15 - r*0.3); ctx.lineTo(x+r, y+i*r*0.15 + r*0.3); ctx.stroke(); }
+    ctx.restore();
+    ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.beginPath(); ctx.arc(x-r*0.4,y-r*0.4,r*0.12,0,7); ctx.fill();
+  },
+  pollen(ctx,x,y,r){
+    ctx.fillStyle = "#d9b45a"; ctx.beginPath(); ctx.arc(x,y,r*0.8,0,7); ctx.fill();
+    ctx.strokeStyle = "#f0d68a"; ctx.lineWidth = Math.max(1,r*0.05);
+    for(let i=0;i<28;i++){ const a = i*2.399; ctx.beginPath(); ctx.moveTo(x+r*0.75*Math.cos(a), y+r*0.75*Math.sin(a)); ctx.lineTo(x+r*Math.cos(a), y+r*Math.sin(a)); ctx.stroke(); }
+  },
+  diatom(ctx,x,y,r,t){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(t*0.1);
+    ctx.strokeStyle = C("--sea"); ctx.lineWidth = Math.max(1,r*0.02);
+    ctx.fillStyle = "rgba(111,194,184,0.08)";
+    ctx.beginPath(); ctx.arc(0,0,r,0,7); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,0,r*0.22,0,7); ctx.stroke();
+    for(let i=0;i<36;i++){ const a = i*Math.PI/18; ctx.beginPath(); ctx.moveTo(r*0.24*Math.cos(a), r*0.24*Math.sin(a)); ctx.lineTo(r*0.97*Math.cos(a), r*0.97*Math.sin(a)); ctx.stroke(); }
+    ctx.fillStyle = C("--sea");
+    for(let ring=0.4; ring<0.95; ring+=0.14) for(let i=0;i<36;i++){ const a = (i+0.5)*Math.PI/18; ctx.beginPath(); ctx.arc(ring*r*Math.cos(a), ring*r*Math.sin(a), Math.max(0.6,r*0.018),0,7); ctx.fill(); }
+    ctx.restore();
+  },
+  deinococcus(ctx,x,y,r){
+    const s = r*0.48;
+    [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>{
+      ctx.fillStyle = "rgba(227,115,90,0.85)"; ctx.strokeStyle = "#f3b19f"; ctx.lineWidth = Math.max(1,r*0.03);
+      ctx.beginPath(); ctx.arc(x+a*s*0.98, y+b*s*0.98, s, 0, 7); ctx.fill(); ctx.stroke();
+    });
+  },
+  phage(ctx,x,y,r,t){
+    ctx.save(); ctx.translate(x,y);
+    ctx.strokeStyle = C("--ink"); ctx.lineWidth = Math.max(1,r*0.03); ctx.fillStyle = "rgba(233,228,216,0.12)";
+    const hR = r*0.35, top = -r*0.55;
+    ctx.beginPath(); for(let i=0;i<6;i++){ const a = i*Math.PI/3 + Math.PI/6; ctx.lineTo(hR*Math.cos(a), top + hR*1.25*Math.sin(a)); } ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillRect(-r*0.07, top+hR*1.1, r*0.14, r*0.75); ctx.strokeRect(-r*0.07, top+hR*1.1, r*0.14, r*0.75);
+    const base = top + hR*1.1 + r*0.75;
+    for(let i=0;i<6;i++){ const s = i<3 ? -1 : 1, k = i%3; const wig = Math.sin(t*2+i)*r*0.03;
+      ctx.beginPath(); ctx.moveTo(0, base); ctx.lineTo(s*r*(0.2+k*0.12), base + r*0.18 + wig); ctx.lineTo(s*r*(0.28+k*0.14), base + r*0.42); ctx.stroke(); }
+    ctx.restore();
+  },
+  dna(ctx,x,y,r,t){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(-0.4);
+    const len = r*2.2, amp = r/6, wl = r*0.567;   // 2 nm wide, one turn every 3.4 nm
+    for(let k=0;k<2;k++){
+      ctx.strokeStyle = k ? C("--sea") : C("--dawn"); ctx.lineWidth = Math.max(1,r*0.035);
+      ctx.beginPath();
+      for(let s=-len/2; s<=len/2; s+=r*0.02){ const yy = amp*Math.sin(s/wl*2*Math.PI + t + k*Math.PI); s===-len/2 ? ctx.moveTo(s,yy) : ctx.lineTo(s,yy); }
+      ctx.stroke();
+    }
+    ctx.strokeStyle = "rgba(233,228,216,0.4)"; ctx.lineWidth = Math.max(1,r*0.015);
+    for(let s=-len/2; s<=len/2; s+=wl/10){ const a = s/wl*2*Math.PI + t; ctx.beginPath(); ctx.moveTo(s, amp*Math.sin(a)); ctx.lineTo(s, amp*Math.sin(a+Math.PI)); ctx.stroke(); }
+    ctx.restore();
+  }
+};
+
+/* ---------- hero: drifting spores and diatoms ---------- */
+(function(){
+  const cv = document.getElementById("heroCanvas");
+  let g = fit(cv); addEventListener("resize", ()=>{ g = fit(cv); });
+  const kinds = ["pollen","diatom","diatom","pollen","meteorite","deinococcus"];
+  const motes = Array.from({length:34}, (_,i)=>({k:kinds[i%kinds.length], x:Math.random(), y:Math.random(), r:4+Math.random()*22, vx:(Math.random()-0.5)*0.01, vy:-0.004-Math.random()*0.01, z:Math.random()}));
+  let t = 0;
+  function frame(dt){
+    t += dt;
+    const {ctx,w,h} = g;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    motes.forEach(m=>{
+      m.x += m.vx*dt; m.y += m.vy*dt;
+      if(m.y < -0.1){ m.y = 1.1; m.x = Math.random(); }
+      if(m.x < -0.1) m.x = 1.1; if(m.x > 1.1) m.x = -0.1;
+      ctx.globalAlpha = 0.25 + 0.5*m.z;
+      draw[m.k](ctx, m.x*w, m.y*h, m.r*(0.5+m.z), t);
+    });
+    ctx.globalAlpha = 1;
+    const veil = ctx.createLinearGradient(0,0,w*0.75,0);
+    veil.addColorStop(0,"rgba(11,16,22,0.8)"); veil.addColorStop(1,"rgba(11,16,22,0)");
+    ctx.fillStyle = veil; ctx.fillRect(0,0,w,h);
+  }
+  if(reduce){ frame(0); return; }
+  let last = performance.now();
+  (function loop(now){ frame(Math.min(0.05,(now-last)/1000)); last = now; requestAnimationFrame(loop); })(last);
+})();
+
+/* ---------- powers of ten ---------- */
+(function(){
+  const cv = document.getElementById("zoomCanvas");
+  let g = fit(cv, 0.62); addEventListener("resize", ()=>{ g = fit(cv, 0.62); render(); });
+  // sizes in metres; each object sits just beside the one before it (dx, dy), and f is the field of view that frames it
+  const O = [
+    {k:"moss", s:0.015, f:0.05, name:"A cushion of roof moss", size:"about 3 cm across",
+     text:"Moss dries out and revives again and again. Each cushion is a little world with its own weather, home to tardigrades, rotifers, nematodes and mites.", where:"Walls, roofs, tree bark, cracks in the pavement."},
+    {k:"tardigrade", dx:4.9e-3, dy:4e-4, s:2.5e-4, f:1e-3, name:"A tardigrade", size:"about 0.5 mm",
+     text:"A water bear: eight stubby legs with claws, a brain, eyespots, and a gut. Dried into a tun it can survive vacuum, crushing pressure and radiation. Fully hydrated, it lives a quiet life eating moss cells and algae.", where:"Wet moss and lichen almost anywhere on Earth."},
+    {k:"meteorite", dx:430e-6, dy:60e-6, s:1.5e-4, f:6e-4, name:"A micrometeorite", size:"about 0.3 mm",
+     text:"A cosmic spherule: a grain of asteroid that melted as it fell through the atmosphere at tens of kilometres per second, then froze into a glassy sphere. The stripes are crystals that grew as it cooled.", where:"Roof gutters, especially on old flat roofs."},
+    {k:"diatom", dx:190e-6, dy:-40e-6, s:2e-5, f:1e-4, name:"A diatom", size:"about 40 µm",
+     text:"A single-celled alga living inside a box of glass with patterned pores. Diatoms produce roughly a fifth of the oxygen made on Earth each year.", where:"Any puddle, pond, damp moss or patch of wet soil."},
+    {k:"pollen", dx:40e-6, dy:8e-6, s:1.5e-5, f:7.5e-5, name:"A pollen grain", size:"about 30 µm",
+     text:"A sealed capsule carrying a plant's male cells. The spiky coat, made of sporopollenin, is one of the toughest natural materials known and can survive in sediments for millions of years.", where:"Every surface outdoors in spring."},
+    {k:"deinococcus", dx:18e-6, dy:-8e-6, s:1.5e-6, f:8e-6, name:"Deinococcus radiodurans", size:"about 3 µm (a group of four)",
+     text:"Nicknamed Conan the Bacterium. It shrugs off a radiation dose a thousand times what would kill a person, and stitches its shattered chromosomes back together within hours.", where:"Soil, dust, even dried food. It was first found in irradiated canned meat in 1956."},
+    // the phage stands on the top-right cell, its tail fibres touching the cell wall
+    {k:"phage", dx:0.7056e-6, dy:-1.547e-6, s:1.2e-7, f:5e-7, name:"A bacteriophage", size:"about 0.2 µm long",
+     text:"A virus that infects bacteria. It lands on its legs and injects its DNA like a syringe. There are around ten million viruses in a millilitre of seawater, and most of them are phages.", where:"Wherever there are bacteria: soil, seawater, your gut."},
+    {k:"dna", dx:1e-7, dy:7.5e-8, s:6e-9, f:2.5e-8, name:"DNA", size:"2 nm wide",
+     text:"The tape in von Neumann's self-building machine. The DNA in one of your cells would stretch about two metres if unwound, packed into a nucleus a few micrometres across.", where:"Inside nearly every living thing you've ever touched."}
+  ];
+  let px = 0, py = 0;
+  O.forEach(o=>{ o.x = px += o.dx || 0; o.y = py += o.dy || 0; });
+  // each object gets an equal share of the slider; the view glides to the next one,
+  // panning ahead of the zoom so it arrives centred (field of view 5 cm down to 25 nm)
+  const slider = document.getElementById("zoom");
+  const ease = u => u*u*(3 - 2*u);
+  let t = 0;
+  function camera(v){
+    const p = v*(O.length - 1), i = Math.min(O.length - 2, Math.floor(p)), u = p - i, a = O[i], b = O[i+1];
+    const z = ease(u), m = ease(Math.min(1, u/0.7));
+    const fov = Math.pow(10, Math.log10(a.f) + (Math.log10(b.f) - Math.log10(a.f))*z);
+    return {fov, cx: a.x + (b.x - a.x)*m, cy: a.y + (b.y - a.y)*m, focus: Math.round(p)};
+  }
+  function fmtLen(m){
+    if(m >= 0.01) return +(m*100).toPrecision(2) + " cm";
+    if(m >= 0.001) return +(m*1000).toPrecision(2) + " mm";
+    if(m >= 1e-6) return +(m*1e6).toPrecision(2) + " µm";
+    return +(m*1e9).toPrecision(2) + " nm";
+  }
+  let shown = -1;
+  function render(){
+    const v = slider.value/1000, cam = camera(v);
+    const {ctx,w,h} = g;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    const k = w/cam.fov;
+    O.forEach(o=>{
+      const r = o.s*k;
+      if(r < 1.2 || r > w*6) return;
+      // fade in as it becomes visible, and out as it grows far past the frame
+      ctx.globalAlpha = Math.min(1, (r-1.2)/6, (w*6 - r)/(w*3));
+      draw[o.k](ctx, w/2 + (o.x - cam.cx)*k, h/2 + (o.y - cam.cy)*k, r, t);
+      ctx.globalAlpha = 1;
+    });
+    // scale bar
+    const barM = Math.pow(10, Math.floor(Math.log10(cam.fov/4)));
+    const barPx = barM*k;
+    ctx.strokeStyle = C("--ink"); ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(16, h-18); ctx.lineTo(16+barPx, h-18); ctx.stroke(); ctx.lineWidth = 1;
+    ctx.font = "12px JetBrains Mono, monospace"; ctx.fillStyle = C("--ink"); ctx.fillText(fmtLen(barM), 16, h-26);
+    document.getElementById("fov").textContent = fmtLen(cam.fov);
+    const mag = 0.05/cam.fov;
+    document.getElementById("mag").textContent = mag < 1000 ? Math.round(mag).toLocaleString() + "×" : (mag < 1e6 ? Math.round(mag/1000).toLocaleString() + " thousand ×" : (mag/1e6).toFixed(1) + " million ×");
+    if(cam.focus !== shown){
+      shown = cam.focus; const o = O[shown];
+      document.getElementById("card").innerHTML = `<div class="size">${o.size}</div><h3>${o.name}</h3><p>${o.text}</p><div class="where">Near you: ${o.where}</div>`;
+    }
+  }
+  slider.addEventListener("input", render);
+  render();
+  if(!reduce){ let last = performance.now(); (function loop(now){ t += (now-last)/1000; last = now; render(); requestAnimationFrame(loop); })(last); }
+})();
+
+/* ---------- snow crystal grower (after Nakaya's diagram) ---------- */
+(function(){
+  const cv = document.getElementById("snowCanvas");
+  let g = fit(cv, 0.6); addEventListener("resize", ()=>{ g = fit(cv, 0.6); grow(); });
+  const temp = document.getElementById("temp"), hum = document.getElementById("hum");
+  const tOut = document.getElementById("tempOut"), hOut = document.getElementById("humOut"), typeEl = document.getElementById("snowType");
+  let seed = 1;
+  const rnd = () => { seed = (seed*16807) % 2147483647; return (seed-1)/2147483646; };
+  function habit(T, H){
+    if(T > -4) return H > 0.5 ? ["plate","Thin hexagonal plates. Near freezing, crystals grow flat."] : ["plate","Small hexagonal plates."];
+    if(T > -10) return H > 0.5 ? ["needle","Needles and hollow columns. Around −5 °C crystals grow long instead of wide."] : ["column","Short solid columns."];
+    if(T > -22) return H > 0.5 ? ["dendrite","Stellar dendrites, the classic six-armed snowflake. They grow near −15 °C in very humid air."] : ["plate","Plates with simple ridges: the right temperature for stars, but too dry to branch."];
+    return H > 0.5 ? ["column","Columns and plates mixed, typical of very cold clouds."] : ["column","Small columns, typical of very cold, dry air."];
+  }
+  function branch(ctx, x, y, a, len, depth, H){
+    if(len < 2 || depth > 4) return;
+    const x2 = x + len*Math.cos(a), y2 = y + len*Math.sin(a);
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x2,y2); ctx.stroke();
+    const n = 2 + Math.floor(H*4);
+    for(let i=1;i<=n;i++){
+      const f = i/(n+1), bx = x + len*f*Math.cos(a), by = y + len*f*Math.sin(a);
+      const bl = len*(0.42 - f*0.25)*(0.7 + 0.5*rnd());
+      branch(ctx, bx, by, a + Math.PI/3, bl, depth+1, H);
+      branch(ctx, bx, by, a - Math.PI/3, bl, depth+1, H);
+    }
+  }
+  function grow(){
+    const T = +temp.value, H = +hum.value;
+    tOut.textContent = "−" + Math.abs(T) + " °C";
+    hOut.textContent = H < 0.35 ? "low" : (H < 0.7 ? "medium" : "high");
+    const [kind, text] = habit(T, H);
+    typeEl.textContent = text;
+    const {ctx,w,h} = g;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    const cx = w/2, cy = h/2, R = Math.min(w,h)*0.4;
+    ctx.strokeStyle = "#dcefff"; ctx.fillStyle = "rgba(220,239,255,0.12)"; ctx.lineWidth = 1.5; ctx.lineCap = "round";
+    seed = Math.floor(Math.abs(T)*97 + H*1000 + (grow.n||0)*7919) || 1;
+    if(kind === "dendrite"){
+      for(let k=0;k<6;k++){ seed = Math.floor(Math.abs(T)*97 + H*1000 + (grow.n||0)*7919) || 1; branch(ctx, cx, cy, k*Math.PI/3 - Math.PI/2, R, 0, H); }
+    } else if(kind === "plate"){
+      const hex = (r) => { ctx.beginPath(); for(let k=0;k<6;k++){ const a = k*Math.PI/3; ctx.lineTo(cx + r*Math.cos(a), cy + r*Math.sin(a)); } ctx.closePath(); };
+      const r = R*(0.55 + 0.35*H);
+      hex(r); ctx.fill(); ctx.stroke();
+      hex(r*0.62); ctx.stroke();
+      if(H > 0.3){ for(let k=0;k<6;k++){ const a = k*Math.PI/3; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx + r*Math.cos(a), cy + r*Math.sin(a)); ctx.stroke(); } }
+      hex(r*0.25); ctx.stroke();
+    } else {
+      const long = kind === "needle", L = long ? R*1.8 : R*0.9, W = long ? R*0.12 : R*0.45;
+      ctx.save(); ctx.translate(cx,cy); ctx.rotate(-0.5);
+      ctx.beginPath(); ctx.rect(-L/2, -W/2, L, W); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-L/2, 0); ctx.lineTo(L/2, 0); ctx.globalAlpha = 0.5; ctx.stroke(); ctx.globalAlpha = 1;
+      if(!long){ ctx.beginPath(); ctx.ellipse(-L/2, 0, W*0.18, W/2, 0, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.ellipse(L/2, 0, W*0.18, W/2, 0, 0, 7); ctx.stroke(); }
+      ctx.restore();
+    }
+  }
+  [temp, hum].forEach(el=>el.addEventListener("input", grow));
+  document.getElementById("regrow").addEventListener("click", ()=>{ grow.n = (grow.n||0) + 1; grow(); });
+  grow();
+})();
+</script>
+</body>
+</html>

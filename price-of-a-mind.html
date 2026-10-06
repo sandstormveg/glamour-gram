@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Price of a Mind · Glamour Gram</title>
+<meta name="description" content="Von Neumann machines shuttle data; living tissue computes where it stands. What would it cost to run a mind, and why nobody knows.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
+<style>
+/* Layout: the title shows a lone data packet on a bus beside a living mesh. Then a bus-vs-mesh race, two ideas from the frontier, a price calculator for minds, and the open problem stated plainly. */
+.bars,.ladder{display:grid;gap:8px;margin-top:14px}
+.barrow,.ladder li{display:grid;grid-template-columns:190px 1fr 110px;gap:10px;align-items:center;font-family:var(--mono);font-size:12px;color:var(--mute)}
+.barrow > *,.ladder li > *{min-width:0}
+.track{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.track i{display:block;height:100%;width:0;transition:width .4s}
+.barrow .val,.ladder .val{color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+.ladder{list-style:none;padding:0;margin-top:20px}
+.ladder .track i{background:var(--mute);opacity:.45}
+.ladder li.you{color:var(--dawn)}
+.ladder li.you .track i{background:var(--dawn);opacity:1}
+.ladder li.you .val{color:var(--dawn)}
+.ladder li{grid-template-columns:230px 1fr 110px}
+@media (max-width:520px){.barrow,.ladder li{grid-template-columns:1fr auto}.barrow .track,.ladder .track{grid-column:1/-1;grid-row:2}}
+.calc{display:grid;gap:14px;margin-top:6px}
+.calc label{display:grid;gap:6px;font-family:var(--mono);font-size:12px;color:var(--mute);letter-spacing:.04em}
+.calc select,.calc input{width:100%}
+.big{font-family:var(--display);font-size:clamp(40px,8vw,72px);line-height:1;color:var(--dawn);margin-top:18px;overflow-wrap:anywhere}
+.big sup{font-size:.45em;vertical-align:.9em;line-height:0}
+.verdict{font-size:18px;margin-top:10px}
+.math{font-family:var(--mono);font-size:15px;background:var(--night);border:1px solid var(--line);border-radius:4px;padding:12px 14px;overflow-x:auto;white-space:nowrap;margin:14px 0}
+</style>
+</head>
+<body>
+<header class="hero" aria-label="A single data packet on a bus beside a pulsing mesh of nodes">
+  <canvas id="heroCanvas"></canvas>
+  <a class="home corner" href="./">Glamour Gram</a>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">Glamour Gram · VII</div>
+    <h1>The Price of a Mind</h1>
+    <p class="lede">Your body runs a mind on about 100 watts. What would a machine need? It depends on something nobody knows yet.</p>
+  </div></div>
+</header>
+
+<main>
+<section id="bottleneck"><div class="wrap">
+  <div class="eyebrow">Instrument · bus versus mesh</div>
+  <h2>Computers spend their energy <em>moving</em></h2>
+  <p>In 1945 John von Neumann described the design nearly every computer still uses: memory in one place, a processor in another, and a channel between them. Every calculation means fetching data across that channel and sending the result back. In 1977 John Backus named the channel the von Neumann bottleneck.</p>
+  <p>Below, both machines do the same job. A signal moves across a grid of cells. Every cell keeps updating itself from what it senses plus a fading average of itself and its four neighbours, so the signal glows and spreads. The von Neumann machine fetches each cell's values across the bus, one cell per clock tick. The mesh updates every cell at once, in place, the way tissue does.</p>
+  <p>The ring shows where the signal really is. Both pictures start out right. Watch which one keeps up, and move your pointer or finger over the grid to steer the signal.</p>
+  <div class="instrument">
+    <canvas id="busCanvas" aria-label="A grid of cells following a moving signal, updated either one cell at a time or all at once"></canvas>
+    <div class="controls">
+      <button type="button" id="modeVN" aria-pressed="true">Von Neumann</button>
+      <button type="button" id="modeMesh" aria-pressed="false">Mesh</button>
+      <label for="busSpeed">Clock speed <input type="range" id="busSpeed" min="1" max="40" value="6"> <output id="busRate" for="busSpeed">24 ticks a second</output></label>
+    </div>
+    <div class="bars">
+      <div class="barrow"><span>Moving data, per update</span><span class="track"><i id="barMove" style="background:var(--ember)"></i></span><span class="val" id="valMove"></span></div>
+      <div class="barrow"><span>Doing maths, per update</span><span class="track"><i id="barComp" style="background:var(--sea)"></i></span><span class="val" id="valComp"></span></div>
+      <div class="barrow"><span>Grid updates per second</span><span class="track"><i id="barRate" style="background:var(--dawn)"></i></span><span class="val" id="valRate"></span></div>
+    </div>
+    <p class="caption">Energy figures are Mark Horowitz's measurements for a 45 nm chip (2014), as tabulated by Song Han and colleagues (2016). Reading 32 bits from main memory costs about 640 pJ, and from a small nearby memory about 5 pJ. A 32-bit floating-point add costs 0.9 pJ and a multiply 3.7 pJ. For one full update of this grid, the von Neumann machine spends about 645 nJ moving data and needs 144 ticks. The mesh spends about 5 nJ in one tick. Both spend under 2 nJ on the maths itself. Real computers soften this with caches and many cores, but the gap is why the problem has a name.</p>
+  </div>
+</div></section>
+
+<section id="two-ideas"><div class="wrap">
+  <div class="eyebrow">Two ideas from the frontier</div>
+  <h2>Life doesn't run software, it <em>is</em> the computation</h2>
+  <div class="facts">
+    <div><b>Polycomputing</b><span>Josh Bongard and Michael Levin argue that living matter computes many things at once in the same place, and which computation you see depends on who is observing. One tissue can be a pump, a signal, a memory and a sensor all at the same time. Bongard's lab has built materials that compute different logic functions at different vibration frequencies simultaneously.</span><span class="num">Bongard &amp; Levin, 2023</span></div>
+    <div><b>Pancomputational enactivism</b><span>Michael Timothy Bennett argues that treating a mind as software running on separate hardware, which he calls computational dualism, makes claims about intelligence depend on an arbitrary interpreter. His alternative treats the whole embodied system, interacting with its world, as the computation.</span><span class="num">Bennett, 2023–2024</span></div>
+  </div>
+  <p>In your body, nothing waits for a bus. Every synapse stores and computes in the same place. Ion channels, hormones, heartbeat, gut, immune system and the bioelectric fields between cells all update at once, at every scale, and each level both reads and rewrites the others. Your brain does it on roughly 20 watts.</p>
+  <p>Are these ideas proven? No. They are frameworks, argued seriously, that point at a real difference between how we build machines and how life works.</p>
+</div></section>
+
+<section id="price"><div class="wrap">
+  <div class="eyebrow">Instrument · the price list</div>
+  <h2>What would it cost to <em>run a mind?</em></h2>
+  <p>To run a mind on a machine you have to choose how much detail to simulate. Abstract neural computation is cheap. Simulating every molecule is not. Choose a level of detail, a number of minds and a hardware efficiency, and see what power it takes.</p>
+  <div class="instrument">
+    <div class="calc">
+      <label for="grain">Level of detail needed for a mind
+        <select id="grain"></select>
+      </label>
+      <label for="minds">Number of minds: <output id="mindsOut" for="minds">1</output>
+        <input type="range" id="minds" min="0" max="9.92" step="0.01" value="0">
+      </label>
+      <label for="eff">Hardware efficiency
+        <select id="eff">
+          <option value="1e-12">Today's best AI chips, about 1 picojoule per operation</option>
+          <option value="1e-15">Chips a thousand times better</option>
+          <option value="2.9e-21">The Landauer limit at room temperature, the floor for erasing a bit</option>
+        </select>
+      </label>
+    </div>
+    <div class="big" id="power">–</div>
+    <p class="verdict" id="verdict"></p>
+    <ol class="ladder" id="ladder" aria-label="Power needed, ranked among known power budgets on a logarithmic scale"></ol>
+    <p class="caption">Levels 2 to 7 use Anders Sandberg and Nick Bostrom's estimates for emulating a human brain (2008). Level 1 is Joseph Carlsmith's central estimate (2020). Level 8 is our own rough estimate: about 7 × 10²⁷ atoms, stepped every femtosecond, with around a thousand operations per atom per step. It still leaves out quantum effects and the world the body lives in. Reversible computing could in principle dip below the Landauer limit.</p>
+  </div>
+</div></section>
+
+<section id="llms"><div class="wrap">
+  <div class="eyebrow">What this means for AI</div>
+  <h2>Will today's AI hit <em>a wall?</em></h2>
+  <p>Large language models run on chips that are massively parallel but still shuttle billions of numbers between memory and processor for every word they write. Chip arithmetic has grown far faster than memory bandwidth, a gap called the memory wall since 1995 that has only widened (Gholami et al., 2024). Data centres used about 1.5 percent of the world's electricity in 2024, and the International Energy Agency expects that to roughly double by 2030.</p>
+  <p>There are counter-currents. The compute needed to reach a given level of language-model performance has been halving roughly every eight months through better algorithms (Ho et al., 2024). And new chips such as IBM's NorthPole and Intel's Loihi move memory and computing together, closer to how tissue works.</p>
+  <p>So whether today's architecture reaches a ceiling before it matches the full range of what minds do is an open question. The answer depends on the problem below.</p>
+</div></section>
+
+<section id="problem"><div class="wrap">
+  <div class="eyebrow">An open problem</div>
+  <h2>The price-of-a-mind <em>problem</em></h2>
+  <div class="callout">
+    <div class="eyebrow">Stated plainly</div>
+    <p>Let <b>g*</b> be the coarsest level of detail at which a simulation of a person still produces a mind like theirs, and possibly their experience. Let <b>C(g)</b> be the operations per second needed at level g, and <b>E</b> the energy per operation. Then hosting N minds takes power</p>
+    <div class="math">P = N × C(g*) × E</div>
+    <p><b>What we know:</b> C ranges from about 10¹⁵ to 10⁴⁶ operations per second depending on g. E ranges from about 10⁻¹² joules today down to 3 × 10⁻²¹ at the Landauer limit for irreversible computing.</p>
+    <p><b>What nobody knows:</b> g*. Nor do we know whether experience comes along at any level, or whether a mind even has a level apart from its body and its world, as enactivists argue.</p>
+    <p style="margin:0"><b>Why it matters:</b> for eight billion minds the answer lands anywhere from less power than humanity uses today to more than the output of hundreds of millions of Suns. The Sun could power all of them on today's chips only if a mind at g* needs fewer than about 5 × 10²⁸ operations per second.</p>
+  </div>
+  <p style="margin-top:24px">Meanwhile, every one of us runs at g*, whatever it is, on about 100 watts, assembled from food. Biology is not just efficient by our standards. It may be doing a different kind of thing.</p>
+  <p>One more consequence, and it cuts both ways. If g* is coarse, digital minds will be cheap. Then so might digital suffering be, multiplied quietly by the billion. Knowing g* may be one of the most important things we could learn before we build.</p>
+  <p class="closer">A mind might cost a light bulb or a galaxy. We don't yet know which.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Sources: John von Neumann, <i>First Draft of a Report on the EDVAC</i> (1945). John Backus, Turing Award lecture (1977). Mark Horowitz, "Computing's energy problem," ISSCC (2014), as tabulated in Han et al., "EIE," ISCA (2016). Wulf &amp; McKee, "Hitting the memory wall" (1995). Bongard &amp; Levin, "There's plenty of room right here," <i>Biomimetics</i> (2023). Michael Timothy Bennett, papers on computational dualism and pancomputational enactivism (2023–2024). Sandberg &amp; Bostrom, <i>Whole Brain Emulation: A Roadmap</i> (2008). Joseph Carlsmith, <i>How Much Computational Power Does It Take to Match the Human Brain?</i> (2020). Gholami et al., "AI and Memory Wall," <i>IEEE Micro</i> (2024). Ho et al., "Algorithmic progress in language models" (2024). IEA, <i>Energy and AI</i> (2025). Rolf Landauer (1961).</p>
+  <div class="next"><a href="workarounds.html">← VI · Nature's Workarounds</a><a href="./">Back to Glamour Gram</a></div>
+</div></footer>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function fit(cv, aspect){
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = aspect ? Math.round(w*aspect) : cv.clientHeight;
+  if(aspect) cv.style.height = h + "px";
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+const SUP = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+function sci(x, digits){
+  if(x === 0) return "0";
+  const e = Math.floor(Math.log10(x)), m = x/Math.pow(10,e);
+  const exp = (e<0?"⁻":"") + String(Math.abs(e)).split("").map(c=>SUP[+c]).join("");
+  return (m.toFixed(digits ?? 1)).replace(/\.0$/,"") + " × 10" + exp;
+}
+
+/* ---------- hero: one packet on a bus, beside a living mesh ---------- */
+(function(){
+  const cv = document.getElementById("heroCanvas");
+  let g = fit(cv); addEventListener("resize", ()=>{ g = fit(cv); build(); });
+  let nodes = [];
+  function build(){
+    const {w,h} = g; nodes = [];
+    for(let i=0;i<180;i++) nodes.push({x: w*(0.42 + 0.56*Math.random()), y: h*(0.08 + 0.86*Math.random())});
+  }
+  build();
+  let t = 0;
+  function frame(dt){
+    t += dt;
+    const {ctx,w,h} = g;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    // mesh: waves of activity pass through every node at once
+    const cx = w*0.72, cy = h*0.5;
+    nodes.forEach((a,i)=>{
+      const d = Math.hypot(a.x-cx, a.y-cy);
+      a.v = 0.5 + 0.5*Math.sin(t*2.4 - d*0.025) * Math.cos(t*0.7 + a.x*0.01);
+    });
+    ctx.lineWidth = 1;
+    for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++){
+      const a = nodes[i], b = nodes[j], d = Math.hypot(a.x-b.x, a.y-b.y);
+      if(d < 52){ ctx.globalAlpha = 0.08 + 0.3*((a.v+b.v)/2)*(1-d/52); ctx.strokeStyle = C("--sea"); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
+    }
+    nodes.forEach(a=>{ ctx.globalAlpha = 0.25 + 0.75*a.v; ctx.fillStyle = a.v > 0.8 ? C("--dawn") : C("--sea"); ctx.beginPath(); ctx.arc(a.x,a.y,1.6+1.8*a.v,0,7); ctx.fill(); });
+    ctx.globalAlpha = 1;
+    // bus: memory and processor, one packet at a time
+    const by = h*0.86, mx = w*0.06, px = w*0.34;
+    ctx.strokeStyle = C("--line"); ctx.strokeRect(mx-18, by-14, 36, 28); ctx.strokeRect(px-18, by-14, 36, 28);
+    ctx.beginPath(); ctx.moveTo(mx+18, by); ctx.lineTo(px-18, by); ctx.stroke();
+    const p = (Math.sin(t*1.3)+1)/2;
+    ctx.fillStyle = C("--ember"); ctx.beginPath(); ctx.arc(mx+18 + (px-mx-36)*p, by, 4, 0, 7); ctx.fill();
+    ctx.font = "11px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "center";
+    ctx.fillText("memory", mx, by+30); ctx.fillText("processor", px, by+30); ctx.textAlign = "left";
+  }
+  if(reduce){ frame(0.8); return; }
+  let last = performance.now();
+  (function loop(now){ frame(Math.min(0.05,(now-last)/1000)); last = now; requestAnimationFrame(loop); })(last);
+})();
+
+/* ---------- bus versus mesh ---------- */
+(function(){
+  const cv = document.getElementById("busCanvas");
+  const COLS = 16, ROWS = 9, N = COLS*ROWS;
+  const aspect = () => 0.9*ROWS/COLS + 66/Math.max(200, cv.clientWidth);   // the grid, plus room for the bus and processor
+  let g = fit(cv, aspect()); addEventListener("resize", ()=>{ g = fit(cv, aspect()); });
+  const DRAM = 640, LOCAL = 5, MATH = 5*0.9 + 2*3.7;  // picojoules: a main-memory access, a nearby-memory access, five adds and two multiplies
+  const COST = {vn:{move:N*7*DRAM, comp:N*MATH}, mesh:{move:N*7*LOCAL, comp:N*MATH}};   // per full update: six reads and a write per cell
+  const vals = new Float32Array(N), next = new Float32Array(N);
+  let mode = "vn", cell = 0, T = 0, steer = null;
+  const sig = {x:0, y:0};
+  const idx = (x,y) => Math.min(ROWS-1, Math.max(0, y))*COLS + Math.min(COLS-1, Math.max(0, x));
+  const avg = i => { const x = i%COLS, y = (i/COLS)|0; return (vals[i] + vals[idx(x-1,y)] + vals[idx(x+1,y)] + vals[idx(x,y-1)] + vals[idx(x,y+1)])/5; };
+  // each cell adds what it senses to a fading average of itself and its neighbours
+  const sense = i => { const x = i%COLS, y = (i/COLS)|0; return Math.exp(-((x - sig.x)**2 + (y - sig.y)**2)/2); };
+  const update = i => Math.min(1, sense(i) + 0.7*avg(i));
+  function tick(){
+    if(mode === "vn"){ vals[cell] = update(cell); cell = (cell + 1) % N; }
+    else { for(let i=0;i<N;i++) next[i] = update(i); vals.set(next); }
+  }
+  function wander(){ sig.x = (COLS-1)/2*(1 + 0.85*Math.sin(0.45*T)); sig.y = (ROWS-1)/2*(1 + 0.8*Math.sin(0.7*T + 1)); }
+  // both machines start from a correct picture of the signal; then watch which one keeps up
+  function settle(){ for(let k=0;k<30;k++){ for(let i=0;i<N;i++) next[i] = update(i); vals.set(next); } }
+  const speed = document.getElementById("busSpeed");
+  const rate = () => 4*(+speed.value);                 // clock ticks a second
+  const nJ = pj => +(pj/1e3).toPrecision(3) + " nJ";
+  function bars(){
+    const c = COST[mode], ups = mode === "vn" ? rate()/N : rate();
+    const set = (id, frac, label) => { document.getElementById("bar"+id).style.width = `max(2px, ${Math.min(100, frac*100)}%)`; document.getElementById("val"+id).textContent = label; };
+    set("Move", c.move/COST.vn.move, nJ(c.move));
+    set("Comp", c.comp/COST.vn.move, nJ(c.comp));
+    set("Rate", ups/rate(), ups < 10 ? ups.toFixed(2) : Math.round(ups).toString());
+    document.getElementById("busRate").textContent = rate() + " ticks a second";
+  }
+  function setMode(m){
+    mode = m; cell = 0; settle();
+    document.getElementById("modeVN").setAttribute("aria-pressed", m === "vn");
+    document.getElementById("modeMesh").setAttribute("aria-pressed", m === "mesh");
+    bars();
+  }
+  document.getElementById("modeVN").addEventListener("click", ()=>setMode("vn"));
+  document.getElementById("modeMesh").addEventListener("click", ()=>setMode("mesh"));
+  speed.addEventListener("input", bars);
+  // steer the signal with a pointer or finger
+  const layout = () => { const gw = g.w*0.9, cs = gw/COLS; return {cs, gx:(g.w - gw)/2, gy:12}; };
+  function aim(e){ const r = cv.getBoundingClientRect(), L = layout(); steer = {x:(e.clientX - r.left - L.gx)/L.cs - 0.5, y:(e.clientY - r.top - L.gy)/L.cs - 0.5}; }
+  cv.addEventListener("pointermove", e=>{ if(e.pointerType === "mouse" || e.buttons) aim(e); });
+  cv.addEventListener("pointerdown", aim);
+  ["pointerleave", "pointercancel"].forEach(t=>cv.addEventListener(t, ()=>{ steer = null; }));
+  cv.addEventListener("pointerup", e=>{ if(e.pointerType !== "mouse") steer = null; });
+  let last = performance.now(), acc = 0;
+  function frame(now){
+    const dt = Math.min(0.05,(now-last)/1000); last = now; T += dt;
+    if(steer){ sig.x += (steer.x - sig.x)*Math.min(1, dt*12); sig.y += (steer.y - sig.y)*Math.min(1, dt*12); }
+    else wander();
+    acc += dt*rate();
+    while(acc >= 1){ acc -= 1; tick(); }
+    const {ctx,w,h} = g, {cs, gx, gy} = layout();
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    if(mode === "mesh"){                               // every cell wired to its neighbours
+      ctx.strokeStyle = C("--sea"); ctx.globalAlpha = 0.18; ctx.lineWidth = 1; ctx.beginPath();
+      for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++){
+        const cx = gx + (x+0.5)*cs, cy = gy + (y+0.5)*cs;
+        if(x < COLS-1){ ctx.moveTo(cx, cy); ctx.lineTo(cx + cs, cy); }
+        if(y < ROWS-1){ ctx.moveTo(cx, cy); ctx.lineTo(cx, cy + cs); }
+      }
+      ctx.stroke(); ctx.globalAlpha = 1;
+    }
+    for(let i=0;i<N;i++){
+      const x = i%COLS, y = (i/COLS)|0;
+      ctx.fillStyle = `rgba(240,168,90,${0.06 + 0.9*Math.min(1, vals[i])})`;
+      ctx.fillRect(gx + x*cs + 2, gy + y*cs + 2, cs-4, cs-4);
+    }
+    // where the signal really is
+    ctx.strokeStyle = C("--ink"); ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.arc(gx + (sig.x+0.5)*cs, gy + (sig.y+0.5)*cs, cs*0.9, 0, 7); ctx.stroke(); ctx.globalAlpha = 1;
+    const busY = gy + ROWS*cs + 14, cpuX = w/2;
+    ctx.font = "11px JetBrains Mono, monospace"; ctx.textAlign = "center";
+    if(mode === "vn"){
+      const x = cell%COLS, y = (cell/COLS)|0, sx = gx + (x+0.5)*cs, sy = gy + (y+0.5)*cs;
+      ctx.strokeStyle = C("--dawn"); ctx.lineWidth = 2; ctx.strokeRect(gx + x*cs, gy + y*cs, cs, cs); ctx.lineWidth = 1;
+      ctx.strokeStyle = C("--line"); ctx.beginPath(); ctx.moveTo(sx, sy + cs/2); ctx.lineTo(cpuX, busY + 6); ctx.stroke();
+      ctx.strokeRect(cpuX - 44, busY + 6, 88, 24);
+      ctx.fillStyle = C("--mute"); ctx.fillText("processor", cpuX, busY + 22);
+      // data shuttles down the bus and results go back up
+      for(let k=0;k<3;k++){
+        const f = (T*1.8 + k/3) % 1, down = k < 2, p = down ? f : 1 - f;
+        ctx.fillStyle = down ? C("--ember") : C("--sea");
+        ctx.beginPath(); ctx.arc(sx + (cpuX - sx)*p, sy + cs/2 + (busY + 6 - sy - cs/2)*p, 2.5, 0, 7); ctx.fill();
+      }
+    } else {
+      ctx.fillStyle = C("--mute"); ctx.fillText("no bus: all cells update at once", w/2, busY + 20);
+    }
+    ctx.textAlign = "left";
+    requestAnimationFrame(frame);
+  }
+  wander(); settle(); bars(); requestAnimationFrame(frame);
+})();
+
+/* ---------- the price list ---------- */
+(function(){
+  const GRAINS = [
+    ["1 · Brain as abstract computation", 1e15],
+    ["2 · Spiking neurons", 1e18],
+    ["3 · Electrophysiology: every ion channel", 1e22],
+    ["4 · Metabolism: every small molecule", 1e25],
+    ["5 · Every protein", 1e26],
+    ["6 · Every protein complex and where it sits", 1e30],
+    ["7 · Single molecules, one by one", 1e43],
+    ["8 · The whole body, atom by atom", 1e46]
+  ];
+  const BUDGETS = [
+    ["a human brain", 20],
+    ["a home", 1e3],
+    ["a big data centre", 1e8],
+    ["all the world's data centres", 4.7e10],
+    ["all human power use", 1.9e13],
+    ["the sunlight reaching Earth", 1.73e17],
+    ["the Sun", 3.83e26],
+    ["all the stars of the Milky Way", 1e37]
+  ];
+  const SUN = 3.83e26, GALAXY = 1e37, LO = -6, HI = 46;      // the ladder spans 10⁻⁶ to 10⁴⁶ watts
+  const grain = document.getElementById("grain"), minds = document.getElementById("minds"), eff = document.getElementById("eff"), ladder = document.getElementById("ladder");
+  GRAINS.forEach(([n,c],i)=>{ const o = document.createElement("option"); o.value = i; o.textContent = `${n} (${sci(c,0)} ops per second)`; grain.appendChild(o); });
+  function fmtW(p){
+    if(p < 1 || p >= 1e15) return sci(p) + " W";
+    for(const [v,u] of [[1e12,"TW"],[1e9,"GW"],[1e6,"MW"],[1e3,"kW"],[1,"W"]]) if(p >= v) return +(p/v).toPrecision(2) + " " + u;
+  }
+  function fmtN(n){
+    if(n < 10) return (+n.toPrecision(2)).toString();
+    if(n < 1e3) return Math.round(+n.toPrecision(2)).toLocaleString();
+    if(n < 1e6) return +(n/1e3).toPrecision(2) + " thousand";
+    if(n < 1e9) return +(n/1e6).toPrecision(2) + " million";
+    if(n < 1e12) return +(n/1e9).toPrecision(2) + " billion";
+    if(n < 1e15) return +(n/1e12).toPrecision(2) + " trillion";
+    return sci(n, 0);
+  }
+  function verdict(p){
+    let v;
+    if(p < 20) v = "Less than a human brain uses.";
+    else if(p >= GALAXY) v = `About ${fmtN(p/GALAXY)} times all the starlight of the Milky Way.`;
+    else if(p >= SUN) v = `About ${fmtN(p/SUN)} Suns.`;
+    else {
+      const [name, b] = BUDGETS.filter(x => x[1] <= p).pop(), r = p/b;
+      v = r < 1.5 ? `About as much as ${name}.` : `About ${fmtN(r)} times ${name}.`;
+    }
+    if(p >= 150 && p < 1e6) v += ` That is ${fmtN(p/100)} times what your whole body uses at rest.`;
+    else if(p >= 60 && p < 150) v += " Close to what your whole body uses at rest.";
+    return v;
+  }
+  function render(){
+    const n = Math.round(Math.pow(10, +minds.value)), c = GRAINS[+grain.value][1], e = +eff.value;
+    const p = n*c*e;
+    document.getElementById("mindsOut").textContent = n.toLocaleString(undefined, {notation: n >= 1e6 ? "compact" : "standard", compactDisplay:"long", maximumSignificantDigits: n >= 1e6 ? 2 : 21});
+    // the display face has no superscript digits, so the headline figure uses a real superscript
+    const e10 = Math.floor(Math.log10(p));
+    document.getElementById("power").innerHTML = fmtW(p).includes("×") ? `${(p/Math.pow(10, e10)).toFixed(1).replace(/\.0$/, "")} × 10<sup>${e10}</sup> W` : fmtW(p);
+    document.getElementById("verdict").textContent = verdict(p);
+    const rows = BUDGETS.map(([name, v]) => ({name, v})).concat([{name: n > 1 ? "your minds" : "your mind", v:p, you:true}]).sort((a,b) => a.v - b.v);
+    ladder.innerHTML = rows.map(r => `<li${r.you ? ' class="you"' : ""}><span>${r.name}</span><span class="track"><i style="width:${Math.max(1, (Math.log10(r.v) - LO)/(HI - LO)*100).toFixed(1)}%"></i></span><span class="val">${fmtW(r.v)}</span></li>`).join("");
+  }
+  [grain, minds, eff].forEach(x=>x.addEventListener("input", render));
+  render();
+})();
+</script>
+</body>
+</html>

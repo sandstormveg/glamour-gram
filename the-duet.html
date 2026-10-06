@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Duet · Glamour Gram</title>
+<meta name="description" content="Two minds that predict each other fall into step without becoming one. Tap a duet, sync a field of fireflies.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
+<style>
+/* Layout: animated title of two threads locking in phase, then two instruments (a tap duet, a firefly field) and the science between them. */
+.modes{display:flex;gap:8px;flex-wrap:wrap}
+.keys{font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:10px}
+.keys b{color:var(--ink);font-weight:500;border:1px solid var(--line);border-radius:4px;padding:1px 6px}
+.eq{font-family:var(--mono);font-size:15px;color:var(--ink);background:var(--night);border:1px solid var(--line);border-radius:4px;padding:12px 14px;overflow-x:auto;margin:18px 0;white-space:nowrap}
+</style>
+</head>
+<body>
+<header class="hero" aria-label="Two threads of light drift in and out of phase">
+  <canvas id="heroCanvas"></canvas>
+  <a class="home corner" href="./">Glamour Gram</a>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">Glamour Gram · III</div>
+    <h1>The Duet</h1>
+    <p class="lede">Two minds that predict each other fall into step without becoming one.</p>
+  </div></div>
+</header>
+
+<main>
+<section id="tap"><div class="wrap">
+  <div class="eyebrow">Instrument · tap together</div>
+  <h2>Predict, then let them <em>surprise you</em></h2>
+  <p>Tap a steady beat and try to land with your partner. Play with a friend on one screen, or with a partner that predicts you and adjusts. Watch the light between you grow as the gap closes.</p>
+  <div class="instrument">
+    <div class="modes" role="group" aria-label="Who you are playing with">
+      <button type="button" id="modeBot" aria-pressed="true">You + a predicting partner</button>
+      <button type="button" id="modeTwo" aria-pressed="false">Two people</button>
+    </div>
+    <canvas id="tapCanvas" aria-label="Tap area. Left half is player A, right half is player B."></canvas>
+    <div class="keys" id="keysHelp">Tap anywhere, or press <b>F</b> or <b>J</b>. The partner starts after your first tap.</div>
+    <div class="controls" id="botControls">
+      <label for="adapt">How much the partner adapts to you
+        <input type="range" id="adapt" min="0" max="1" step="0.05" value="0.35">
+        <output id="adaptOut" for="adapt">35%</output>
+      </label>
+      <label for="surprise"><input type="checkbox" id="surprise" checked> Partner sometimes changes tempo</label>
+    </div>
+    <div class="readout">
+      <div><div class="k">Average gap</div><div class="v" id="gap">–</div></div>
+      <div><div class="k">Who leads</div><div class="v" id="lead">–</div></div>
+      <div><div class="k">In sync</div><div class="v" id="sync">–</div></div>
+    </div>
+    <p class="caption">Set the partner to 0% and it ignores you. Set it to 100% and it copies you, which turns out to be unsettling. In one study, people synchronised best, and felt most in sync, with a virtual partner that adapted to them only partly (Fairhurst, Janata &amp; Keller, 2013).</p>
+  </div>
+</div></section>
+
+<section id="fireflies"><div class="wrap">
+  <div class="eyebrow">Instrument · no conductor needed</div>
+  <h2>Sixty fireflies, <em>sixty rhythms</em></h2>
+  <p>In the Great Smoky Mountains, thousands of fireflies of one species, <i>Photinus carolinus</i>, flash together on June nights. No firefly leads. Each nudges its own timing toward the flashes it sees. Raise the coupling and watch order appear.</p>
+  <div class="instrument">
+    <canvas id="flyCanvas" aria-label="A field of fireflies flashing"></canvas>
+    <div class="controls">
+      <label for="coupling">Coupling, how much each one listens
+        <input type="range" id="coupling" min="0" max="3" step="0.05" value="0.3">
+        <output id="couplingOut" for="coupling">0.30</output>
+      </label>
+      <button type="button" id="scatter">Scatter them</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Togetherness r</div><div class="v" id="order">–</div></div>
+      <div><div class="k">Tipping point</div><div class="v">≈ 0.80</div></div>
+    </div>
+  </div>
+  <p style="margin-top:22px">This is the Kuramoto model (1975). Each firefly has its own natural speed ω and keeps it. Coupling K pulls each phase θ toward the others:</p>
+  <div class="eq">dθᵢ/dt = ωᵢ + (K/N) · Σⱼ sin(θⱼ − θᵢ)</div>
+  <p>Below a critical coupling the field stays scattered. Above it, synchrony switches on, even though no two fireflies are the same. For this field the theory puts the tipping point near K ≈ 0.8.</p>
+</div></section>
+
+<section id="brains"><div class="wrap">
+  <div class="eyebrow">What happens between brains</div>
+  <h2>Understanding looks like <em>synchrony</em></h2>
+  <div class="facts">
+    <div><b>Speaker and listener</b><span>When one person tells a story, the listener's brain activity follows the speaker's. Listeners whose brains run slightly ahead understand best.</span><span class="num">Stephens, Silbert &amp; Hasson, 2010</span></div>
+    <div><b>Tapping pairs</b><span>Two people tapping together both adjust to each other at once. Neither simply follows. They become one system of two predictors.</span><span class="num">Konvalinka et al., 2010</span></div>
+    <div><b>Classrooms</b><span>Students whose brain rhythms were more in step with each other were more engaged in class.</span><span class="num">Dikker et al., 2017</span></div>
+    <div><b>Choirs</b><span>When singers breathe and sing together, their heart rates rise and fall together.</span><span class="num">Vickhoff et al., 2013</span></div>
+  </div>
+  <p>Karl Friston and Chris Frith modelled two songbirds as prediction machines, each guessing the other's next note. The birds converged on a shared song, a state mathematicians call generalised synchrony, while staying two birds. They called the paper <i>A Duet for One</i>.</p>
+</div></section>
+
+<section id="freedom"><div class="wrap">
+  <div class="eyebrow">The point</div>
+  <h2>In step, and <em>still two</em></h2>
+  <p>The fireflies keep their own rhythms and still flash as one. The tapping partner works best when it bends partway, not all the way. The birds share a song without sharing a brain.</p>
+  <p>That's the shape of connection that adds to each mind instead of absorbing it. Listen closely enough to predict the other person. Then leave room for them to surprise you.</p>
+  <p class="closer">Two predictors, one rhythm, still two.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Sources: Y. Kuramoto (1975), coupled oscillators. Stephens, Silbert &amp; Hasson, <i>PNAS</i> (2010). Konvalinka, Vuust, Roepstorff &amp; Frith, <i>Quarterly Journal of Experimental Psychology</i> (2010). Fairhurst, Janata &amp; Keller, <i>Cerebral Cortex</i> (2013), on adaptive virtual partners. Dikker et al., <i>Current Biology</i> (2017). Vickhoff et al., <i>Frontiers in Psychology</i> (2013). Friston &amp; Frith, "A Duet for One," <i>Consciousness and Cognition</i> (2015).</p>
+  <div class="next"><a href="three-letter-spell.html">← II · The Three-Letter Spell</a><a href="specious-present.html">IV · The Specious Present →</a></div>
+</div></footer>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function fit(cv, aspect){
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = aspect ? Math.round(w*aspect) : cv.clientHeight;
+  if(aspect) cv.style.height = h + "px";
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+
+/* ---------- hero: two threads locking ---------- */
+(function(){
+  const cv = document.getElementById("heroCanvas");
+  let g = fit(cv);
+  addEventListener("resize", ()=>{ g = fit(cv); });
+  let p1 = 0, p2 = 2.4, t = 0;
+  function frame(dt){
+    t += dt;
+    const K = 1.4*Math.max(0, Math.sin(t*0.16));          // coupling breathes in and out
+    const w1 = 1.0, w2 = 1.22;
+    p1 += (w1 + K*Math.sin(p2-p1))*dt;
+    p2 += (w2 + K*Math.sin(p1-p2))*dt;
+    const sync = Math.abs(Math.cos((p1-p2)/2));
+    const {ctx,w,h} = g;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    const mid = h*0.68, A = h*0.11;
+    // shared light between threads
+    const grad = ctx.createRadialGradient(w*0.62, mid, 0, w*0.62, mid, w*0.5);
+    grad.addColorStop(0, `rgba(240,168,90,${0.22*sync*sync})`); grad.addColorStop(1,"rgba(240,168,90,0)");
+    ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+    const thread = (phase, color, off) => {
+      ctx.beginPath();
+      for(let x=0; x<=w; x+=6){
+        const y = mid + off + A*Math.sin(x*0.012 - phase*2.2) * (0.6 + 0.4*Math.sin(x*0.003+t*0.2));
+        x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle = color; ctx.lineWidth = 1.6; ctx.stroke();
+    };
+    ctx.globalAlpha = 0.95; thread(p1, C("--dawn"), -8); thread(p2, C("--sea"), 8); ctx.globalAlpha = 1;
+    ctx.font = "12px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute");
+    ctx.fillText("in step " + Math.round(sync*100) + "%", 20, h-18);
+  }
+  if(reduce){ frame(0); return; }
+  let last = performance.now();
+  (function loop(now){ frame(Math.min(0.05,(now-last)/1000)); last = now; requestAnimationFrame(loop); })(last);
+})();
+
+/* ---------- tap duet ---------- */
+(function(){
+  const cv = document.getElementById("tapCanvas");
+  let g = fit(cv, 0.42);
+  addEventListener("resize", ()=>{ g = fit(cv, 0.42); });
+  let mode = "bot";
+  const taps = {A:[], B:[]};       // times in ms
+  const flash = {A:0, B:0};
+  const pairs = [];                // signed asynchronies, A minus B
+  let bot = null;                  // {next, period}
+  const adapt = document.getElementById("adapt"), adaptOut = document.getElementById("adaptOut");
+  adapt.addEventListener("input", ()=>{ adaptOut.textContent = Math.round(adapt.value*100)+"%"; });
+  const surprise = document.getElementById("surprise");
+  let botTapCount = 0;
+
+  function setMode(m){
+    mode = m; taps.A.length = 0; taps.B.length = 0; pairs.length = 0; bot = null; botTapCount = 0;
+    document.getElementById("modeBot").setAttribute("aria-pressed", m==="bot");
+    document.getElementById("modeTwo").setAttribute("aria-pressed", m==="two");
+    document.getElementById("botControls").hidden = m!=="bot";
+    document.getElementById("keysHelp").innerHTML = m==="bot"
+      ? "Tap anywhere, or press <b>F</b> or <b>J</b>. The partner starts after your first tap."
+      : "Player A: left half or <b>F</b>. Player B: right half or <b>J</b>.";
+    show();
+  }
+  document.getElementById("modeBot").addEventListener("click", ()=>setMode("bot"));
+  document.getElementById("modeTwo").addEventListener("click", ()=>setMode("two"));
+
+  function record(who, t){
+    taps[who].push(t); if(taps[who].length > 40) taps[who].shift();
+    flash[who] = 1;
+    const other = taps[who==="A"?"B":"A"];
+    const o = other[other.length-1];
+    if(o !== undefined && Math.abs(t-o) < 300){
+      const asyn = who==="A" ? t-o : o-t;
+      pairs.push(asyn); if(pairs.length > 10) pairs.shift();
+    }
+  }
+  function humanTap(side){
+    const t = performance.now();
+    if(mode === "bot"){
+      record("A", t);
+      if(!bot){ bot = {period: 600, next: t + 600}; return; }
+      // the partner learns your tempo and corrects its timing toward you, by the amount you set
+      const a = +adapt.value;
+      const prevA = taps.A[taps.A.length-2], gapA = prevA !== undefined ? t - prevA : 0;
+      if(a > 0 && gapA > 250 && gapA < 1500){
+        // once it has heard your beat, it joins on the next one
+        if(!bot.learned){ bot.learned = true; bot.period = Math.min(1400, gapA); bot.next = t + bot.period; return; }
+        bot.period += a*(gapA - bot.period);
+      }
+      const lastB = taps.B[taps.B.length-1];
+      const toLast = lastB !== undefined ? t - lastB : Infinity;
+      const toNext = bot.next - t;
+      if(Math.abs(toLast) < Math.abs(toNext)) bot.next += a*toLast;
+      else bot.next -= a*toNext;
+      bot.period = Math.max(300, Math.min(1400, bot.period));
+    } else {
+      record(side, t);
+    }
+  }
+  cv.addEventListener("pointerdown", e=>{
+    e.preventDefault();
+    const r = cv.getBoundingClientRect();
+    humanTap(e.clientX - r.left < r.width/2 ? "A" : "B");
+  });
+  addEventListener("keydown", e=>{
+    if(e.repeat || (e.target.closest && e.target.closest("input,select,textarea,button"))) return;
+    if(e.code === "KeyF") humanTap("A");
+    if(e.code === "KeyJ") humanTap("B");
+  });
+
+  function show(){
+    const gap = document.getElementById("gap"), lead = document.getElementById("lead"), sync = document.getElementById("sync");
+    if(pairs.length < 2){ gap.textContent = "–"; lead.textContent = "–"; sync.textContent = "–"; return 0; }
+    const meanAbs = pairs.reduce((s,x)=>s+Math.abs(x),0)/pairs.length;
+    const mean = pairs.reduce((s,x)=>s+x,0)/pairs.length;
+    gap.textContent = Math.round(meanAbs) + " ms";
+    const nameA = mode==="bot" ? "You" : "A", nameB = mode==="bot" ? "Partner" : "B";
+    lead.textContent = Math.abs(mean) < 12 ? "Shared" : (mean < 0 ? nameA : nameB);
+    const s = Math.max(0, 1 - meanAbs/150);
+    sync.textContent = Math.round(s*100) + "%";
+    return s;
+  }
+
+  let last = performance.now();
+  function frame(now){
+    const dt = (now-last)/1000; last = now;
+    if(mode==="bot" && bot && now >= bot.next){
+      record("B", bot.next);
+      botTapCount++;
+      if(surprise.checked && botTapCount % 9 === 0) bot.period *= (Math.random()<0.5 ? 0.9 : 1.1);
+      bot.period = Math.max(300, Math.min(1400, bot.period));
+      bot.next += bot.period;
+      if(taps.A.length && now - taps.A[taps.A.length-1] > 4000){ bot = null; }  // you stopped; partner waits
+    }
+    const s = show() || 0;
+    const {ctx,w,h} = g;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    // center light
+    const cx = w/2, cy = h*0.42;
+    const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,h*0.5);
+    grad.addColorStop(0, `rgba(240,168,90,${0.5*s})`); grad.addColorStop(1,"rgba(240,168,90,0)");
+    ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+    // divider
+    ctx.strokeStyle = C("--line"); ctx.setLineDash([3,5]); ctx.beginPath(); ctx.moveTo(cx,10); ctx.lineTo(cx,h*0.72); ctx.stroke(); ctx.setLineDash([]);
+    // players move closer as sync grows
+    const spread = w*0.32*(1 - 0.6*s);
+    [["A", cx-spread, C("--dawn")], ["B", cx+spread, C("--sea")]].forEach(([who,x,col])=>{
+      flash[who] *= Math.pow(0.02, dt);
+      ctx.globalAlpha = 0.18 + 0.6*flash[who];
+      ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, cy, 18 + 26*flash[who], 0, 7); ctx.fill();
+      ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(x, cy, 7, 0, 7); ctx.fill();
+      ctx.font = "12px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "center";
+      ctx.fillText(mode==="bot" ? (who==="A"?"you":"partner") : who, x, cy+48);
+    });
+    // timeline of the last 5 seconds
+    const ty = h*0.8, span = 5000;
+    ctx.strokeStyle = C("--line"); ctx.beginPath(); ctx.moveTo(10,ty); ctx.lineTo(w-10,ty); ctx.stroke();
+    [["A",-1,C("--dawn")],["B",1,C("--sea")]].forEach(([who,dir,col])=>{
+      ctx.strokeStyle = col; ctx.lineWidth = 2;
+      taps[who].forEach(t=>{
+        const x = w-10 - (now-t)/span*(w-20);
+        if(x < 10) return;
+        ctx.beginPath(); ctx.moveTo(x, ty); ctx.lineTo(x, ty + dir*14); ctx.stroke();
+      });
+    });
+    ctx.lineWidth = 1; ctx.textAlign = "left";
+    requestAnimationFrame(frame);
+  }
+  setMode("bot");
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- fireflies (Kuramoto) ---------- */
+(function(){
+  const cv = document.getElementById("flyCanvas");
+  let g = fit(cv, 0.5);
+  addEventListener("resize", ()=>{ g = fit(cv, 0.5); });
+  const N = 60, MEAN = 2*Math.PI/1.2, SD = 0.5;   // rad/s
+  const gauss = () => { let u=0,v=0; while(!u) u=Math.random(); v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); };
+  const flies = Array.from({length:N}, ()=>({x:Math.random(), y:Math.random(), w:MEAN + SD*gauss(), th:Math.random()*2*Math.PI, glow:0}));
+  const K = document.getElementById("coupling"), Kout = document.getElementById("couplingOut");
+  K.addEventListener("input", ()=>{ Kout.textContent = (+K.value).toFixed(2); });
+  document.getElementById("scatter").addEventListener("click", ()=>flies.forEach(f=>f.th = Math.random()*2*Math.PI));
+  const orderEl = document.getElementById("order");
+  let last = performance.now(), rSmooth = 0;
+  function frame(now){
+    const dt = Math.min(0.04,(now-last)/1000); last = now;
+    let sx=0, sy=0; flies.forEach(f=>{ sx+=Math.cos(f.th); sy+=Math.sin(f.th); });
+    const r = Math.hypot(sx,sy)/N, psi = Math.atan2(sy,sx), k = +K.value;
+    flies.forEach(f=>{
+      const before = f.th;
+      f.th += (f.w + k*r*Math.sin(psi - f.th))*dt;
+      if(Math.floor(f.th/(2*Math.PI)) > Math.floor(before/(2*Math.PI))) f.glow = 1;
+      f.glow *= Math.pow(0.004, dt);
+      f.x += Math.sin(now*0.0003 + f.w*7)*0.00025; f.y += Math.cos(now*0.0002 + f.w*5)*0.00025;
+    });
+    rSmooth += (r - rSmooth)*Math.min(1, dt*3);
+    orderEl.textContent = rSmooth.toFixed(2);
+    const {ctx,w,h} = g;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    flies.forEach(f=>{
+      const x = 12 + f.x*(w-24), y = 12 + f.y*(h-24);
+      ctx.globalAlpha = 0.12 + 0.88*f.glow;
+      ctx.fillStyle = "#e8e27a";
+      ctx.beginPath(); ctx.arc(x,y,2 + 3*f.glow,0,7); ctx.fill();
+      if(f.glow > 0.05){ ctx.globalAlpha = 0.25*f.glow; ctx.beginPath(); ctx.arc(x,y,14*f.glow+4,0,7); ctx.fill(); }
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

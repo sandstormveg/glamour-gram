@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nature's Workarounds · Glamour Gram</title>
+<meta name="description" content="A swallowed bacterium that became a nitrogen factory, a single cell that solves mazes, and the twelve languages of aging.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
+<style>
+/* Layout: a living slime-mould network as the title, then three discoveries (a new organelle, a brainless solver, the hallmarks of aging) and why evolution left aging unsolved. */
+.cell-svg{width:100%;height:auto;display:block;margin-top:8px}
+.cell-svg text{font-family:var(--mono);font-size:12px;fill:var(--ink)}
+.cell-svg .m{fill:var(--mute)}
+@media (prefers-reduced-motion:no-preference){
+  .flow{stroke-dasharray:4 8;animation:flow 1.6s linear infinite}
+  @keyframes flow{to{stroke-dashoffset:-24}}
+}
+.lineage{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-top:22px}
+.lineage > div{min-width:0;border-top:2px solid var(--line);padding-top:10px}
+.lineage .when{font-family:var(--mono);font-size:12px;color:var(--dawn)}
+.lineage b{font-family:var(--display);font-weight:400;font-size:21px;display:block;line-height:1.2;margin-top:2px}
+.lineage span{font-size:15px;color:var(--mute);display:block}
+.lineage .new{border-top-color:var(--dawn)}
+.hallmarks{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.hcard{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;min-height:180px}
+.hcard > div{min-width:0}
+.hcard .k{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--sea);margin-bottom:6px}
+.hcard p{font-size:17px;margin:0}
+</style>
+</head>
+<body>
+<header class="hero" aria-label="A slime-mould network growing between food sources">
+  <canvas id="heroCanvas"></canvas>
+  <a class="home corner" href="./">Glamour Gram</a>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">Glamour Gram · VI</div>
+    <h1>Nature's Workarounds</h1>
+    <p class="lede">Evolution has already invented things we're still dreaming of. Some are hiding in a drop of seawater.</p>
+  </div></div>
+</header>
+
+<main>
+<section id="nitroplast"><div class="wrap">
+  <div class="eyebrow">Discovery · 2024</div>
+  <h2>A bacterium that became <em>an organ</em></h2>
+  <p>Every protein in your body needs nitrogen. The air is 78 percent nitrogen, yet almost no living thing can use it directly. Only some bacteria and archaea can break the triple bond of N₂ and "fix" it into ammonia. Plants and animals have always depended on them.</p>
+  <p>In 2024, Tyler Coale, Jonathan Zehr and colleagues showed that a tiny ocean alga, <i>Braarudosphaera bigelowii</i>, has crossed that line. Long ago it swallowed a nitrogen-fixing cyanobacterium called UCYN-A. Over time the guest became part of the host. It now imports proteins made by the host's genes and divides in step with the host cell. That makes it an organelle: the nitroplast, the first known nitrogen-fixing organelle.</p>
+  <div class="instrument">
+    <svg class="cell-svg" viewBox="0 0 640 300" role="img" aria-label="Diagram of the alga cell exchanging nitrogen and carbon with its nitroplast">
+      <ellipse cx="300" cy="150" rx="250" ry="125" fill="rgba(111,194,184,0.06)" stroke="var(--sea)" stroke-width="1.5"/>
+      <circle cx="190" cy="150" r="52" fill="rgba(233,228,216,0.05)" stroke="var(--ink)" stroke-width="1"/>
+      <text x="190" y="154" text-anchor="middle">nucleus</text>
+      <ellipse cx="300" cy="72" rx="46" ry="18" fill="rgba(132,176,122,0.25)" stroke="#84b07a"/>
+      <text x="300" y="76" text-anchor="middle" class="m">chloroplast</text>
+      <circle cx="400" cy="160" r="46" fill="rgba(240,168,90,0.12)" stroke="var(--dawn)" stroke-width="1.5"/>
+      <text x="400" y="156" text-anchor="middle">nitroplast</text>
+      <text x="400" y="173" text-anchor="middle" class="m">N₂ → NH₃</text>
+      <path class="flow" d="M600 120 C 520 120, 470 130, 444 146" fill="none" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="560" y="108" text-anchor="middle" class="m">N₂ from seawater</text>
+      <path class="flow" d="M360 180 C 300 220, 240 210, 215 196" fill="none" stroke="var(--dawn)" stroke-width="1.5"/>
+      <text x="300" y="236" text-anchor="middle" class="m">nitrogen to the host</text>
+      <path class="flow" d="M240 140 C 300 120, 330 130, 356 146" fill="none" stroke="var(--sea)" stroke-width="1.5"/>
+      <text x="300" y="118" text-anchor="middle" class="m">proteins and sugar</text>
+    </svg>
+    <p class="caption">The host supplies carbon from photosynthesis and proteins coded in its own nucleus. The nitroplast returns usable nitrogen.</p>
+  </div>
+  <p style="margin-top:24px">A swallowed bacterium has turned into an organelle only a handful of times in four billion years:</p>
+  <div class="lineage">
+    <div><div class="when">~2 billion years ago</div><b>Mitochondria</b><span>From a bacterium that burned oxygen. Every animal cell runs on them.</span></div>
+    <div><div class="when">over a billion years ago</div><b>Chloroplasts</b><span>From a photosynthetic cyanobacterium. Every plant runs on them.</span></div>
+    <div><div class="when">~100 million years ago</div><b>Chromatophore</b><span>A second, separate capture of photosynthesis, in the amoeba <i>Paulinella</i>.</span></div>
+    <div class="new"><div class="when">~100 million years ago</div><b>Nitroplast</b><span>Nitrogen fixation, inside a eukaryote. Described in 2024.</span></div>
+  </div>
+  <p style="margin-top:24px">Why it matters: farming now leans on the Haber–Bosch process, which makes ammonia fertiliser at high heat and pressure and uses around 1–2 percent of the world's energy. Roughly half of humanity eats food grown with it. Crops with their own nitroplasts are a long way off, but nature has now shown it can be done.</p>
+  <div class="facts">
+    <div><b>Sea slugs that steal sunlight</b><span><i>Elysia chlorotica</i> eats algae, keeps their chloroplasts working inside its own cells, and photosynthesises for months.</span></div>
+    <div><b>Animals built from borrowed genes</b><span>Bdelloid rotifers carry hundreds of genes taken from bacteria, fungi and plants, close to a tenth of their genome.</span><span class="num">Flot et al., 2013</span></div>
+  </div>
+</div></section>
+
+<section id="slime"><div class="wrap">
+  <div class="eyebrow">Instrument · a brainless solver</div>
+  <h2>One cell, millions of nuclei, <em>no brain</em></h2>
+  <p>The slime mould <i>Physarum polycephalum</i> is a single cell. Its nuclei divide without the cell dividing, so one yellow cell can hold millions of nuclei and spread wider than a dinner plate. It has no neurons, yet:</p>
+  <div class="facts">
+    <div><b>It solves mazes</b><span>Placed in a maze with food at both exits, it withdraws from dead ends and keeps the shortest path.</span><span class="num">Nakagaki, Yamada &amp; Tóth, 2000</span></div>
+    <div><b>It designs railways</b><span>With oat flakes placed like the cities around Tokyo, it grew a network about as efficient and resilient as the real rail system.</span><span class="num">Tero et al., 2010</span></div>
+    <div><b>It learns and remembers</b><span>It learns to cross bitter but harmless barriers, and stores where food was in the thickness of its tubes.</span><span class="num">Boisseau et al., 2016 · Kramar &amp; Alim, 2021</span></div>
+  </div>
+  <div class="instrument">
+    <canvas id="slimeCanvas" aria-label="A simulated slime mould. Click to place food."></canvas>
+    <div class="controls">
+      <span class="note" style="margin:0">Click or tap to drop an oat flake.</span>
+      <button type="button" id="slimeReset">Start again</button>
+    </div>
+    <p class="caption">A simple model of <i>Physarum</i> after Jeff Jones (2010): thousands of particles each follow the chemical trail ahead of them and leave a little more. Each also streams toward one oat flake and then another, the way cytoplasm shuttles through the real cell. Tubes emerge from these local rules alone.</p>
+  </div>
+</div></section>
+
+<section id="aging"><div class="wrap">
+  <div class="eyebrow">Every hallmark has its own language</div>
+  <h2>The twelve <em>hallmarks</em> of aging</h2>
+  <p>In 2013 Carlos López-Otín and colleagues listed nine processes that drive aging. In 2023 they extended the list to twelve. Each is its own problem with its own vocabulary, and for each one, some creature somewhere has found a partial answer. Choose one.</p>
+  <div class="hallmarks" id="hallmarks" role="group" aria-label="Hallmarks of aging"></div>
+  <div class="hcard" id="hcard" aria-live="polite"></div>
+</div></section>
+
+<section id="selection"><div class="wrap">
+  <div class="eyebrow">Instrument · why aging was never fixed</div>
+  <h2>Selection goes <em>quiet</em> with age</h2>
+  <p>Evolution never "decided" that we should age. It simply can't see old age very well. In the wild, most animals die of predators, accidents or disease long before they grow old, so genes that act late in life are barely tested. Raise the danger and watch selection's attention fade sooner.</p>
+  <div class="instrument">
+    <canvas id="selCanvas" aria-label="Chart of survival and the strength of selection by age"></canvas>
+    <div class="controls">
+      <label for="danger">Yearly risk of death from outside causes <input type="range" id="danger" min="0.02" max="0.5" step="0.01" value="0.15"> <output id="dangerOut" for="danger">15%</output></label>
+    </div>
+    <div class="readout">
+      <div><div class="k">Half are gone by</div><div class="v" id="half">–</div></div>
+      <div><div class="k">90% gone by</div><div class="v" id="ninety">–</div></div>
+    </div>
+  </div>
+  <div class="facts">
+    <div><b>Mutation accumulation</b><span>Harmful genes that act only late in life pile up, because selection rarely meets them.</span><span class="num">Peter Medawar, 1952</span></div>
+    <div><b>Antagonistic pleiotropy</b><span>A gene that helps you at 20 and harms you at 70 will spread, because 20 matters far more to selection.</span><span class="num">George C. Williams, 1957</span></div>
+    <div><b>Disposable soma</b><span>Energy spent on repair is energy not spent on reproducing, so bodies are built to last only as long as they usually need to.</span><span class="num">Thomas Kirkwood, 1977</span></div>
+  </div>
+  <p>The prediction holds up in the wild. On Sapelo Island, off Georgia, opossums have lived for thousands of years with few predators. Steven Austad found they age more slowly than mainland opossums (1993).</p>
+  <p>Nothing in physics requires aging. Hydra and some turtles show almost none. Aging may be less a law than a gap that evolution never had a reason to close. That makes it a problem knowledge can work on.</p>
+  <p class="closer">Nature wrote the workarounds in pieces. We can learn to read them together.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Sources: Coale et al., "Nitrogen-fixing organelle in a marine alga," <i>Science</i> (2024). Cornejo-Castillo et al., <i>Cell</i> (2024). Erisman et al., <i>Nature Geoscience</i> (2008). Flot et al., <i>Nature</i> (2013). Nakagaki, Yamada &amp; Tóth, <i>Nature</i> (2000). Tero et al., <i>Science</i> (2010). Boisseau, Vogel &amp; Dussutour, <i>Proceedings of the Royal Society B</i> (2016). Kramar &amp; Alim, <i>PNAS</i> (2021). Jeff Jones, <i>Artificial Life</i> (2010). López-Otín et al., "Hallmarks of aging: an expanding universe," <i>Cell</i> (2023). Austad, <i>Journal of Zoology</i> (1993). Dates for ancient events are estimates.</p>
+  <div class="next"><a href="microcosm.html">← V · The Microcosm Next Door</a><a href="price-of-a-mind.html">VII · The Price of a Mind →</a></div>
+</div></footer>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function fit(cv, aspect){
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = aspect ? Math.round(w*aspect) : cv.clientHeight;
+  if(aspect) cv.style.height = h + "px";
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+
+/* ---------- Physarum model (after Jones 2010) ---------- */
+function Slime(W, H, N){
+  const trail = new Float32Array(W*H), tmp = new Float32Array(W*H);
+  const ax = new Float32Array(N), ay = new Float32Array(N), ah = new Float32Array(N), tg = new Int16Array(N);
+  const food = [];
+  const SA = 0.6, SD = 7, RA = 0.45, STEP = 1, DEP = 4, DECAY = 0.92;
+  const PULL = 8;   // how hard each particle steers toward the flake it is streaming to
+  function reset(){
+    trail.fill(0); food.length = 0; tg.fill(-1);
+    for(let i=0;i<N;i++){ const r = Math.random()*Math.min(W,H)*0.12, a = Math.random()*6.283; ax[i] = W/2 + r*Math.cos(a); ay[i] = H/2 + r*Math.sin(a); ah[i] = Math.random()*6.283; }
+  }
+  // the trail is sensed with saturation, so a thick tube can't capture particles bound elsewhere
+  const at = (x,y) => { x = x|0; y = y|0; if(x<0||y<0||x>=W||y>=H) return -1; const T = trail[y*W+x]; return 20*T/(T + 10); };
+  // a new flake recruits a share of the particles; after that they shuttle between flakes, as cytoplasm does
+  function addFood(x, y){
+    food.push({x, y}); const j = food.length - 1;
+    for(let i=0;i<N;i++) if(tg[i] < 0 || Math.random() < 1/food.length) tg[i] = j;
+  }
+  function step(){
+    for(const f of food) for(let dy=-2;dy<=2;dy++) for(let dx=-2;dx<=2;dx++){ const x=f.x+dx, y=f.y+dy; if(x>=0&&y>=0&&x<W&&y<H) trail[y*W+x] += 6; }
+    for(let i=0;i<N;i++){
+      const h = ah[i];
+      let F = at(ax[i]+SD*Math.cos(h), ay[i]+SD*Math.sin(h));
+      let L = at(ax[i]+SD*Math.cos(h-SA), ay[i]+SD*Math.sin(h-SA));
+      let R = at(ax[i]+SD*Math.cos(h+SA), ay[i]+SD*Math.sin(h+SA));
+      if(tg[i] >= 0){
+        const f = food[tg[i]], dx = f.x - ax[i], dy = f.y - ay[i], d = Math.hypot(dx, dy);
+        if(d < 5){ if(food.length > 1) tg[i] = (tg[i] + 1 + ((Math.random()*(food.length-1))|0)) % food.length; }
+        else {
+          const ux = dx/d, uy = dy/d;
+          F += PULL*(Math.cos(h)*ux + Math.sin(h)*uy);
+          L += PULL*(Math.cos(h-SA)*ux + Math.sin(h-SA)*uy);
+          R += PULL*(Math.cos(h+SA)*ux + Math.sin(h+SA)*uy);
+        }
+      }
+      if(F > L && F > R){}
+      else if(F < L && F < R) ah[i] += (Math.random()<0.5 ? -RA : RA);
+      else if(L > R) ah[i] -= RA;
+      else if(R > L) ah[i] += RA;
+      let nx = ax[i] + STEP*Math.cos(ah[i]), ny = ay[i] + STEP*Math.sin(ah[i]);
+      if(nx<1||ny<1||nx>=W-1||ny>=H-1){ ah[i] = Math.random()*6.283; nx = Math.min(W-2,Math.max(1,nx)); ny = Math.min(H-2,Math.max(1,ny)); }
+      ax[i] = nx; ay[i] = ny;
+      trail[(ny|0)*W+(nx|0)] += DEP;
+    }
+    for(let y=1;y<H-1;y++) for(let x=1;x<W-1;x++){
+      const k = y*W+x;
+      tmp[k] = (trail[k] + trail[k-1] + trail[k+1] + trail[k-W] + trail[k+W] + trail[k-W-1] + trail[k-W+1] + trail[k+W-1] + trail[k+W+1]) / 9 * DECAY;
+    }
+    trail.set(tmp);
+  }
+  reset();
+  return {W, H, trail, food, step, reset, addFood};
+}
+function paintSlime(s, img){
+  const d = img.data;
+  for(let i=0;i<s.W*s.H;i++){
+    const v = Math.min(1, s.trail[i]/40);
+    d[i*4] = 11 + v*229; d[i*4+1] = 16 + v*190; d[i*4+2] = 22 + v*40; d[i*4+3] = 255;
+  }
+}
+
+/* ---------- hero: a network growing between hidden food ---------- */
+(function(){
+  const cv = document.getElementById("heroCanvas");
+  let g = fit(cv); addEventListener("resize", ()=>{ g = fit(cv); });
+  const s = Slime(220, 110, 5000);
+  [[0.55,0.3],[0.8,0.25],[0.9,0.7],[0.62,0.8],[0.72,0.52],[0.4,0.75]].forEach(([x,y])=>s.addFood((x*s.W)|0, (y*s.H)|0));
+  const off = document.createElement("canvas"); off.width = s.W; off.height = s.H;
+  const octx = off.getContext("2d"), img = octx.createImageData(s.W, s.H);
+  function frame(){
+    s.step(); paintSlime(s, img); octx.putImageData(img,0,0);
+    const {ctx,w,h} = g;
+    ctx.imageSmoothingEnabled = true; ctx.drawImage(off, 0, 0, w, h);
+    const veil = ctx.createLinearGradient(0,0,w*0.7,0);
+    veil.addColorStop(0,"rgba(11,16,22,0.85)"); veil.addColorStop(1,"rgba(11,16,22,0)");
+    ctx.fillStyle = veil; ctx.fillRect(0,0,w,h);
+  }
+  if(reduce){ for(let i=0;i<300;i++) s.step(); frame(); return; }
+  let visible = true;
+  new IntersectionObserver(es=>{ visible = es[0].isIntersecting; }).observe(cv);
+  (function loop(){ if(visible) frame(); requestAnimationFrame(loop); })();
+})();
+
+/* ---------- instrument: place oat flakes ---------- */
+(function(){
+  const cv = document.getElementById("slimeCanvas");
+  let g = fit(cv, 0.6); addEventListener("resize", ()=>{ g = fit(cv, 0.6); });
+  const s = Slime(200, 120, 4500);
+  const off = document.createElement("canvas"); off.width = s.W; off.height = s.H;
+  const octx = off.getContext("2d"), img = octx.createImageData(s.W, s.H);
+  cv.addEventListener("pointerdown", e=>{
+    const r = cv.getBoundingClientRect();
+    s.addFood(((e.clientX-r.left)/r.width*s.W)|0, ((e.clientY-r.top)/r.height*s.H)|0);
+  });
+  document.getElementById("slimeReset").addEventListener("click", ()=>s.reset());
+  let visible = true;
+  new IntersectionObserver(es=>{ visible = es[0].isIntersecting; }).observe(cv);
+  function frame(){
+    if(visible){
+      s.step(); s.step();
+      paintSlime(s, img); octx.putImageData(img,0,0);
+      const {ctx,w,h} = g;
+      ctx.imageSmoothingEnabled = true; ctx.drawImage(off, 0, 0, w, h);
+      ctx.fillStyle = C("--ink");
+      s.food.forEach(f=>{ ctx.beginPath(); ctx.ellipse(f.x/s.W*w, f.y/s.H*h, 6, 4, 0.5, 0, 7); ctx.fill(); });
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- hallmarks ---------- */
+(function(){
+  const H = [
+    ["Genomic instability","DNA damage piles up: breaks, mutations, scrambled chromosomes.","Elephants carry about 20 copies of the anti-cancer gene TP53. People have one. Elephants rarely get cancer despite their huge number of cells (Abegglen et al., 2015).","DNA repair research, and the study of p53 and other genome guardians."],
+    ["Telomere attrition","The protective caps on chromosome ends shorten with each division until cells stop dividing.","In long-lived <i>Myotis</i> bats, telomeres don't appear to shorten with age (Foley et al., 2018).","Telomerase, the enzyme that rebuilds the caps. Its discovery won the 2009 Nobel Prize."],
+    ["Epigenetic alterations","The chemical marks that tell each gene when to switch on drift out of pattern, and cells lose track of what they are.","The jellyfish <i>Turritopsis dohrnii</i> can turn its adult body back into a young polyp and start its life again.","Partial reprogramming with Yamanaka factors reversed signs of aging in mice (Ocampo et al., 2016)."],
+    ["Loss of proteostasis","Proteins misfold and clump, and the cell's quality control falls behind.","Naked mole-rats keep their proteins stable and well folded far longer than mice do (Pérez et al., 2009). They can live over 30 years.","Chaperone proteins and drugs that clear misfolded proteins."],
+    ["Disabled autophagy","Cells stop recycling their own worn-out parts.","Long-lived worm mutants need working autophagy to live long (Meléndez et al., 2003).","Fasting and drugs that switch recycling back on."],
+    ["Deregulated nutrient sensing","Growth signals such as insulin and mTOR stay switched to 'build' when they should switch to 'maintain'.","A single gene change, in <i>daf-2</i>, doubles the lifespan of the worm <i>C. elegans</i> (Kenyon et al., 1993).","Rapamycin extended the lives of mice even when started late in life (Harrison et al., 2009)."],
+    ["Mitochondrial dysfunction","The cell's power plants become less efficient and leak more damaging by-products.","Birds and bats burn energy fast yet live far longer than mammals their size.","Research on mitochondrial repair, replacement and quality control."],
+    ["Cellular senescence","Damaged cells stop dividing but don't die, and send out inflammatory signals that harm their neighbours.","Salamanders regrowing limbs make senescent cells and then clear them efficiently (Yun et al., 2015).","Senolytic drugs. Clearing senescent cells extended healthy life in mice (Baker et al., 2011)."],
+    ["Stem cell exhaustion","The reserves that renew tissues run down.","<i>Hydra</i> renews its body continuously from stem cells and shows no clear sign of aging (Martínez, 1998).","Stem cell therapies and tissue engineering."],
+    ["Altered intercellular communication","Cells' signals to each other turn noisy and inflammatory.","In experiments joining the blood circulation of old and young mice, old tissues repaired themselves better (Conboy et al., 2005).","Research into which factors in blood carry youth and age."],
+    ["Chronic inflammation","A low, constant immune alarm that wears tissues down. It's sometimes called inflammaging.","Bats carry many viruses with dampened inflammation; one key alarm pathway is muted (Ahn et al., 2019).","Anti-inflammatory approaches aimed at the root triggers."],
+    ["Dysbiosis","The community of gut microbes shifts and loses diversity.","Old killifish given gut microbes from young fish lived longer (Smith et al., 2017).","Microbiome therapies, from diet to microbial transplants."]
+  ];
+  const wrap = document.getElementById("hallmarks"), card = document.getElementById("hcard");
+  function show(i){
+    const [name, wrong, nature, handle] = H[i];
+    card.innerHTML = `<div><div class="k">What goes wrong</div><p>${wrong}</p></div><div><div class="k">Who resists it</div><p>${nature}</p></div><div><div class="k">Our handle on it</div><p>${handle}</p></div>`;
+    [...wrap.children].forEach((b,j)=>b.setAttribute("aria-pressed", j===i));
+  }
+  H.forEach((h,i)=>{ const b = document.createElement("button"); b.type = "button"; b.textContent = h[0]; b.addEventListener("click", ()=>show(i)); wrap.appendChild(b); });
+  show(0);
+})();
+
+/* ---------- selection shadow chart ---------- */
+(function(){
+  const cv = document.getElementById("selCanvas");
+  let g = fit(cv, 0.45); addEventListener("resize", ()=>{ g = fit(cv, 0.45); render(); });
+  const danger = document.getElementById("danger"), out = document.getElementById("dangerOut");
+  const MAX = 60, MATURE = 2;
+  function render(){
+    const m = +danger.value;
+    out.textContent = Math.round(m*100) + "%";
+    const k = -Math.log(1-m);                       // yearly risk to a continuous rate
+    document.getElementById("half").textContent = (Math.log(2)/k).toFixed(1) + " years";
+    document.getElementById("ninety").textContent = (Math.log(10)/k).toFixed(1) + " years";
+    const {ctx,w,h} = g;
+    const L = 46, R = w-14, T = 16, B = h-34;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle = C("--line"); ctx.lineWidth = 1;
+    ctx.font = "11px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute");
+    for(let i=0;i<=4;i++){ const y = B - (B-T)*i/4; ctx.beginPath(); ctx.moveTo(L,y); ctx.lineTo(R,y); ctx.stroke(); ctx.textAlign = "right"; ctx.fillText((i*25)+"%", L-6, y+4); }
+    for(let a=0;a<=MAX;a+=10){ const x = L + (R-L)*a/MAX; ctx.textAlign = "center"; ctx.fillText(a, x, B+16); }
+    ctx.fillText("age (years)", (L+R)/2, B+30); ctx.textAlign = "left";
+    const X = a => L + (R-L)*a/MAX, Y = v => B - (B-T)*v;
+    // survival
+    ctx.beginPath(); for(let a=0;a<=MAX;a+=0.25){ const v = Math.exp(-k*a); a===0 ? ctx.moveTo(X(a),Y(v)) : ctx.lineTo(X(a),Y(v)); }
+    ctx.strokeStyle = C("--sea"); ctx.lineWidth = 2; ctx.stroke();
+    // strength of selection on a gene acting at age a (after maturity, it tracks the survivors)
+    ctx.beginPath(); for(let a=0;a<=MAX;a+=0.25){ const v = a < MATURE ? 1 : Math.exp(-k*(a-MATURE)); a===0 ? ctx.moveTo(X(a),Y(v)) : ctx.lineTo(X(a),Y(v)); }
+    ctx.strokeStyle = C("--dawn"); ctx.setLineDash([5,4]); ctx.stroke(); ctx.setLineDash([]); ctx.lineWidth = 1;
+    ctx.fillStyle = C("--sea"); ctx.fillText("still alive", R-90, T+14);
+    ctx.fillStyle = C("--dawn"); ctx.fillText("selection's attention", R-160, T+30);
+  }
+  danger.addEventListener("input", render);
+  render();
+})();
+</script>
+</body>
+</html>

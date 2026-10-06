@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Specious Present · Glamour Gram</title>
+<meta name="description" content="Your now is built after the fact. Four live experiments that catch your brain editing time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
+<style>
+/* Layout: a title that lags behind itself, then four experiments in sequence, each a small dark stage with one control. */
+h1.lag{position:relative;display:inline-block}
+h1.lag::after{content:attr(data-text);position:absolute;left:0;top:0;color:var(--sea);opacity:0;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){
+  h1.lag::after{animation:lag 3.2s ease-out infinite}
+  @keyframes lag{0%{opacity:.6;transform:translateX(-18px)}35%{opacity:0;transform:translateX(0)}100%{opacity:0}}
+}
+.quote{font-family:var(--display);font-style:italic;font-size:clamp(22px,3.6vw,30px);line-height:1.35;margin:24px 0 8px;max-width:30ch}
+.cite{font-family:var(--mono);font-size:12px;color:var(--mute);letter-spacing:.06em}
+</style>
+</head>
+<body>
+<header class="hero" aria-label="A dot circles while flashes appear beside it">
+  <canvas id="heroCanvas"></canvas>
+  <a class="home corner" href="./">Glamour Gram</a>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">Glamour Gram · IV</div>
+    <h1 class="lag" data-text="The Specious Present">The Specious Present</h1>
+    <p class="lede">Your "now" is assembled after the fact, and it is wider than an instant.</p>
+  </div></div>
+</header>
+
+<main>
+<section id="flash-lag"><div class="wrap">
+  <div class="eyebrow">Experiment 1 · the flash-lag effect</div>
+  <h2>The flash <em>falls behind</em></h2>
+  <p>Watch the moving dot. Every so often a bar flashes right next to it. Most people see the bar trailing behind the dot. It isn't. Turn on "Freeze the flash" to check.</p>
+  <div class="instrument">
+    <canvas id="lagCanvas" aria-label="A dot moving in a circle with occasional flashes"></canvas>
+    <div class="controls">
+      <label for="lagSpeed">Speed <input type="range" id="lagSpeed" min="0.4" max="2.4" step="0.1" value="1.3"></label>
+      <label for="truth"><input type="checkbox" id="truth"> Freeze the flash</label>
+    </div>
+  </div>
+  <p style="margin-top:20px">David Eagleman and Terrence Sejnowski showed in 2000 that what you see at the moment of the flash depends on what the dot does in the next eighty milliseconds or so. Your brain waits, gathers evidence, then writes the past. They called it postdiction.</p>
+</div></section>
+
+<section id="color-phi"><div class="wrap">
+  <div class="eyebrow">Experiment 2 · color phi</div>
+  <h2>A change you saw <em>before it happened</em></h2>
+  <p>Two dots flash in turn: an orange one on the left, then a teal one on the right. At the right timing you see one dot gliding across and changing color halfway. But nothing appeared in between. To show the change midway, your brain had to know the second color before the second dot arrived.</p>
+  <div class="instrument">
+    <canvas id="phiCanvas" aria-label="Two colored dots flashing alternately"></canvas>
+    <div class="controls">
+      <label for="phiGap">Gap between flashes <input type="range" id="phiGap" min="0" max="500" step="10" value="90"> <output id="phiGapOut" for="phiGap">90 ms</output></label>
+    </div>
+    <p class="caption">Try 50 to 150 ms for smooth motion. Past about 300 ms the illusion breaks into two separate flashes. Effects vary from person to person and screen to screen.</p>
+  </div>
+  <p style="margin-top:20px">Paul Kolers and Michael von Grünau reported this in 1976. The philosopher Daniel Dennett used it to argue that there is no single moment where experience "happens." The brain keeps drafts and settles on a story.</p>
+</div></section>
+
+<section id="width"><div class="wrap">
+  <div class="eyebrow">Experiments 3 and 4 · with sound</div>
+  <h2>How wide is <em>your now?</em></h2>
+  <p>Start the beats, then slowly widen the gap. Notice the point where the beats stop feeling like a rhythm and become separate events. For most people it is around two to three seconds. The psychologist Ernst Pöppel argued that this window is the width of the present moment.</p>
+  <div class="instrument">
+    <canvas id="beatCanvas" aria-label="A pulse that lights with each beat"></canvas>
+    <div class="controls">
+      <button type="button" class="primary" id="beatBtn">Start beats</button>
+      <label for="beatGap">Gap <input type="range" id="beatGap" min="0.3" max="5" step="0.1" value="0.6"> <output id="beatGapOut" for="beatGap">0.6 s</output></label>
+    </div>
+    <p class="caption">At fast speeds, identical beats start to sound grouped: tick-TOCK, tick-TOCK. Nothing in the sound changes. Your brain adds the accent, an effect Thaddeus Bolton described in 1894.</p>
+  </div>
+  <p style="margin-top:28px">Now test what counts as "at the same time." A flash and a beep play together, offset by the amount you choose. Find where they stop feeling simultaneous.</p>
+  <div class="instrument">
+    <canvas id="avCanvas" aria-label="A flash that plays with a beep"></canvas>
+    <div class="controls">
+      <button type="button" class="primary" id="avBtn">Play flash and beep</button>
+      <label for="avOff">Beep offset <input type="range" id="avOff" min="-300" max="300" step="10" value="0"> <output id="avOffOut" for="avOff">0 ms</output></label>
+    </div>
+    <p class="caption">Negative means the beep comes first. Most people accept a late beep more easily than an early one, since in nature sound always arrives after light. Your screen and speakers add delays of their own, so treat these numbers as rough.</p>
+  </div>
+</div></section>
+
+<section id="block"><div class="wrap">
+  <div class="eyebrow">What this means</div>
+  <h2>The present is a <em>saddle-back</em></h2>
+  <p class="quote">"The practically cognized present is no knife-edge, but a saddle-back, with a certain breadth of its own on which we sit perched, and from which we look in two directions into time."</p>
+  <div class="cite">William James, The Principles of Psychology, 1890</div>
+  <p style="margin-top:24px">The phrase "specious present" comes from E. R. Clay in 1882, and James made it famous. Since then, the experiments have filled in the details. You live roughly a tenth of a second in the past, while your brain finishes the edit. Events within a few tens of milliseconds get bound together into one moment. And moments within about three seconds get bound into one "now."</p>
+  <p>Physics, in Einstein's block universe, has no moving present at all. The flow you feel may be built here, in this window, out of waiting and editing and binding. If so, a "now" isn't something you are in. It's something you make.</p>
+  <p class="closer">You don't live in the present. You compose it.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Sources: William James, <i>The Principles of Psychology</i> (1890). Eagleman &amp; Sejnowski, "Motion integration and postdiction in visual awareness," <i>Science</i> (2000). Kolers &amp; von Grünau, <i>Vision Research</i> (1976). Dennett &amp; Kinsbourne, "Time and the observer," <i>Behavioral and Brain Sciences</i> (1992). Ernst Pöppel, <i>Mindworks</i> (1988). Thaddeus Bolton, "Rhythm," <i>American Journal of Psychology</i> (1894).</p>
+  <div class="next"><a href="the-duet.html">← III · The Duet</a><a href="microcosm.html">V · The Microcosm Next Door →</a></div>
+</div></footer>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function fit(cv, aspect){
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = aspect ? Math.round(w*aspect) : cv.clientHeight;
+  if(aspect) cv.style.height = h + "px";
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+let audio = null;
+function ac(){ if(!audio){ try{ audio = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(audio && audio.state==="suspended") audio.resume(); return audio; }
+function click(at, freq){
+  const a = ac(); if(!a) return;
+  const o = a.createOscillator(), g = a.createGain();
+  o.frequency.value = freq || 1000; o.connect(g); g.connect(a.destination);
+  g.gain.setValueAtTime(0.0001, at); g.gain.exponentialRampToValueAtTime(0.3, at+0.003); g.gain.exponentialRampToValueAtTime(0.0001, at+0.05);
+  o.start(at); o.stop(at+0.06);
+}
+
+/* ---------- hero: motion leaves afterimages, flashes lag ---------- */
+(function(){
+  const cv = document.getElementById("heroCanvas");
+  let g = fit(cv); addEventListener("resize", ()=>{ g = fit(cv); });
+  let a = 0, nextFlash = 1.2, t = 0, flashT = -1, flashA = 0;
+  function frame(dt){
+    t += dt; a += dt*1.1;
+    const {ctx,w,h} = g;
+    ctx.fillStyle = "rgba(11,16,22,0.16)"; ctx.fillRect(0,0,w,h);      // afterimage: the past fades slowly
+    const cx = w*0.72, cy = h*0.56, R = Math.min(w,h)*0.26;
+    const x = cx + R*Math.cos(a), y = cy + R*Math.sin(a);
+    ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(x,y,6,0,7); ctx.fill();
+    if(t > nextFlash){ flashT = t; flashA = a; nextFlash = t + 0.9 + Math.random()*1.2; }
+    if(t - flashT < 0.04){
+      ctx.strokeStyle = C("--sea"); ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(cx+(R+16)*Math.cos(flashA), cy+(R+16)*Math.sin(flashA)); ctx.lineTo(cx+(R+40)*Math.cos(flashA), cy+(R+40)*Math.sin(flashA)); ctx.stroke();
+      ctx.lineWidth = 1;
+    }
+  }
+  const {ctx,w,h} = g; ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+  if(reduce){ frame(0); return; }
+  let last = performance.now();
+  (function loop(now){ frame(Math.min(0.05,(now-last)/1000)); last = now; requestAnimationFrame(loop); })(last);
+})();
+
+/* ---------- experiment 1: flash-lag ---------- */
+(function(){
+  const cv = document.getElementById("lagCanvas");
+  let g = fit(cv, 0.55); addEventListener("resize", ()=>{ g = fit(cv, 0.55); });
+  const speed = document.getElementById("lagSpeed"), truth = document.getElementById("truth");
+  let a = -Math.PI/2, last = performance.now(), next = last + 1200, flashUntil = 0, frozenUntil = 0, fa = 0;
+  function frame(now){
+    const dt = Math.min(0.05,(now-last)/1000); last = now;
+    const frozen = now < frozenUntil;
+    if(!frozen) a += dt*(+speed.value)*2.2;
+    if(now > next && !frozen){
+      fa = a; flashUntil = now + 34; next = now + 900 + Math.random()*900;
+      if(truth.checked){ frozenUntil = now + 1100; flashUntil = frozenUntil; }
+    }
+    const {ctx,w,h} = g;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    const cx = w/2, cy = h/2, R = Math.min(w,h)*0.32;
+    ctx.strokeStyle = C("--line"); ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.stroke();
+    ctx.fillStyle = C("--ink"); ctx.beginPath(); ctx.arc(cx,cy,3,0,7); ctx.fill();
+    const x = cx + R*Math.cos(a), y = cy + R*Math.sin(a);
+    ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(x,y,9,0,7); ctx.fill();
+    if(now < flashUntil){
+      ctx.strokeStyle = C("--sea"); ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.moveTo(cx+(R+16)*Math.cos(fa), cy+(R+16)*Math.sin(fa)); ctx.lineTo(cx+(R+48)*Math.cos(fa), cy+(R+48)*Math.sin(fa)); ctx.stroke();
+      ctx.lineWidth = 1;
+      if(frozen){ ctx.font = "13px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "center"; ctx.fillText("frozen: the bar was level with the dot", cx, h-16); ctx.textAlign = "left"; }
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- experiment 2: color phi ---------- */
+(function(){
+  const cv = document.getElementById("phiCanvas");
+  let g = fit(cv, 0.4); addEventListener("resize", ()=>{ g = fit(cv, 0.4); });
+  const gap = document.getElementById("phiGap"), out = document.getElementById("phiGapOut");
+  gap.addEventListener("input", ()=>{ out.textContent = gap.value + " ms"; });
+  const ON = 150, PAUSE = 700;
+  let start = performance.now();
+  function frame(now){
+    const G = +gap.value, cycle = ON + G + ON + PAUSE;
+    const t = (now - start) % cycle;
+    const {ctx,w,h} = g;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    const cy = h/2, x1 = w*0.3, x2 = w*0.7;
+    ctx.fillStyle = C("--line"); ctx.beginPath(); ctx.arc(w/2, cy, 2, 0, 7); ctx.fill();   // fixation point
+    if(t < ON){ ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(x1,cy,16,0,7); ctx.fill(); }
+    else if(t >= ON+G && t < ON+G+ON){ ctx.fillStyle = C("--sea"); ctx.beginPath(); ctx.arc(x2,cy,16,0,7); ctx.fill(); }
+    ctx.font = "12px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "center";
+    ctx.fillText("keep your eyes on the small center dot", w/2, h-14); ctx.textAlign = "left";
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- experiment 3: edge of the present (beats) ---------- */
+(function(){
+  const cv = document.getElementById("beatCanvas");
+  let g = fit(cv, 0.22); addEventListener("resize", ()=>{ g = fit(cv, 0.22); });
+  const btn = document.getElementById("beatBtn"), gap = document.getElementById("beatGap"), out = document.getElementById("beatGapOut");
+  gap.addEventListener("input", ()=>{ out.textContent = (+gap.value).toFixed(1) + " s"; });
+  let running = false, nextAt = 0, pulse = 0, timer = null;
+  const beats = [];
+  function schedule(){
+    const a = ac(); if(!a || !running) return;
+    while(nextAt < a.currentTime + 0.15){
+      click(nextAt, 1000);
+      const when = performance.now() + (nextAt - a.currentTime)*1000;
+      beats.push(when);
+      nextAt += +gap.value;
+    }
+  }
+  btn.addEventListener("click", ()=>{
+    const a = ac();
+    if(!a){ btn.textContent = "Sound isn't available here"; return; }
+    running = !running;
+    btn.textContent = running ? "Stop beats" : "Start beats";
+    if(running){ nextAt = a.currentTime + 0.1; timer = setInterval(schedule, 40); schedule(); }
+    else clearInterval(timer);
+  });
+  function frame(now){
+    while(beats.length && beats[0] <= now){ beats.shift(); pulse = 1; }
+    pulse *= 0.9;
+    const {ctx,w,h} = g;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    ctx.globalAlpha = 0.2 + 0.8*pulse; ctx.fillStyle = C("--dawn");
+    ctx.beginPath(); ctx.arc(w/2, h/2, 10 + 22*pulse, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- experiment 4: simultaneity window ---------- */
+(function(){
+  const cv = document.getElementById("avCanvas");
+  let g = fit(cv, 0.22); addEventListener("resize", ()=>{ g = fit(cv, 0.22); });
+  const btn = document.getElementById("avBtn"), off = document.getElementById("avOff"), out = document.getElementById("avOffOut");
+  off.addEventListener("input", ()=>{ out.textContent = (+off.value > 0 ? "+" : "") + off.value + " ms"; });
+  let flashAt = -1;
+  btn.addEventListener("click", ()=>{
+    const a = ac();
+    if(!a){ btn.textContent = "Sound isn't available here"; return; }
+    const lead = 0.4, o = +off.value/1000;
+    click(a.currentTime + lead + o, 660);
+    flashAt = performance.now() + lead*1000;
+  });
+  function frame(now){
+    const {ctx,w,h} = g;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0,0,w,h);
+    const on = flashAt > 0 && now >= flashAt && now < flashAt + 50;
+    ctx.fillStyle = on ? C("--ink") : C("--line");
+    ctx.beginPath(); ctx.arc(w/2, h/2, on ? 30 : 6, 0, 7); ctx.fill();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

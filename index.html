@@ -4,57 +4,427 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Glamour Gram</title>
-<meta name="description" content="Natural philosophy for the long dawn: interactive pages on physics, wonder and the futures we could spell into being.">
+<meta name="description" content="Natural philosophy for the long dawn. A living index: every page is a cell, and every new page adds a gene to the organism.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
 <style>
-/* Layout: a title page and a short table of contents, like the front of a grimoire that is really a notebook. */
-:root{
-  --night:#0b1016; --deep:#121a23; --line:#26323f; --ink:#e9e4d8; --mute:#9aa5ae;
-  --dawn:#f0a85a; --sea:#6fc2b8;
-  --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
-  --body:"Newsreader","Iowan Old Style",Georgia,serif;
-  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
-  color-scheme:dark;
-}
-*{box-sizing:border-box}
-html{background:var(--night)}
-body{margin:0;background:var(--night);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.6;font-weight:300}
-.wrap{max-width:720px;margin:0 auto;padding-inline:20px}
-header{padding-block:72px 48px}
-.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--sea);margin-bottom:14px}
-h1{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(60px,13vw,128px);line-height:1;margin:0}
-h1 span{color:var(--dawn)}
-.lede{font-size:clamp(19px,2.4vw,23px);max-width:36ch;margin:18px 0 0}
-.gloss{font-size:16px;color:var(--mute);max-width:56ch;margin-top:18px}
-ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
-li{border-bottom:1px solid var(--line)}
-li a{display:grid;grid-template-columns:52px 1fr;gap:16px;padding:26px 0;color:inherit;text-decoration:none}
-li a > *{min-width:0}
-li .n{font-family:var(--mono);font-size:13px;color:var(--mute);padding-top:10px}
-li b{font-family:var(--display);font-weight:400;font-size:clamp(28px,5vw,40px);line-height:1.1;display:block}
-li span{color:var(--mute);font-size:17px}
-li a:hover b,li a:focus-visible b{color:var(--dawn)}
-li a:focus-visible{outline:2px solid var(--sea);outline-offset:4px}
-footer{padding-block:48px 72px;font-size:15px;color:var(--mute)}
+/* Layout: the whole first screen is a living holon. Pages are cells placed on a golden-angle spiral; zooming into a cell reveals its sections. Below it, the genome (one gene per page) and a plain index. */
+.stage{position:relative;height:min(94svh,920px);min-height:560px;overflow:hidden;border-bottom:1px solid var(--line);touch-action:manipulation}
+#org{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:default}
+.title{position:absolute;left:0;right:0;top:0;padding-top:34px;pointer-events:none;transition:opacity .5s}
+.stage.zoomed .title{opacity:0}
+.title h1{font-size:clamp(46px,8vw,92px)}
+.title h1 span{color:var(--dawn)}
+.title .hint{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--mute);margin-top:12px}
+.genome-tag{position:absolute;right:16px;bottom:14px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--mute);text-align:right;max-width:70%;pointer-events:none}
+.genome-tag b{color:var(--dawn);font-weight:400}
+.card{position:absolute;left:16px;bottom:16px;width:min(440px,calc(100% - 32px));background:rgba(18,26,35,.94);border:1px solid var(--line);border-radius:6px;padding:18px}
+.card .num{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--sea)}
+.card h2{font-size:clamp(28px,5vw,38px);margin:6px 0 8px}
+.card p{font-size:17px;margin-bottom:10px}
+.card ul{list-style:none;padding:0;margin:0 0 14px;display:flex;flex-wrap:wrap;gap:6px}
+.card ul a{font-family:var(--mono);font-size:12px;color:var(--ink);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 10px;display:inline-block}
+.card ul a:hover{border-color:var(--dawn);color:var(--dawn)}
+.card .row{display:flex;gap:10px;flex-wrap:wrap}
+.card a.primary{font-family:var(--mono);font-size:13px;background:var(--dawn);color:var(--night);border-radius:999px;padding:8px 16px;text-decoration:none}
+.card a.primary:hover{background:var(--ink)}
+ol.genome{list-style:none;margin:24px 0 0;padding:0;border-top:1px solid var(--line)}
+ol.genome li{display:grid;grid-template-columns:52px 1fr;gap:14px;padding:18px 0;border-bottom:1px solid var(--line)}
+ol.genome li > *{min-width:0}
+ol.genome .n{font-family:var(--mono);font-size:13px;color:var(--mute);padding-top:6px}
+ol.genome a{color:inherit;text-decoration:none}
+ol.genome b{font-family:var(--display);font-weight:400;font-size:clamp(24px,4vw,32px);display:block;line-height:1.15}
+ol.genome a:hover b{color:var(--dawn)}
+ol.genome .gene{font-family:var(--mono);font-size:12px;color:var(--sea);letter-spacing:.06em;margin-top:4px}
+ol.genome span{color:var(--mute);font-size:17px;display:block}
 </style>
 </head>
 <body>
-<header><div class="wrap">
-  <div class="eyebrow">Natural philosophy for the long dawn</div>
-  <h1>Glamour <span>Gram</span></h1>
-  <p class="lede">Pages for zooming in, being amazed, and zooming in again.</p>
-  <p class="gloss"><i>Glamour</i> began as a Scots form of <i>grammar</i>: learning so deep it looked like enchantment. These pages are notes toward that kind of learning, about a universe that is still very young.</p>
-</div></header>
-<main><div class="wrap">
-  <ol>
-    <li><a href="four-days-old.html"><span class="n">I</span><div><b>Four Days Old</b><span>Ride an endless wave, zoom into the age of stars, and climb the ladder of wholes.</span></div></a></li>
-    <li><a href="three-letter-spell.html"><span class="n">II</span><div><b>The Three-Letter Spell</b><span>Everything is written in three letters. Spell a diamond, a pencil and yourself.</span></div></a></li>
-  </ol>
-</div></main>
+<header class="stage" id="stage">
+  <canvas id="org" aria-label="The Glamour Gram organism. Each cell is a page. The index below lists the same pages."></canvas>
+  <div class="title"><div class="wrap wide">
+    <div class="eyebrow">Natural philosophy for the long dawn</div>
+    <h1>Glamour <span>Gram</span></h1>
+    <div class="hint" id="hint">Tap a cell to zoom in, then tap a section to enter there.</div>
+  </div></div>
+  <div class="genome-tag" id="genomeTag"></div>
+  <div class="card" id="card" hidden>
+    <div class="num" id="cardNum"></div>
+    <h2 id="cardTitle"></h2>
+    <p id="cardHook"></p>
+    <ul id="cardSections"></ul>
+    <div class="row"><a class="primary" id="cardEnter" href="#">Enter</a><button type="button" id="zoomOut">Zoom out</button></div>
+  </div>
+</header>
+
+<main>
+<section id="genome"><div class="wrap">
+  <div class="eyebrow">How this page grows</div>
+  <h2>Every page adds <em>a gene</em></h2>
+  <p>The creature above is built from the list below. Each Glamour Gram is a cell, placed on a golden-angle spiral, the 137.5° turn that packs sunflower seeds. Each also carries one gene that adds a new behaviour to the whole organism. Add a page and the creature changes: it grows a cell, and it learns something new.</p>
+  <p><i>Glamour</i> began as a Scots form of <i>grammar</i>: learning so deep it looked like enchantment. Read in order, the genes are the spell this site is writing.</p>
+  <ol class="genome" id="genomeList"></ol>
+</div></section>
+</main>
+
 <footer><div class="wrap">
   <p>Zoom. Record. Lessen. Ride. Join.</p>
 </div></footer>
+
+<script>
+/* ===== The genome. To add a page: append an entry. Its gene changes the whole organism. ===== */
+const PAGES = [
+  {n:"I", slug:"four-days-old.html", title:"Four Days Old", hue:"--dawn", gene:"wave",
+   hook:"Ride an endless wave, zoom into the age of stars, and climb the ladder of wholes.",
+   effect:"The membrane breathes like a wave.",
+   sections:[["dawn","The very beginning"],["fall","A fall done well"],["ladder","The ladder of wholes"],["practice","A practice"]]},
+  {n:"II", slug:"three-letter-spell.html", title:"The Three-Letter Spell", hue:"--sea", gene:"letters",
+   hook:"Everything is written in three letters. Spell a diamond, a pencil and yourself.",
+   effect:"Up quarks, down quarks and electrons orbit the organism.",
+   sections:[["alphabet","The alphabet"],["scarce","The spelling is scarce"],["constructor","Von Neumann's machine"],["leap","The leap"],["twist","The twist"]]},
+  {n:"III", slug:"the-duet.html", title:"The Duet", hue:"--dawn", gene:"duet",
+   hook:"Two minds that predict each other fall into step without becoming one.",
+   effect:"Two lights circle the rim at different speeds and fall into step.",
+   sections:[["tap","Tap together"],["fireflies","Sixty fireflies"],["brains","Between brains"],["freedom","Still two"]]},
+  {n:"IV", slug:"specious-present.html", title:"The Specious Present", hue:"--sea", gene:"echo",
+   hook:"Four live experiments that catch your brain editing time.",
+   effect:"Everything leaves an afterimage. The organism's present gains width.",
+   sections:[["flash-lag","The flash falls behind"],["color-phi","Color phi"],["width","How wide is now?"],["block","The saddle-back"]]},
+  {n:"V", slug:"microcosm.html", title:"The Microcosm Next Door", hue:"--ember", gene:"spores",
+   hook:"Tardigrades in the moss, stardust in the gutter. Zoom from a moss cushion down to DNA.",
+   effect:"Tiny drifting life fills the spaces between cells.",
+   sections:[["zoom-in","Powers of ten"],["extremes","Life at the edges"],["snow","Letters from the sky"],["look","Go and look"]]},
+  {n:"VI", slug:"workarounds.html", title:"Nature's Workarounds", hue:"--dawn", gene:"nest",
+   hook:"A swallowed bacterium turned nitrogen factory, a brainless maze-solver, and the twelve languages of aging.",
+   effect:"Endosymbiosis: every cell gains an organelle of its own.",
+   sections:[["nitroplast","The nitroplast"],["slime","The slime mould"],["aging","Hallmarks of aging"],["selection","Why aging was never fixed"]]},
+  {n:"VII", slug:"price-of-a-mind.html", title:"The Price of a Mind", hue:"--sea", gene:"mesh",
+   hook:"Von Neumann machines shuttle data; tissue computes where it stands. What would a mind cost?",
+   effect:"Cells link into a network and pass signals between them.",
+   sections:[["bottleneck","Bus versus mesh"],["two-ideas","Two ideas"],["price","The price list"],["llms","A wall for AI?"],["problem","The open problem"]]}
+];
+
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const GA = Math.PI*(3 - Math.sqrt(5));              // the golden angle, 137.5°
+const has = g => PAGES.some(p => p.gene === g);
+
+/* ---------- genome list and tag ---------- */
+const list = document.getElementById("genomeList");
+PAGES.forEach(p=>{
+  const li = document.createElement("li");
+  li.innerHTML = `<span class="n">${p.n}</span><a href="${p.slug}"><b>${p.title}</b><span>${p.hook}</span><div class="gene">gene · ${p.gene} · ${p.effect}</div></a>`;
+  list.appendChild(li);
+});
+document.getElementById("genomeTag").innerHTML = "genome · " + PAGES.map((p,i)=> i === PAGES.length-1 ? `<b>${p.gene}</b>` : p.gene).join(" · ");
+
+/* ---------- layout: cells on a golden spiral, sections inside cells ---------- */
+const n = PAGES.length;
+const c = 0.86/(Math.sqrt(Math.max(1,n) - 0.4) + 0.62);
+const cells = PAGES.map((p,i)=>{
+  const rho = c*Math.sqrt(i + 0.6), a = i*GA - 0.6;
+  const m = p.sections.length;
+  // sections ring the cell like organelles, read clockwise from the top; the page's own motif is the nucleus
+  const ring = 0.95/(1 + Math.sin(Math.PI/m));
+  const subs = p.sections.map((s,j)=>{
+    const sa = j/m*Math.PI*2 - Math.PI/2;
+    return {id:s[0], label:s[1], x:ring*Math.cos(sa), y:ring*Math.sin(sa), r: 0.84*ring*Math.sin(Math.PI/m)};
+  });
+  return {p, x:rho*Math.cos(a), y:rho*Math.sin(a), r:0.62*c, subs, nucleus: ring - subs[0].r - 0.05, phase:Math.random()*6.28};
+});
+const links = [];
+cells.forEach((a,i)=>cells.forEach((b,j)=>{ if(j>i && Math.hypot(a.x-b.x,a.y-b.y) < 2.3*c) links.push([i,j,Math.random()]); }));
+
+/* ---------- canvas and camera ---------- */
+const stage = document.getElementById("stage"), cv = document.getElementById("org"), ctx = cv.getContext("2d"), card = document.getElementById("card");
+const trail = document.createElement("canvas"), tctx = trail.getContext("2d");   // afterimages for the echo gene
+let W = 0, H = 0, dpr = 1;
+let cam = {cx:0, cy:0, s:1, ax:0, ay:0}, from = null, to = null, animStart = 0, focus = -1, hover = -1, hoverSub = -1;
+// Boxes of the words and panels the organism must not grow over, relative to the stage.
+function boxOf(el, text){
+  const s = stage.getBoundingClientRect();
+  let b = el.getBoundingClientRect();
+  if(text){ const r = document.createRange(); r.selectNodeContents(el); b = r.getBoundingClientRect(); }
+  return b.width && b.height ? {left:b.left - s.left, right:b.right - s.left, top:b.top - s.top, bottom:b.bottom - s.top} : null;
+}
+// The largest circle that fits on the stage without touching the obstacles: a cell grows into the space it has.
+function freeCircle(obs){
+  const m = 16; let best = null;
+  for(let i=0;i<=60;i++) for(let j=0;j<=40;j++){
+    const x = m + (W - 2*m)*i/60, y = m + (H - 2*m)*j/40;
+    let r = Math.min(x - m, W - m - x, y - m, H - m - y);
+    for(const o of obs){ if(!o) continue; const dx = Math.max(o.left - m - x, 0, x - o.right - m), dy = Math.max(o.top - m - y, 0, y - o.bottom - m); r = Math.min(r, Math.hypot(dx, dy)); }
+    const score = r - 0.05*Math.hypot(x - W/2, y - H/2);
+    if(!best || score > best.score) best = {x, y, r, score};
+  }
+  return best;
+}
+function overview(){
+  const f = freeCircle([boxOf(document.querySelector(".title .eyebrow"), true), boxOf(document.querySelector(".title h1"), true), boxOf(document.getElementById("hint"), true), boxOf(document.getElementById("genomeTag"), true)]);
+  return {cx:0, cy:0, s: f.r/1.06, ax: f.x, ay: f.y};
+}
+function zoomed(i){
+  const cl = cells[i], f = freeCircle([boxOf(card)]);
+  return {cx:cl.x, cy:cl.y, s: 0.97*f.r/cl.r, ax: f.x, ay: f.y};
+}
+function resize(){
+  dpr = Math.min(2, devicePixelRatio || 1); W = stage.clientWidth; H = stage.clientHeight;
+  cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+  trail.width = W*dpr; trail.height = H*dpr; tctx.setTransform(dpr,0,0,dpr,0,0);
+  cam = focus >= 0 ? zoomed(focus) : overview(); to = null;
+  if(reduce) render(0);
+}
+const ease = t => t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+function goTo(target){
+  if(reduce){ cam = target; to = null; render(0); return; }
+  from = {...cam}; to = target; animStart = performance.now();
+}
+const toScreen = (x,y) => [cam.ax + (x - cam.cx)*cam.s, cam.ay + (y - cam.cy)*cam.s];
+const toWorld = (sx,sy) => [cam.cx + (sx - cam.ax)/cam.s, cam.cy + (sy - cam.ay)/cam.s];
+
+/* ---------- card ---------- */
+function openCard(i){
+  const p = PAGES[i];
+  document.getElementById("cardNum").textContent = `${p.n} · gene: ${p.gene}`;
+  document.getElementById("cardTitle").textContent = p.title;
+  document.getElementById("cardHook").textContent = p.hook;
+  document.getElementById("cardSections").innerHTML = p.sections.map(s=>`<li><a href="${p.slug}#${s[0]}">${s[1]}</a></li>`).join("");
+  document.getElementById("cardEnter").href = p.slug;
+  card.hidden = false; document.getElementById("genomeTag").hidden = true; stage.classList.add("zoomed");
+}
+function zoomIn(i){ focus = i; openCard(i); goTo(zoomed(i)); }
+function zoomOut(){ focus = -1; card.hidden = true; document.getElementById("genomeTag").hidden = false; stage.classList.remove("zoomed"); goTo(overview()); }
+document.getElementById("zoomOut").addEventListener("click", zoomOut);
+addEventListener("keydown", e=>{ if(e.key === "Escape" && focus >= 0) zoomOut(); });
+
+/* ---------- hit testing ---------- */
+function hit(sx, sy){
+  const [wx, wy] = toWorld(sx, sy);
+  for(let i=cells.length-1;i>=0;i--){
+    const cl = cells[i], dx = wx - cl.x, dy = wy - cl.y;
+    if(Math.hypot(dx,dy) < cl.r){
+      let sub = -1;
+      if(cl.r*cam.s > 140) cl.subs.forEach((s,j)=>{ if(Math.hypot(dx/cl.r - s.x, dy/cl.r - s.y) < s.r) sub = j; });
+      return [i, sub];
+    }
+  }
+  return [-1, -1];
+}
+cv.addEventListener("pointermove", e=>{
+  const r = cv.getBoundingClientRect(); [hover, hoverSub] = hit(e.clientX - r.left, e.clientY - r.top);
+  cv.style.cursor = hover >= 0 ? "pointer" : "default";
+  if(reduce) render(0);
+});
+cv.addEventListener("pointerleave", ()=>{ hover = -1; hoverSub = -1; });
+cv.addEventListener("click", e=>{
+  const r = cv.getBoundingClientRect(); const [i, sub] = hit(e.clientX - r.left, e.clientY - r.top);
+  if(i < 0){ if(focus >= 0) zoomOut(); return; }
+  if(i === focus){
+    const p = PAGES[i];
+    location.href = sub >= 0 ? `${p.slug}#${p.sections[sub][0]}` : p.slug;
+    return;
+  }
+  zoomIn(i);
+});
+
+/* ---------- motifs: each page's title animation, in miniature ---------- */
+const motif = {
+  wave(x,y,R,t){
+    ctx.beginPath();
+    for(let k=-1;k<=1;k+=0.02){ const px = x + k*R, py = y + R*0.12*Math.sin(k*5 - t*1.5) + k*R*0.18; k===-1 ? ctx.moveTo(px,py) : ctx.lineTo(px,py); }
+    ctx.strokeStyle = C("--sea"); ctx.lineWidth = Math.max(1, R*0.02); ctx.stroke();
+    const k = 0.1*Math.sin(t*0.6), px = x + k*R, py = y + R*0.12*Math.sin(k*5 - t*1.5) + k*R*0.18;
+    ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(px, py - R*0.03, Math.max(1.5,R*0.04), 0, 7); ctx.fill();
+  },
+  letters(x,y,R,t){
+    ctx.font = `italic ${Math.max(9,R*0.22)}px "Bodoni Moda", Georgia, serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    [["u","--dawn",0],["d","--sea",2.09],["e","--ink",4.19]].forEach(([l,col,o])=>{ ctx.fillStyle = C(col); ctx.fillText(l, x + R*0.45*Math.cos(t*0.8+o), y + R*0.45*Math.sin(t*0.8+o)); });
+    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+  },
+  duet(x,y,R,t){
+    const s = Math.abs(Math.cos(t*0.3));
+    [[-1,"--dawn",0],[1,"--sea",1.6*(1-s)]].forEach(([d,col,o])=>{
+      const pulse = 0.5 + 0.5*Math.sin(t*3 + o);
+      ctx.globalAlpha = 0.4 + 0.6*pulse; ctx.fillStyle = C(col);
+      ctx.beginPath(); ctx.arc(x + d*R*0.3*(1-0.5*s), y, Math.max(1.5,R*(0.06 + 0.05*pulse)), 0, 7); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  },
+  echo(x,y,R,t){
+    for(let k=6;k>=0;k--){ const a = t*1.6 - k*0.12; ctx.globalAlpha = (1 - k/7)*0.9; ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(x + R*0.42*Math.cos(a), y + R*0.42*Math.sin(a), Math.max(1.2,R*0.05), 0, 7); ctx.fill(); }
+    ctx.globalAlpha = 1;
+  },
+  spores(x,y,R,t){
+    ctx.strokeStyle = C("--sea"); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(x, y, R*0.3, 0, 7); ctx.stroke();
+    for(let i=0;i<12;i++){ const a = i*Math.PI/6 + t*0.2; ctx.beginPath(); ctx.moveTo(x + R*0.08*Math.cos(a), y + R*0.08*Math.sin(a)); ctx.lineTo(x + R*0.3*Math.cos(a), y + R*0.3*Math.sin(a)); ctx.stroke(); }
+    ctx.fillStyle = "#d9b45a";
+    for(let i=0;i<5;i++){ const a = i*1.3 + t*0.3; ctx.beginPath(); ctx.arc(x + R*0.6*Math.cos(a), y + R*0.6*Math.sin(a*1.3), Math.max(1,R*0.035), 0, 7); ctx.fill(); }
+  },
+  nest(x,y,R,t){
+    ctx.strokeStyle = C("--dawn"); ctx.lineWidth = 1;
+    let cx = x, cy = y, r = R*0.55;
+    for(let k=0;k<4;k++){ ctx.globalAlpha = 1 - k*0.18; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.stroke(); const a = t*0.4*(k%2?-1:1) + k; cx += r*0.35*Math.cos(a); cy += r*0.35*Math.sin(a); r *= 0.5; }
+    ctx.globalAlpha = 1;
+  },
+  mesh(x,y,R,t){
+    const pts = [];
+    for(let i=-2;i<=2;i++) for(let j=-2;j<=2;j++){ if(i*i + j*j > 6) continue; pts.push([x + i*R*0.17, y + j*R*0.17]); }
+    ctx.strokeStyle = C("--sea"); ctx.globalAlpha = 0.4; ctx.lineWidth = 1;
+    pts.forEach((a,i)=>pts.forEach((b,j)=>{ if(j>i && Math.hypot(a[0]-b[0],a[1]-b[1]) < R*0.2){ ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); } }));
+    pts.forEach(a=>{ const v = 0.5 + 0.5*Math.sin(t*2.4 - Math.hypot(a[0]-x, a[1]-y)/R*8); ctx.globalAlpha = 0.3 + 0.7*v; ctx.fillStyle = v > 0.8 ? C("--dawn") : C("--sea"); ctx.beginPath(); ctx.arc(a[0], a[1], Math.max(1,R*0.03), 0, 7); ctx.fill(); });
+    ctx.globalAlpha = 1;
+  },
+  glow(x,y,R,t){ ctx.fillStyle = C("--dawn"); ctx.globalAlpha = 0.5 + 0.3*Math.sin(t); ctx.beginPath(); ctx.arc(x,y,R*0.15,0,7); ctx.fill(); ctx.globalAlpha = 1; }
+};
+
+/* ---------- ambient genes: behaviours of the whole organism ---------- */
+const stars = Array.from({length:110}, ()=>({x:Math.random(), y:Math.random(), r:Math.random()*1.1 + 0.2, a:Math.random()*0.5 + 0.15}));
+const motes = Array.from({length:70}, ()=>{ const r = Math.sqrt(Math.random())*0.85, a = Math.random()*6.28; return {x:r*Math.cos(a), y:r*Math.sin(a), vx:0, vy:0, k:Math.random()}; });
+const glyphs = Array.from({length:15}, (_,i)=>({l:"ude"[i%3], col:["--dawn","--sea","--ink"][i%3], a:i*GA, r:1.04 + (i%4)*0.035, sp:0.05 + (i%5)*0.012}));
+let duet = {p1:0, p2:2.5};
+
+function membrane(R, t, wobble){
+  ctx.beginPath();
+  for(let k=0;k<=120;k++){
+    const a = k/120*Math.PI*2;
+    const rr = R*(1 + (wobble ? 0.018*Math.sin(a*6 - t*0.9) + 0.01*Math.sin(a*11 + t*1.3) : 0));
+    const [sx, sy] = toScreen(rr*Math.cos(a), rr*Math.sin(a));
+    k ? ctx.lineTo(sx, sy) : ctx.moveTo(sx, sy);
+  }
+  ctx.closePath();
+}
+
+function render(t, dt){
+  dt = dt || 0;
+  if(to){
+    const k = Math.min(1, (performance.now() - animStart)/950), e = ease(k);
+    cam = {cx: from.cx + (to.cx-from.cx)*e, cy: from.cy + (to.cy-from.cy)*e, s: Math.exp(Math.log(from.s) + (Math.log(to.s)-Math.log(from.s))*e), ax: from.ax + (to.ax-from.ax)*e, ay: from.ay + (to.ay-from.ay)*e};
+    if(k >= 1){ cam = to; to = null; }
+  }
+  ctx.fillStyle = C("--night"); ctx.fillRect(0,0,W,H);
+  // the echo gene gives the organism a present with width: moving things leave afterimages
+  const echo = has("echo") && !reduce, L = echo ? tctx : ctx;
+  if(echo){ tctx.save(); tctx.setTransform(1,0,0,1,0,0); tctx.globalCompositeOperation = "destination-out"; tctx.fillStyle = "rgba(0,0,0,0.22)"; tctx.fillRect(0,0,trail.width,trail.height); tctx.restore(); }
+  stars.forEach(s=>{ ctx.globalAlpha = s.a; ctx.fillStyle = C("--ink"); ctx.beginPath(); ctx.arc(s.x*W, s.y*H, s.r, 0, 7); ctx.fill(); });
+  ctx.globalAlpha = 1;
+
+  // the organism's body
+  const [ox, oy] = toScreen(0,0), OR = 0.95*cam.s;
+  const body = ctx.createRadialGradient(ox, oy, OR*0.1, ox, oy, OR);
+  body.addColorStop(0, "rgba(111,194,184,0.10)"); body.addColorStop(1, "rgba(111,194,184,0.02)");
+  membrane(0.95, t, has("wave")); ctx.fillStyle = body; ctx.fill();
+  ctx.strokeStyle = C("--sea"); ctx.globalAlpha = 0.7; ctx.lineWidth = 1.4; ctx.stroke(); ctx.globalAlpha = 1;
+  if(has("nest")){ membrane(0.9, t + 1, has("wave")); ctx.strokeStyle = C("--sea"); ctx.globalAlpha = 0.25; ctx.stroke(); ctx.globalAlpha = 1; }
+
+  // spores gene: drifting life between the cells
+  if(has("spores")){
+    motes.forEach(m=>{
+      m.vx += (Math.random()-0.5)*0.012*dt*60; m.vy += (Math.random()-0.5)*0.012*dt*60; m.vx *= 0.97; m.vy *= 0.97;
+      m.x += m.vx*dt; m.y += m.vy*dt;
+      const d = Math.hypot(m.x, m.y); if(d > 0.86){ m.x *= 0.86/d; m.y *= 0.86/d; m.vx *= -1; m.vy *= -1; }
+      const [sx, sy] = toScreen(m.x, m.y);
+      L.globalAlpha = 0.35 + 0.4*m.k; L.fillStyle = m.k > 0.7 ? "#d9b45a" : C("--sea");
+      L.beginPath(); L.arc(sx, sy, Math.min(3.2, Math.max(0.8, cam.s*0.004*(1 + m.k))), 0, 7); L.fill();
+    });
+    L.globalAlpha = 1;
+  }
+
+  // mesh gene: cells signal to each other
+  if(has("mesh")){
+    links.forEach(k=>{
+      const a = cells[k[0]], b = cells[k[1]];
+      const [x1,y1] = toScreen(a.x, a.y), [x2,y2] = toScreen(b.x, b.y);
+      ctx.strokeStyle = C("--sea"); ctx.globalAlpha = 0.18; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.globalAlpha = 1;
+      const f = (t*0.25 + k[2]) % 1;
+      L.globalAlpha = 0.9; L.fillStyle = C("--dawn");
+      L.beginPath(); L.arc(x1 + (x2-x1)*f, y1 + (y2-y1)*f, Math.min(4, Math.max(1.2, cam.s*0.006)), 0, 7); L.fill(); L.globalAlpha = 1;
+    });
+  }
+
+  // letters gene: the alphabet orbits the organism
+  if(has("letters")){
+    L.font = `italic ${Math.min(30, Math.max(10, cam.s*0.035))}px "Bodoni Moda", Georgia, serif`; L.textAlign = "center"; L.textBaseline = "middle";
+    glyphs.forEach(gl=>{ const a = gl.a + t*gl.sp; const [sx, sy] = toScreen(gl.r*Math.cos(a), gl.r*Math.sin(a)); L.fillStyle = C(gl.col); L.globalAlpha = 0.7; L.fillText(gl.l, sx, sy); });
+    L.globalAlpha = 1; L.textAlign = "left"; L.textBaseline = "alphabetic";
+  }
+
+  // duet gene: two lights at different speeds, coupled, fall into step
+  if(has("duet")){
+    const K = 0.06*(1 + Math.sin(t*0.07));           // coupling waxes and wanes: in step, then free, then in step
+    duet.p1 += (0.30 + K*Math.sin(duet.p2 - duet.p1))*dt;
+    duet.p2 += (0.37 + K*Math.sin(duet.p1 - duet.p2))*dt;
+    const sync = Math.abs(Math.cos((duet.p1 - duet.p2)/2));
+    [[duet.p1,"--dawn"],[duet.p2,"--sea"]].forEach(([p,col])=>{
+      const [sx, sy] = toScreen(0.95*Math.cos(p), 0.95*Math.sin(p));
+      L.fillStyle = C(col); L.globalAlpha = 0.9; L.beginPath(); L.arc(sx, sy, Math.min(6, Math.max(2.5, cam.s*0.012)), 0, 7); L.fill();
+      L.globalAlpha = 0.15 + 0.35*sync; L.beginPath(); L.arc(sx, sy, Math.min(18, Math.max(8, cam.s*0.04)), 0, 7); L.fill();
+    });
+    L.globalAlpha = 1;
+  }
+  if(echo){ ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.drawImage(trail, 0, 0); ctx.restore(); }
+
+  // cells
+  cells.forEach((cl,i)=>{
+    const [x, y] = toScreen(cl.x, cl.y), R = cl.r*cam.s;
+    if(x + R < 0 || x - R > W || y + R < 0 || y - R > H) return;
+    const hue = C(cl.p.hue), hov = i === hover;
+    const g = ctx.createRadialGradient(x, y, R*0.1, x, y, R);
+    g.addColorStop(0, "rgba(18,26,35,0.95)"); g.addColorStop(1, "rgba(18,26,35,0.75)");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 7); ctx.fill();
+    ctx.strokeStyle = hue; ctx.lineWidth = hov || i === focus ? 2 : 1.2; ctx.globalAlpha = hov || i === focus ? 1 : 0.75;
+    ctx.beginPath(); ctx.arc(x, y, R, 0, 7); ctx.stroke(); ctx.globalAlpha = 1;
+    const deep = R > 140;
+    // nest gene: every cell gains an organelle
+    if(has("nest") && !deep){ const a = t*0.3 + cl.phase; ctx.strokeStyle = C("--dawn"); ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.ellipse(x + R*0.62*Math.cos(a), y + R*0.62*Math.sin(a), R*0.11, R*0.07, a, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; }
+    ctx.save(); ctx.beginPath(); ctx.arc(x, y, R*0.96, 0, 7); ctx.clip();
+    if(!deep){ (motif[cl.p.gene] || motif.glow)(x, y, R*0.55, t + cl.phase); }
+    else {
+      // inside the cell: the page's motif is the nucleus, and its sections are smaller cells around it
+      ctx.strokeStyle = hue; ctx.globalAlpha = 0.35; ctx.setLineDash([3, 5]);
+      ctx.beginPath(); ctx.arc(x, y, cl.nucleus*R, 0, 7); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+      (motif[cl.p.gene] || motif.glow)(x, y, cl.nucleus*R*0.8, t + cl.phase);
+      cl.subs.forEach((s,j)=>{
+        const sx = x + s.x*R, sy = y + s.y*R, sr = s.r*R, on = i === hover && j === hoverSub;
+        ctx.fillStyle = on ? "rgba(240,168,90,0.12)" : "rgba(233,228,216,0.03)";
+        ctx.beginPath(); ctx.arc(sx, sy, sr, 0, 7); ctx.fill();
+        ctx.strokeStyle = on ? C("--dawn") : hue; ctx.globalAlpha = on ? 1 : 0.55; ctx.stroke(); ctx.globalAlpha = 1;
+        const labelled = R > 150;
+        (motif[cl.p.gene] || motif.glow)(sx, sy - (labelled ? sr*0.32 : 0), sr*(labelled ? 0.36 : 0.5), t + j*1.7);
+        if(labelled){
+          const fs = Math.min(14, Math.max(9, sr*0.2));
+          ctx.font = `${fs}px "JetBrains Mono", monospace`; ctx.fillStyle = on ? C("--dawn") : C("--ink"); ctx.textAlign = "center";
+          const lines = [], words = s.label.split(" "); let line = "";
+          words.forEach(wd=>{ const test = line ? line + " " + wd : wd; if(ctx.measureText(test).width > sr*1.6 && line){ lines.push(line); line = wd; } else line = test; });
+          lines.push(line);
+          lines.slice(0,3).forEach((ln,k)=>ctx.fillText(ln, sx, sy + sr*0.22 + k*fs*1.2, sr*1.75));
+          ctx.textAlign = "left";
+        }
+      });
+    }
+    ctx.restore();
+    // label
+    ctx.textAlign = "center";
+    if(R > 26 && !deep){ ctx.font = `${Math.min(13, Math.max(10, R*0.12))}px "JetBrains Mono", monospace`; ctx.fillStyle = C("--mute"); ctx.fillText(cl.p.n, x, y - R*0.72); }
+    if(R > 70 && !deep){ ctx.font = `italic ${Math.min(22, R*0.15)}px "Bodoni Moda", Georgia, serif`; ctx.fillStyle = hov ? C("--dawn") : C("--ink"); ctx.fillText(cl.p.title, x, y + R*0.78, R*1.6); }
+    ctx.textAlign = "left";
+  });
+
+}
+
+/* ---------- run ---------- */
+addEventListener("resize", resize);
+resize();
+document.fonts && document.fonts.ready.then(()=>{ if(!to) resize(); });   // re-measure the title once its typeface arrives
+if(reduce){ render(2); }
+else {
+  let last = performance.now(), t = 0;
+  (function loop(now){ const dt = Math.min(0.05, (now-last)/1000); last = now; t += dt; render(t, dt); requestAnimationFrame(loop); })(last);
+}
+</script>
 </body>
 </html>
