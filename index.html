@@ -103,7 +103,11 @@ const PAGES = [
   {n:"VII", slug:"price-of-a-mind.html", title:"The Price of a Mind", hue:"--sea", gene:"mesh",
    hook:"Von Neumann machines shuttle data; tissue computes where it stands. What would a mind cost?",
    effect:"Cells link into a network and pass signals between them.",
-   sections:[["bottleneck","Bus versus mesh"],["two-ideas","Two ideas"],["price","The price list"],["llms","A wall for AI?"],["problem","The open problem"]]}
+   sections:[["bottleneck","Bus versus mesh"],["two-ideas","Two ideas"],["price","The price list"],["llms","A wall for AI?"],["problem","The open problem"]]},
+  {n:"VIII", slug:"view-from-elsewhere.html", title:"The View from Elsewhere", hue:"--ember", gene:"daydream",
+   hook:"You can't see the state you're in. Wear a lens, forecast yourself, heat a landscape, and write to a later you.",
+   effect:"Leave it alone and it daydreams; touch it and it snaps back to task.",
+   sections:[["parallax","A parallax"],["lens","The lens"],["forecast","The gap"],["modes","Modes"],["range","Range"],["doors","Doors"],["letter","A letter"],["elsewhere","No true view"]]}
 ];
 
 const css = getComputedStyle(document.documentElement);
@@ -140,6 +144,7 @@ cells.forEach((a,i)=>cells.forEach((b,j)=>{ if(j>i && Math.hypot(a.x-b.x,a.y-b.y
 
 /* ---------- canvas and camera ---------- */
 const stage = document.getElementById("stage"), cv = document.getElementById("org"), ctx = cv.getContext("2d"), card = document.getElementById("card");
+const hint = document.getElementById("hint"), hintText = hint.textContent;
 const trail = document.createElement("canvas"), tctx = trail.getContext("2d");   // afterimages for the echo gene
 let W = 0, H = 0, dpr = 1;
 let cam = {cx:0, cy:0, s:1, ax:0, ay:0}, from = null, to = null, animStart = 0, focus = -1, hover = -1, hoverSub = -1;
@@ -163,7 +168,9 @@ function freeCircle(obs){
   return best;
 }
 function overview(){
-  const f = freeCircle([boxOf(document.querySelector(".title .eyebrow"), true), boxOf(document.querySelector(".title h1"), true), boxOf(document.getElementById("hint"), true), boxOf(document.getElementById("genomeTag"), true)]);
+  const said = hint.textContent; hint.textContent = hintText;   // measure the hint at full length, even mid-daydream
+  const f = freeCircle([boxOf(document.querySelector(".title .eyebrow"), true), boxOf(document.querySelector(".title h1"), true), boxOf(hint, true), boxOf(document.getElementById("genomeTag"), true)]);
+  hint.textContent = said;
   return {cx:0, cy:0, s: f.r/1.06, ax: f.x, ay: f.y};
 }
 function zoomed(i){
@@ -204,7 +211,7 @@ addEventListener("keydown", e=>{ if(e.key === "Escape" && focus >= 0) zoomOut();
 function hit(sx, sy){
   const [wx, wy] = toWorld(sx, sy);
   for(let i=cells.length-1;i>=0;i--){
-    const cl = cells[i], dx = wx - cl.x, dy = wy - cl.y;
+    const cl = cells[i], [px, py] = cellXY(cl), dx = wx - px, dy = wy - py;
     if(Math.hypot(dx,dy) < cl.r){
       let sub = -1;
       if(cl.r*cam.s > 140) cl.subs.forEach((s,j)=>{ if(Math.hypot(dx/cl.r - s.x, dy/cl.r - s.y) < s.r) sub = j; });
@@ -278,6 +285,16 @@ const motif = {
     pts.forEach(a=>{ const v = 0.5 + 0.5*Math.sin(t*2.4 - Math.hypot(a[0]-x, a[1]-y)/R*8); ctx.globalAlpha = 0.3 + 0.7*v; ctx.fillStyle = v > 0.8 ? C("--dawn") : C("--sea"); ctx.beginPath(); ctx.arc(a[0], a[1], Math.max(1,R*0.03), 0, 7); ctx.fill(); });
     ctx.globalAlpha = 1;
   },
+  daydream(x,y,R,t){
+    const th = t*0.9, B = 0.55;   // a patch of sky: nearer stars trace bigger ellipses, all in step
+    [[-0.42,-0.22,1],[0.3,-0.36,2.2],[0.08,0.3,1.4],[-0.26,0.36,3.5],[0.45,0.16,5]].forEach(([u,v,d])=>{
+      const a = R*0.18/d, sx = x + u*R, sy = y + v*R;
+      ctx.strokeStyle = C("--sea"); ctx.globalAlpha = 0.3; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(sx, sy, a, a*B, 0, 0, 7); ctx.stroke();
+      ctx.globalAlpha = 0.9; ctx.fillStyle = d < 1.6 ? C("--dawn") : C("--ink");
+      ctx.beginPath(); ctx.arc(sx - a*Math.cos(th), sy - a*B*Math.sin(th), Math.max(1, R*0.05/Math.sqrt(d)), 0, 7); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  },
   glow(x,y,R,t){ ctx.fillStyle = C("--dawn"); ctx.globalAlpha = 0.5 + 0.3*Math.sin(t); ctx.beginPath(); ctx.arc(x,y,R*0.15,0,7); ctx.fill(); ctx.globalAlpha = 1; }
 };
 
@@ -337,7 +354,7 @@ function render(t, dt){
   if(has("mesh")){
     links.forEach(k=>{
       const a = cells[k[0]], b = cells[k[1]];
-      const [x1,y1] = toScreen(a.x, a.y), [x2,y2] = toScreen(b.x, b.y);
+      const [x1,y1] = toScreen(...cellXY(a)), [x2,y2] = toScreen(...cellXY(b));
       ctx.strokeStyle = C("--sea"); ctx.globalAlpha = 0.18; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.globalAlpha = 1;
       const f = (t*0.25 + k[2]) % 1;
@@ -370,7 +387,7 @@ function render(t, dt){
 
   // cells
   cells.forEach((cl,i)=>{
-    const [x, y] = toScreen(cl.x, cl.y), R = cl.r*cam.s;
+    const [x, y] = toScreen(...cellXY(cl)), R = cl.r*cam.s;
     if(x + R < 0 || x - R > W || y + R < 0 || y - R > H) return;
     const hue = C(cl.p.hue), hov = i === hover;
     const g = ctx.createRadialGradient(x, y, R*0.1, x, y, R);
@@ -382,7 +399,13 @@ function render(t, dt){
     // nest gene: every cell gains an organelle
     if(has("nest") && !deep){ const a = t*0.3 + cl.phase; ctx.strokeStyle = C("--dawn"); ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.ellipse(x + R*0.62*Math.cos(a), y + R*0.62*Math.sin(a), R*0.11, R*0.07, a, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; }
     ctx.save(); ctx.beginPath(); ctx.arc(x, y, R*0.96, 0, 7); ctx.clip();
-    if(!deep){ (motif[cl.p.gene] || motif.glow)(x, y, R*0.55, t + cl.phase); }
+    if(!deep){
+      // daydream gene: deep in a daydream, each cell dreams of the other pages, one every five seconds
+      const cyc = Math.floor(dreamClock/5), u = dreamClock/5 - cyc, gene = cyc > 0 ? PAGES[(i + cyc) % n].gene : cl.p.gene;
+      (motif[gene] || motif.glow)(x, y, R*0.55, t + cl.phase);
+      const fade = dreamClock > 0 && (cyc > 0 || u > 0.88) ? Math.max(0, 1 - Math.min(u, 1 - u)/0.12) : 0;
+      if(fade > 0){ ctx.fillStyle = `rgba(18,26,35,${(0.9*fade).toFixed(3)})`; ctx.beginPath(); ctx.arc(x, y, R*0.93, 0, 7); ctx.fill(); }
+    }
     else {
       // inside the cell: the page's motif is the nucleus, and its sections are smaller cells around it
       ctx.strokeStyle = hue; ctx.globalAlpha = 0.35; ctx.setLineDash([3, 5]);
@@ -414,6 +437,30 @@ function render(t, dt){
     ctx.textAlign = "left";
   });
 
+  // daydream gene: while it dreams, a haze closes in around it
+  if(dream > 0){
+    const vg = ctx.createRadialGradient(ox, oy, OR, ox, oy, OR + 0.5*Math.hypot(W, H));
+    vg.addColorStop(0, "rgba(11,16,22,0)"); vg.addColorStop(1, `rgba(11,16,22,${(0.55*dream).toFixed(3)})`);
+    ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  }
+}
+
+/* ---------- daydream gene: left alone, the organism drifts into default mode; any touch snaps it back to task ---------- */
+let idle = 0, dream = 0, dreamClock = 0, wanderT = 0;
+["pointermove","pointerdown","keydown","wheel","scroll","touchstart"].forEach(ev => addEventListener(ev, ()=>{ idle = 0; }, {passive:true}));
+function cellXY(cl){   // while it dreams, the cells wander a little from their places
+  if(!(dream > 0) || focus >= 0) return [cl.x, cl.y];
+  return [cl.x + 0.04*dream*Math.sin(wanderT*0.21 + cl.phase), cl.y + 0.04*dream*Math.cos(wanderT*0.17 + cl.phase*1.3)];
+}
+function daydream(dt){   // returns how fast the organism's time runs
+  if(!has("daydream")) return 1;
+  idle += dt; wanderT += dt;
+  const want = idle > 7 && focus < 0 && !to;
+  dream = want ? Math.min(1, dream + 0.25*dt) : Math.max(0, dream - 3*dt);   // drifts off slowly, wakes fast
+  dreamClock = dream > 0.6 ? dreamClock + dt : dream < 0.3 ? 0 : dreamClock;
+  const msg = dream > 0.6 ? "Daydreaming. Move or tap to wake it." : dream < 0.3 ? hintText : hint.textContent;
+  if(hint.textContent !== msg) hint.textContent = msg;
+  return 1 - 0.55*dream;
 }
 
 /* ---------- run ---------- */
@@ -423,7 +470,7 @@ document.fonts && document.fonts.ready.then(()=>{ if(!to) resize(); });   // re-
 if(reduce){ render(2); }
 else {
   let last = performance.now(), t = 0;
-  (function loop(now){ const dt = Math.min(0.05, (now-last)/1000); last = now; t += dt; render(t, dt); requestAnimationFrame(loop); })(last);
+  (function loop(now){ const dt = Math.min(0.05, (now-last)/1000); last = now; const k = daydream(dt); t += dt*k; render(t, dt*k); requestAnimationFrame(loop); })(last);
 }
 </script>
 </body>

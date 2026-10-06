@@ -11,5 +11,6 @@ The home page is a living organism. Each page is a cell you can zoom into, then 
 - **V · The Microcosm Next Door**: tardigrades in the moss, stardust in the gutter. Zoom from a moss cushion down to DNA.
 - **VI · Nature's Workarounds**: a swallowed bacterium turned nitrogen factory, a brainless maze-solver, and the twelve hallmarks of aging.
 - **VII · The Price of a Mind**: von Neumann machines shuttle data while tissue computes where it stands. What would a mind cost in watts, and an open problem.
+- **VIII · The View from Elsewhere**: you can't see the state you're in. Wear a lens until it fades, forecast your own mood, heat a landscape of mind-states, and write a letter to a later you.
 
 Plain HTML, no build step. Pages III onward share `glam.css`. Served with GitHub Pages from the `main` branch.

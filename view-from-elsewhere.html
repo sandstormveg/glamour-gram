@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The View from Elsewhere · Glamour Gram</title>
+<meta name="description" content="You can't see the state you're in. Wear a coloured lens until it fades, forecast your own mood, heat a landscape of mind-states, and write to a later you.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
+<style>
+/* Layout: the title is a starfield that gains depth as Earth moves round the Sun. Then why depth needs two views, a coloured lens you stop seeing, a forecast of your own mood, the brain's modes, a landscape of states to heat and cool, doors to elsewhere, a letter to a later you, and the turn: no view is the true one. */
+[hidden]{display:none!important}
+.hero-copy a{pointer-events:auto}
+.waiting{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dawn);text-decoration:none;border:1px dashed var(--dawn);border-radius:999px;padding:7px 12px;background:rgba(11,16,22,.75)}
+.waiting:hover{color:var(--ink);border-color:var(--ink)}
+blockquote{margin:24px 0;padding:4px 0 4px 18px;border-left:2px solid var(--dawn);font-family:var(--display);font-style:italic;font-size:clamp(20px,3vw,24px);line-height:1.4;max-width:58ch}
+blockquote cite{display:block;margin-top:8px;font-family:var(--mono);font-style:normal;font-size:12px;letter-spacing:.06em;color:var(--mute)}
+.instrument canvas.free{touch-action:manipulation}
+.gridcv{max-width:420px;margin-inline:auto}
+.say{font-size:17px;margin:14px 0 0;min-height:1.6em;max-width:none}
+.result{font-size:17px;margin:10px 0 0;max-width:none}
+.result:empty{display:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--mute)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin:26px 0}
+.door{min-width:0;border:1px solid var(--line);border-radius:50% 50% 6px 6px / 64px 64px 6px 6px;padding:50px 18px 20px;background:linear-gradient(var(--deep),var(--night) 70%)}
+.door h3{font-size:22px;text-align:center;margin-bottom:12px}
+.door p{font-size:16px;color:var(--mute);margin:0}
+.door .num{display:block;font-family:var(--mono);font-size:12px;color:var(--dawn);margin-top:10px}
+.door.warn{border-color:var(--ember)}
+.door.warn .num{color:var(--ember)}
+textarea{width:100%;font-family:var(--body);font-size:17px;font-weight:300;line-height:1.5;background:var(--night);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:10px 12px;resize:vertical}
+textarea:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+.field{display:grid;gap:6px;margin-top:16px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--mute)}
+.arrival{border:1px dashed var(--dawn);border-radius:6px;padding:16px;margin-bottom:16px}
+.arrival .eyebrow{color:var(--dawn)}
+.arrival blockquote{margin:12px 0;font-size:20px;white-space:pre-wrap;overflow-wrap:anywhere}
+.arrival p{margin-bottom:8px}
+.sealed{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:8px}
+.sealed li{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--mute);border-top:1px solid var(--line);padding-top:8px}
+.toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:min(440px,calc(100% - 32px));background:var(--deep);border:1px solid var(--dawn);border-radius:8px;padding:14px 16px;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.toast .eyebrow{color:var(--dawn);margin-bottom:6px}
+.toast p{font-size:17px;margin:0 0 12px}
+.toast .opts{display:flex;flex-wrap:wrap;gap:8px}
+.toast .opts a{font-family:var(--mono);font-size:13px}
+.toast .skip{margin-top:10px;border:0;padding:4px 0;color:var(--mute);font-size:12px}
+</style>
+</head>
+<body>
+<header class="hero" aria-label="A starfield that gains depth as the Earth moves around the Sun">
+  <canvas id="heroCanvas"></canvas>
+  <a class="home corner" href="./">Glamour Gram</a>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">Glamour Gram · VIII</div>
+    <h1>The View from Elsewhere</h1>
+    <p class="lede">You can't see the state you're in. To know how you're doing, you need a second position, and time between.</p>
+    <a id="waiting" class="waiting" href="#letter" hidden>A letter from an earlier you has arrived</a>
+  </div></div>
+</header>
+
+<main>
+<section id="parallax"><div class="wrap">
+  <div class="eyebrow">Two positions</div>
+  <h2>Less a paradox than <em>a parallax</em></h2>
+  <p>From one spot, a near star and a far one look alike: two points of light on a flat sky. Since antiquity, the missing shift between them was an argument that Earth stands still. Then in 1838 Friedrich Bessel watched the star 61 Cygni from opposite sides of Earth's orbit, half a year apart, and saw it move against the stars behind it. The whole shift was about 0.6 arcseconds, the width of a coin seen from 8 kilometres. That tiny difference gave the first distance to a star.</p>
+  <p>The same year, Charles Wheatstone showed that your brain does this all the time. It builds depth from the small differences between what your two eyes see. One view is flat. Two views, compared, have depth.</p>
+  <p>Your inner life has the same problem. From inside, a mood doesn't look like a mood. It looks like the way things are.</p>
+  <blockquote>"Life is a train of moods like a string of beads, and, as we pass through them, they prove to be many-colored lenses which paint the world their own hue, and each shows only what lies in its focus."<cite>Ralph Waldo Emerson, "Experience" (1844)</cite></blockquote>
+  <p>Søren Kierkegaard put the timing in his journal in 1843: life is understood backwards, but it must be lived forwards. So you can't fully judge the state you're in from inside it. You need a second position, and time between. This page is about ways to get one.</p>
+  <div class="callout">
+    <div class="eyebrow">An experiment to run while you read</div>
+    <p>Turn this on and the page will interrupt you four times, at random, to ask where your mind is and how you feel. Psychologists call this experience sampling. Your answers stay on this page, and you'll see them beside <a href="#esmBox">the wandering mind</a>.</p>
+    <button type="button" data-esm aria-pressed="false">Interrupt me while I read</button>
+  </div>
+</div></section>
+
+<section id="lens"><div class="wrap">
+  <div class="eyebrow">Instrument · the lens</div>
+  <h2>You can't see the lens <em>you're wearing</em></h2>
+  <p>What never changes fades from view. In 1953 Lorrin Riggs and colleagues used a tiny mirror on a contact lens to hold an image perfectly still on the retina. Within seconds, fine lines faded away. Ignaz Troxler noticed in 1804 that if you fix your gaze, things near the edge of vision dissolve. Galileo made the point about motion in 1632: below decks on a smoothly sailing ship, nothing you do there can tell you whether you're moving.</p>
+  <p>Try it with colour. Choose a lens, put it on, and keep your eyes on the dot.</p>
+  <div class="instrument">
+    <canvas id="lensCanvas" class="free" aria-label="A pale seascape with a lighthouse, seen through a coloured lens that slowly fades in"></canvas>
+    <div class="controls">
+      <button type="button" data-lens="amber" aria-pressed="true">Amber</button>
+      <button type="button" data-lens="sea" aria-pressed="false">Sea</button>
+      <button type="button" data-lens="both" aria-pressed="false">One of each</button>
+      <button type="button" class="primary" id="lensGo">Put it on</button>
+    </div>
+    <p class="say" id="lensSay" aria-live="polite">Choose a lens, press Put it on, and keep your eyes on the dot.</p>
+    <p class="caption">Your eyes adjust to the light around them, so a steady tint seems to weaken as you look. When it comes off, the adjustment keeps running for a few seconds, and plain colours look shifted the other way. The lens stays on for 32 seconds.</p>
+  </div>
+  <p style="margin-top:24px">Moods work the same way. Philip Brickman and Donald Campbell called it the hedonic treadmill in 1971: we adapt to good and bad fortune, and our sense of normal moves with us. But adaptation is often incomplete. After unemployment, for example, average life satisfaction tends not to return fully to where it was (Lucas et al. 2004; Diener, Lucas &amp; Scollon 2006). The tint fades from view. That doesn't mean it's gone.</p>
+</div></section>
+
+<section id="forecast"><div class="wrap">
+  <div class="eyebrow">Instrument · forecast yourself</div>
+  <h2>From one state, another <em>is hard to imagine</em></h2>
+  <p>We're poor at predicting how we'll feel in a state we're not in. George Loewenstein calls it the hot–cold empathy gap: when calm, we underestimate the pull of hunger, fear or craving, and in their grip we can't imagine calm (2005). Timothy Wilson and Daniel Gilbert found that people overestimate how strongly and for how long future events will move them, which they call the impact bias (2005). The philosopher L. A. Paul argues that some experiences are transformative. You can't know what they're like, or what you'll care about afterwards, until you've changed (2014).</p>
+  <p>Memory edits too. Daniel Kahneman and colleagues found that people judge a past experience mostly by its peak and its end (1993). The self who remembers isn't quite the self who lived it.</p>
+  <p>Here's a small test. Mark where you are now, forecast where you'll be after eight slow breaths, then breathe and see.</p>
+  <div class="instrument">
+    <canvas id="fcGrid" class="gridcv free" tabindex="0" aria-label="A nine by nine mood grid. Left to right runs from unpleasant to pleasant, bottom to top from sleepy to energised. Arrow keys move, Enter chooses."></canvas>
+    <p class="say" id="fcSay" aria-live="polite">Tap the square for where you are right now.</p>
+    <div class="controls"><button type="button" class="primary" id="fcGo" hidden>Start breathing</button><button type="button" id="fcSkip" hidden>Skip</button></div>
+    <p class="result" id="fcOut" aria-live="polite"></p>
+    <p class="caption">The grid is James Russell's Affect Grid (1989): pleasantness across, energy up. The pace, about five and a half breaths a minute, is close to the slow resonance breathing used in heart-rate-variability research (Lehrer &amp; Gevirtz 2014). One person and no control group: the point is the gap, not the breathing.</p>
+  </div>
+</div></section>
+
+<section id="modes"><div class="wrap">
+  <div class="eyebrow">Instrument · three networks</div>
+  <h2>A mind that <em>wanders</em>, and one that works</h2>
+  <p>In 2001 Marcus Raichle's team described something odd in brain scans. A set of regions was more active when people rested than when they did a task. They called it the default mode (Raichle et al. 2001). It's busy when you remember, imagine the future, think about yourself or other people, or let your mind wander. When you focus on a task, a central executive network leads and the default mode quietens. A third network, the salience network, seems to help switch between them (Menon &amp; Uddin 2010).</p>
+  <div class="instrument">
+    <canvas id="modesCanvas" class="free" aria-label="A side view of the brain with three networks of glowing nodes"></canvas>
+    <div class="legend"><span><i style="background:var(--sea)"></i>default mode</span><span><i style="background:var(--dawn)"></i>central executive</span><span><i style="background:var(--ember)"></i>salience</span></div>
+    <div class="controls">
+      <button type="button" data-mode="rest" aria-pressed="true">Resting</button>
+      <button type="button" data-mode="task" aria-pressed="false">On a task</button>
+      <button type="button" data-mode="wander" aria-pressed="false">Let it wander</button>
+    </div>
+    <p class="say" id="modesSay" aria-live="polite"></p>
+    <p class="caption">A cartoon of one hemisphere, front to the left. Hollow dots lie on the brain's inner surface or deep inside it. The real networks span both hemispheres. The flash at each change is the salience network.</p>
+  </div>
+  <p style="margin-top:24px">It isn't a simple switch. Some of the opposition between the networks in scans can come from how the data are processed (Murphy et al. 2009), and in creative thinking the default and executive networks work together (Beaty et al. 2016). Kalina Christoff and colleagues describe mind-wandering as thought moving freely, loosened from goals and habits (2016).</p>
+  <p>Is wandering good for you? In 2010 Matthew Killingsworth and Daniel Gilbert used an iPhone app to interrupt 2,250 adults at random moments. Their minds were elsewhere 46.9% of the time, and on average they were less happy then. Wandering to pleasant topics was no happier than staying on task, and wandering to neutral or unpleasant ones was less happy.</p>
+  <div class="instrument" id="esmBox">
+    <div class="eyebrow">Your own samples</div>
+    <div class="readout">
+      <div><div class="k">Samples</div><div class="v" id="esmN">0</div></div>
+      <div><div class="k">Mind elsewhere</div><div class="v" id="esmAway">–</div></div>
+      <div><div class="k">Feeling, on the page</div><div class="v" id="esmHere">–</div></div>
+      <div><div class="k">Feeling, elsewhere</div><div class="v" id="esmElse">–</div></div>
+    </div>
+    <p class="caption" id="esmNote">Turn on interruptions and keep reading. Your answers will appear here, beside the 46.9% from Killingsworth and Gilbert.</p>
+    <div class="controls"><button type="button" data-esm aria-pressed="false">Interrupt me while I read</button></div>
+  </div>
+  <p style="margin-top:24px">So wandering has a cost. But the same networks let you remember, plan, and see yourself from outside, which is exactly the second position this page is after. The question may be less which mode is best than whether you can move between them.</p>
+</div></section>
+
+<section id="range"><div class="wrap">
+  <div class="eyebrow">Instrument · a landscape of states</div>
+  <h2>Health is <em>range</em>, with a way home</h2>
+  <p>Several lines of research point the same way. Catherine Heller and colleagues tracked where people went, by phone, for months. On days when they went to more varied places they felt better, and the link was stronger in people whose hippocampus and striatum were more tightly connected (2020). Feelings that change slowly from moment to moment, called emotional inertia, go with depression (Kuppens et al. 2010) and predict its onset in teenagers (Kuppens et al. 2012). Mood may even slow down before tipping into or out of depression, a warning sign borrowed from the study of ecosystems (van de Leemput et al. 2014). A healthy heartbeat is no metronome either. Its rhythm varies in complex ways, and loses that complexity with disease and age (Goldberger et al. 2002).</p>
+  <p>But range isn't chaos. Moods that swing hard and fast go with distress too (Trull et al. 2008). What seems to matter is flexibility: moving when the moment calls for it, and coming back (Kashdan &amp; Rottenberg 2010).</p>
+  <p>Below is a ball in a landscape of states. It starts in a rut, a valley worn deep by long use, and wherever it rests the ground wears deeper. Heat shakes it loose. You can see only the ground near the ball and, dimly, where it has been, the way we only know the states we've visited. Find all five valleys.</p>
+  <div class="instrument">
+    <canvas id="landCanvas" class="free" aria-label="A ball in a hilly landscape of five valleys, mostly hidden by fog, with a record of its path below"></canvas>
+    <div class="controls">
+      <label for="heat">Heat <input type="range" id="heat" min="0" max="100" value="15"> <output id="heatOut" for="heat">cold</output></label>
+    </div>
+    <div class="controls">
+      <button type="button" class="primary" id="pulse">Heat pulse</button>
+      <button type="button" id="peek" aria-pressed="false">Peek at the view from nowhere</button>
+      <button type="button" id="landRun">Pause</button>
+      <button type="button" id="landReset">Start over</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Valleys found</div><div class="v" id="found">1 of 5</div></div>
+      <div><div class="k">Time in this valley</div><div class="v" id="stay">0 s</div></div>
+      <div><div class="k">Groove underfoot</div><div class="v" id="groove">100%</div></div>
+    </div>
+    <p class="say" id="landSay" aria-live="polite"></p>
+    <p class="caption">A cartoon, not a model of a real brain. Heating and slowly cooling to escape a trap is simulated annealing, from physics and computing (Kirkpatrick et al. 1983). Robin Carhart-Harris and Karl Friston propose that psychedelics flatten the brain's landscape of beliefs in a similar way (2019), and Carhart-Harris and colleagues describe some mental illness as canalization, valleys deepened by use (2023). These are serious hypotheses, not settled science.</p>
+  </div>
+  <p style="margin-top:24px">Notice that heat alone doesn't help. Too hot, and the ball never settles anywhere. The useful move is heat and then cooling: loosen, explore, and let it settle, perhaps somewhere new. People who work with altered states call the settling part integration.</p>
+</div></section>
+
+<section id="doors"><div class="wrap">
+  <div class="eyebrow">Ways out, and back</div>
+  <h2>Doors to <em>elsewhere</em></h2>
+  <p>You don't need anything exotic to change state. Here are some doors people use, and what the evidence says, as plainly as we can put it.</p>
+  <div class="doors">
+    <div class="door"><h3>Dreams</h3><p>Every night you leave. In dreaming sleep, frontal control regions quieten while emotional ones run hot (Maquet et al. 1996). In 2021, four labs in the US, France, Germany and the Netherlands put questions to 36 sleeping volunteers. Some, while lucid dreaming, answered simple maths problems with eye movements.</p><span class="num">Konkoly et al. 2021</span></div>
+    <div class="door"><h3>The edge of sleep</h3><p>People who drifted briefly into the lightest stage of sleep were nearly three times as likely to find a hidden shortcut in a number puzzle: 83% versus 30% for those who stayed awake. Edison is said to have dozed holding steel balls that woke him as they fell. The study used a bottle the same way.</p><span class="num">Lacaux et al. 2021</span></div>
+    <div class="door"><h3>Awe</h3><p>Vast things make the self feel smaller. Visitors to Yosemite drew themselves smaller than tourists in a city did (Bai et al. 2017), and awe-inspiring videos quietened the default mode in a brain-scan study (van Elk et al. 2019). Astronauts who see Earth whole often describe a lasting shift, the overview effect.</p><span class="num">White 1987; Yaden et al. 2016</span></div>
+    <div class="door"><h3>Nature</h3><p>A 90-minute walk through green space, compared with one beside a busy road, reduced rumination and activity in a brain region tied to brooding.</p><span class="num">Bratman et al. 2015</span></div>
+    <div class="door"><h3>Stepping back</h3><p>Talking to yourself by name, or picturing a scene from a distance, cools reactions and makes reasoning wiser (Kross et al. 2014; Grossmann &amp; Kross 2014). So does asking how this will feel in ten years.</p><span class="num">Bruehlman-Senecal &amp; Ayduk 2015</span></div>
+    <div class="door"><h3>Other people</h3><p>Others see parts of you better than you do. Friends judge your intellect and creativity more accurately than you can, while you know your own anxieties best.</p><span class="num">Vazire 2010</span></div>
+    <div class="door"><h3>Movement</h3><p>Exercise helps depression. A 2024 review of 218 trials, with about 14,200 people, found moderate benefits from walking or jogging, yoga and strength training, larger when the exercise was more vigorous.</p><span class="num">Noetel et al. 2024</span></div>
+    <div class="door"><h3>Meditation</h3><p>For recurrent depression, mindfulness-based cognitive therapy lowered the risk of relapse over 60 weeks by about a third (Kuyken et al. 2016). It seems to work partly by teaching you to see thoughts as thoughts (Teasdale et al. 2002). Experienced meditators show less default-mode activity (Brewer et al. 2011).</p><span class="num">Hazard ratio 0.69</span></div>
+    <div class="door warn"><h3>Substances, told straight</h3><p>In a 2006 trial, two thirds of volunteers rated a psilocybin session among the five most meaningful experiences of their lives (Griffiths et al. 2006). In treatment-resistant depression, one 25 mg dose beat a 1 mg dose at three weeks (Goodwin et al. 2022). Against the antidepressant escitalopram, a trial found no clear difference on its main measure (Carhart-Harris et al. 2021). Blinding is hard when people can tell what they took, which may inflate results (Muthukumaraswamy et al. 2021). The risks are real, especially with a personal or family history of psychosis or bipolar disorder, and trials exclude those people. In most places these drugs are illegal.</p><span class="num">Promising, unproven, not for everyone</span></div>
+  </div>
+  <p>What the doors share: each takes you somewhere you can look back from, and each lets you come back.</p>
+</div></section>
+
+<section id="letter"><div class="wrap">
+  <div class="eyebrow">Instrument · integration</div>
+  <h2>Understood <em>backwards</em></h2>
+  <p>A state you've left is easier to see, and so is a self you've left. Derek Parfit came to think that personal identity matters less than it seems: what joins you to a future you is a matter of degree, through memory and character. He found this freeing. Once he believed it, he wrote, "the walls of my glass tunnel disappeared" (<i>Reasons and Persons</i>, 1984).</p>
+  <p>Treating your future self as a real person helps them. Hal Hershfield and colleagues showed people aged images of their own faces, and they put more into a hypothetical retirement fund (2011).</p>
+  <p>So write to a later you. Mark where you are now, say what you'd want them to know, and seal it. When you come back after the time you choose, it will be waiting. Before you read it, the page will ask where you are then. The gap between the two marks is a view from elsewhere.</p>
+  <div class="instrument">
+    <div class="arrival" id="arrival" hidden>
+      <div class="eyebrow">A letter has arrived</div>
+      <p id="arrivalMeta"></p>
+      <p id="arrivalAsk">Before you read it: where are you now? Tap the grid.</p>
+      <blockquote id="arrivalText" hidden></blockquote>
+      <p class="note" id="arrivalGap" hidden></p>
+      <button type="button" id="writeBack" hidden>Write back</button>
+    </div>
+    <canvas id="letterGrid" class="gridcv free" tabindex="0" aria-label="A nine by nine mood grid. Left to right runs from unpleasant to pleasant, bottom to top from sleepy to energised. Arrow keys move, Enter chooses."></canvas>
+    <p class="say" id="letterSay" aria-live="polite">Tap the square for where you are now.</p>
+    <label class="field" for="letterText">Your letter
+      <textarea id="letterText" maxlength="2000" rows="5" placeholder="What should a later you know about now?"></textarea>
+    </label>
+    <div class="controls">
+      <label for="letterWhen">Open it
+        <select id="letterWhen">
+          <option value="3600000" data-say="on your next visit, after an hour">on my next visit, after an hour</option>
+          <option value="604800000" data-say="in a week">in a week</option>
+          <option value="2592000000" data-say="in a month">in a month</option>
+          <option value="31536000000" data-say="in a year">in a year</option>
+        </select>
+      </label>
+      <button type="button" class="primary" id="seal">Seal it</button>
+    </div>
+    <p class="caption" id="letterStatus" aria-live="polite"></p>
+    <ul class="sealed" id="sealedList" hidden></ul>
+    <div class="controls"><button type="button" id="forget" hidden>Forget my letters</button></div>
+    <p class="caption">Stored only in this browser, on this device. Nothing is sent anywhere. Faint marks on the grid are your earlier letters.</p>
+  </div>
+</div></section>
+
+<section id="elsewhere"><div class="wrap">
+  <div class="eyebrow">The turn</div>
+  <h2>No view is <em>the true one</em></h2>
+  <p>It's tempting to decide that some other state is the real one: the calm after meditation, the clarity after a journey, the wisdom of age. Emerson saw the catch. Every mood is a lens, and each one "shows only what lies in its focus." Thomas Nagel called the dream of seeing from no particular point the view from nowhere, and argued that we can approach it but never fully reach it (1986). Physics agrees in its own way. In relativity no frame of reference is privileged. The laws are what stays true when you translate between frames.</p>
+  <p>A different state isn't wiser just for being different. Depth comes from comparing several, the way two eyes do.</p>
+  <blockquote>"I left the woods for as good a reason as I went there. Perhaps it seemed to me that I had several more lives to live, and could not spare any more time for that one."<cite>Henry David Thoreau, Walden (1854)</cite></blockquote>
+  <p class="closer">You can't see your mind from inside. So visit other states, and write home.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Sources: Friedrich Bessel on 61 Cygni (1838). Charles Wheatstone, "On some remarkable, and hitherto unobserved, phenomena of binocular vision" (1838). Ralph Waldo Emerson, "Experience," <i>Essays: Second Series</i> (1844). Søren Kierkegaard, journals (1843). Riggs, Ratliff, Cornsweet &amp; Cornsweet, <i>J. Optical Society of America</i> (1953). Ignaz Troxler (1804). Galileo, <i>Dialogue Concerning the Two Chief World Systems</i> (1632). Brickman &amp; Campbell (1971). Lucas, Clark, Georgellis &amp; Diener, <i>Psychological Science</i> (2004). Diener, Lucas &amp; Scollon, <i>American Psychologist</i> (2006). Loewenstein, <i>Health Psychology</i> (2005). Wilson &amp; Gilbert, <i>Current Directions in Psychological Science</i> (2005). L. A. Paul, <i>Transformative Experience</i> (2014). Kahneman, Fredrickson, Schreiber &amp; Redelmeier, <i>Psychological Science</i> (1993). Russell, Weiss &amp; Mendelsohn, <i>JPSP</i> (1989). Lehrer &amp; Gevirtz, <i>Frontiers in Psychology</i> (2014). Raichle et al., <i>PNAS</i> (2001). Menon &amp; Uddin, <i>Brain Structure and Function</i> (2010). Murphy et al., <i>NeuroImage</i> (2009). Beaty et al., <i>Trends in Cognitive Sciences</i> (2016). Christoff et al., <i>Nature Reviews Neuroscience</i> (2016). Killingsworth &amp; Gilbert, <i>Science</i> (2010). Heller et al., <i>Nature Neuroscience</i> (2020). Kuppens, Allen &amp; Sheeber, <i>Psychological Science</i> (2010). Kuppens et al., <i>Emotion</i> (2012). van de Leemput et al., <i>PNAS</i> (2014). Goldberger et al., <i>PNAS</i> (2002). Trull et al., <i>J. Abnormal Psychology</i> (2008). Kashdan &amp; Rottenberg, <i>Clinical Psychology Review</i> (2010). Kirkpatrick, Gelatt &amp; Vecchi, <i>Science</i> (1983). Carhart-Harris &amp; Friston, <i>Pharmacological Reviews</i> (2019). Carhart-Harris et al., <i>Neuropharmacology</i> (2023). Maquet et al., <i>Nature</i> (1996). Konkoly et al., <i>Current Biology</i> (2021). Lacaux et al., <i>Science Advances</i> (2021). Bai et al., <i>JPSP</i> (2017). van Elk et al., <i>Human Brain Mapping</i> (2019). Frank White, <i>The Overview Effect</i> (1987). Yaden et al., <i>Psychology of Consciousness</i> (2016). Bratman et al., <i>PNAS</i> (2015). Kross et al., <i>JPSP</i> (2014). Grossmann &amp; Kross, <i>Psychological Science</i> (2014). Bruehlman-Senecal &amp; Ayduk, <i>JPSP</i> (2015). Vazire, <i>JPSP</i> (2010). Noetel et al., <i>BMJ</i> (2024). Kuyken et al., <i>JAMA Psychiatry</i> (2016). Teasdale et al., <i>J. Consulting and Clinical Psychology</i> (2002). Brewer et al., <i>PNAS</i> (2011). Griffiths et al., <i>Psychopharmacology</i> (2006). Goodwin et al., <i>NEJM</i> (2022). Carhart-Harris et al., <i>NEJM</i> (2021). Muthukumaraswamy, Forsyth &amp; Lumley, <i>Expert Review of Clinical Pharmacology</i> (2021). Derek Parfit, <i>Reasons and Persons</i> (1984). Hershfield et al., <i>J. Marketing Research</i> (2011). Thomas Nagel, <i>The View from Nowhere</i> (1986). Henry David Thoreau, <i>Walden</i> (1854).</p>
+  <div class="next"><a href="price-of-a-mind.html">← VII · The Price of a Mind</a><a href="./">Back to Glamour Gram</a></div>
+</div></footer>
+
+<div class="toast" id="toast" role="region" aria-label="A question from the page" aria-live="polite" hidden>
+  <div class="eyebrow">Sample <span id="toastN">1</span> of 4</div>
+  <p id="toastQ"></p>
+  <div class="opts" id="toastOpts"></div>
+  <button type="button" class="skip" id="toastSkip">Not now</button>
+</div>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function fit(cv, aspect){
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = aspect ? Math.round(w*aspect) : cv.clientHeight;
+  if(aspect) cv.style.height = h + "px";
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const smooth = (a, b, x) => { const u = clamp((x - a)/(b - a), 0, 1); return u*u*(3 - 2*u); };
+const f1 = v => (Math.round(v*10)/10).toFixed(1).replace(/\.0$/, "").replace("-", "−");
+const squares = v => { const s = f1(v); return s + (s === "1" ? " square" : " squares"); };
+const plural = (n, unit) => `${n} ${unit}${n === 1 ? "" : "s"}`;
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+function shift(a, b){   // how b differs from a on the mood grid, in words
+  const p = [], dx = b.x - a.x, dy = b.y - a.y;
+  if(dx >= 1) p.push("more pleasant"); else if(dx <= -1) p.push("less pleasant");
+  if(dy >= 1) p.push("more energised"); else if(dy <= -1) p.push("calmer");
+  return p.join(" and ");
+}
+function onScreen(el){
+  const s = {v:true};
+  if("IntersectionObserver" in window) new IntersectionObserver(es => { s.v = es[es.length - 1].isIntersecting; }).observe(el);
+  return s;
+}
+function animate(frame, vis){
+  let last = performance.now();
+  (function loop(now){ const dt = Math.min(0.05, (now - last)/1000); last = now; if(!vis || vis.v) frame(dt); requestAnimationFrame(loop); })(last);
+}
+const busy = {lens:false, breath:false};   // instruments the sampler shouldn't interrupt
+
+/* ---------- hero: a flat sky gains depth as the Earth moves ---------- */
+(function(){
+  const cv = document.getElementById("heroCanvas"), copy = document.querySelector(".hero-copy .wrap");
+  const B = 0.55;   // in one small patch of sky every star traces the same flattened ellipse, sized by nearness
+  const ptr = {x:0, y:0, tx:0, ty:0};
+  let g = fit(cv), stars = [], safe = null, t = reduce ? 10 : 0;
+  function measure(){
+    const hr = cv.getBoundingClientRect(), cr = copy.getBoundingClientRect();
+    safe = {x0:cr.left - hr.left - 12, y0:cr.top - hr.top - 12, x1:cr.right - hr.left + 12, y1:cr.bottom - hr.top + 12};
+  }
+  function build(){
+    const {w, h} = g; measure(); stars = [];
+    const n = Math.round(clamp(w*h/2600, 120, 320));
+    for(let i=0;i<n;i++){
+      const d = i < 12 ? 1.2 + 2.8*Math.random() : i < 52 ? 4 + 8*Math.random() : 12 + 68*Math.random();
+      let x, y, k = 0;
+      do { x = w*(0.03 + 0.94*Math.random()); y = h*(0.05 + 0.9*Math.random()); }
+      while(d < 4 && ++k < 60 && x > safe.x0 && x < safe.x1 && y > safe.y0 && y < safe.y1);   // keep the nearest stars off the title
+      stars.push({x, y, d, r:0.5 + 1.5/Math.sqrt(d), l:0.35 + 0.65*Math.random(), tw:6.28*Math.random()});
+    }
+  }
+  function frame(dt){
+    t += dt;
+    const {ctx, w, h} = g, sea = C("--sea"), dawn = C("--dawn"), ink = C("--ink");
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    ptr.x += (ptr.tx - ptr.x)*0.05; ptr.y += (ptr.ty - ptr.y)*0.05;
+    // one orbit every 14 s; the field starts flat and depth appears once the Earth starts moving
+    const p0 = Math.min(w, h)*0.06, th = 2*Math.PI*t/14, amp = reduce ? 1 : smooth(1.2, 4, t);
+    const ex = -Math.cos(th), ey = -B*Math.sin(th);   // stars shift opposite to the Earth
+    ctx.lineWidth = 1;
+    for(const s of stars){
+      const a = p0/s.d, ox = s.x + 28*ptr.x/s.d, oy = s.y + 28*ptr.y/s.d;
+      if(a > 3){ ctx.globalAlpha = 0.18*amp; ctx.strokeStyle = sea; ctx.beginPath(); ctx.ellipse(ox, oy, a, a*B, 0, 0, 7); ctx.stroke(); }
+      ctx.globalAlpha = s.l*(reduce ? 1 : 0.85 + 0.15*Math.sin(t*1.3 + s.tw));
+      ctx.fillStyle = s.d < 4 ? dawn : ink;
+      ctx.beginPath(); ctx.arc(ox + amp*a*ex, oy + amp*a*ey, s.r, 0, 7); ctx.fill();
+    }
+    // the orbit that makes the difference
+    const R = Math.min(34, w*0.07), cx = w - R - 24, cy = h - R*B - 34;
+    if(cy - R*B - 8 > safe.y1 || cx - R - 8 > safe.x1){
+      ctx.globalAlpha = 1; ctx.strokeStyle = C("--line"); ctx.beginPath(); ctx.ellipse(cx, cy, R, R*B, 0, 0, 7); ctx.stroke();
+      ctx.fillStyle = dawn; ctx.beginPath(); ctx.arc(cx, cy, 3.5, 0, 7); ctx.fill();
+      ctx.fillStyle = sea; ctx.beginPath(); ctx.arc(cx + R*Math.cos(th), cy + R*B*Math.sin(th), 2.5, 0, 7); ctx.fill();
+      ctx.font = "10px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "right";
+      ctx.fillText(reduce ? "Earth's orbit" : "a year every 14 seconds", w - 14, h - 12); ctx.textAlign = "left";
+    }
+    ctx.globalAlpha = 1;
+  }
+  build();
+  addEventListener("resize", () => { const w0 = g.w; g = fit(cv); if(g.w !== w0) build(); else measure(); if(reduce) frame(0); });
+  document.fonts && document.fonts.ready.then(() => { if(reduce || t < 1.2) build(); else measure(); if(reduce) frame(0); });
+  const hero = cv.parentElement;
+  hero.addEventListener("pointermove", e => { const r = cv.getBoundingClientRect(); ptr.tx = (e.clientX - r.left)/r.width - 0.5; ptr.ty = (e.clientY - r.top)/r.height - 0.5; });
+  hero.addEventListener("pointerleave", () => { ptr.tx = 0; ptr.ty = 0; });
+  if(reduce) frame(0); else animate(frame, onScreen(cv));
+})();
+
+/* ---------- the lens you stop seeing ---------- */
+(function(){
+  const cv = document.getElementById("lensCanvas"), go = document.getElementById("lensGo"), say = document.getElementById("lensSay");
+  const picks = [...document.querySelectorAll("[data-lens]")];
+  const TINT = {amber:[255,170,80], sea:[80,190,210]}, ON = 32, AFTER = 15;
+  let g = fit(cv, 0.56), scene = null, lens = "amber", phase = "idle", t = 0, last = 0, raf = 0;
+  const MSG = {
+    idle:"Choose a lens, press Put it on, and keep your eyes on the dot.",
+    on:"Keep your eyes on the dot.",
+    fade:"Is the colour weaker than it was? Keep looking at the dot.",
+    off:"Lens off. For a few seconds the plain picture looks tinted the other way. That's your eyes' adjustment, still running.",
+    split:"Lens off. The picture is the same on both sides now, but it doesn't look it. Same world, different histories.",
+    done:"Your eyes have nearly reset. Try another lens."
+  };
+  const tell = m => { if(say.textContent !== m) say.textContent = m; };
+  function paint(){   // a pale, nearly neutral seascape, so the lens does all the colouring
+    const {w, h} = g, dpr = Math.min(2, devicePixelRatio || 1);
+    scene = document.createElement("canvas"); scene.width = w*dpr; scene.height = h*dpr;
+    const c = scene.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const hz = h*0.6;
+    let gr = c.createLinearGradient(0, 0, 0, hz); gr.addColorStop(0, "#c8d1d6"); gr.addColorStop(1, "#eceeea");
+    c.fillStyle = gr; c.fillRect(0, 0, w, hz);
+    c.fillStyle = "#faf8f0"; c.beginPath(); c.arc(w*0.74, h*0.22, h*0.065, 0, 7); c.fill();
+    c.fillStyle = "rgba(248,248,245,.9)";
+    [[0.16,0.17,1],[0.32,0.11,0.75],[0.58,0.3,0.9],[0.9,0.12,0.7]].forEach(([u, v, k]) => {
+      for(let i=0;i<5;i++){ c.beginPath(); c.ellipse(w*(u + (i - 2)*0.03*k), h*(v + (i % 2 ? -0.018 : 0.008)*k), w*0.042*k, h*0.04*k, 0, 0, 7); c.fill(); }
+    });
+    c.fillStyle = "#b5bdb7"; c.beginPath(); c.moveTo(0, hz);
+    for(let x=0;x<=w+6;x+=6) c.lineTo(x, hz - h*(0.05 + 0.035*Math.sin(x/w*6 + 1) + 0.015*Math.sin(x/w*21)));
+    c.lineTo(w, hz); c.fill();
+    gr = c.createLinearGradient(0, hz, 0, h); gr.addColorStop(0, "#b9c7cc"); gr.addColorStop(1, "#98a9b0");
+    c.fillStyle = gr; c.fillRect(0, hz, w, h - hz);
+    c.fillStyle = "rgba(255,255,250,.85)";
+    for(let i=0;i<110;i++){ const v = Math.random(), y = hz + 2 + v*v*(h - hz - 4), x = w*0.74 + (Math.random() - 0.5)*w*(0.05 + 0.3*v); c.fillRect(x, y, 2 + 8*v, 1 + v); }
+    // rocks, a lighthouse, three birds
+    c.fillStyle = "#7c8481"; c.beginPath(); c.moveTo(w*0.04, h); c.quadraticCurveTo(w*0.1, h*0.74, w*0.2, h*0.76); c.quadraticCurveTo(w*0.29, h*0.79, w*0.36, h); c.fill();
+    const lx = w*0.19, lb = h*0.77, lt = h*0.42, lw = Math.max(7, w*0.026);
+    c.fillStyle = "#f3f2ec"; c.beginPath(); c.moveTo(lx - lw, lb); c.lineTo(lx - lw*0.62, lt); c.lineTo(lx + lw*0.62, lt); c.lineTo(lx + lw, lb); c.fill();
+    c.fillStyle = "#cbc8c0"; c.fillRect(lx - lw*0.72, lt + (lb - lt)*0.4, lw*1.44, (lb - lt)*0.08);
+    c.fillStyle = "#8e908b"; c.fillRect(lx - lw*0.75, lt - h*0.045, lw*1.5, h*0.045);
+    c.beginPath(); c.moveTo(lx - lw*0.85, lt - h*0.045); c.lineTo(lx, lt - h*0.09); c.lineTo(lx + lw*0.85, lt - h*0.045); c.fill();
+    c.fillStyle = "#fbf6e6"; c.fillRect(lx - lw*0.45, lt - h*0.038, lw*0.9, h*0.03);
+    c.strokeStyle = "#6e7571"; c.lineWidth = 1.3; c.lineCap = "round";
+    [[0.45,0.2,1],[0.5,0.16,0.8],[0.54,0.23,0.9]].forEach(([u, v, k]) => {
+      const x = w*u, y = h*v, s = w*0.013*k;
+      c.beginPath(); c.moveTo(x - s, y - s*0.35); c.quadraticCurveTo(x - s*0.45, y - s*0.7, x, y); c.quadraticCurveTo(x + s*0.45, y - s*0.7, x + s, y - s*0.35); c.stroke();
+    });
+  }
+  function draw(){
+    const {ctx, w, h} = g;
+    ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1;
+    ctx.drawImage(scene, 0, 0, w, h);
+    const s = phase === "on" ? smooth(0, 8, t) : 0;   // the tint eases in over 8 s, then holds
+    if(s > 0){
+      ctx.globalCompositeOperation = "multiply";
+      const lay = (k, x0, x1) => { ctx.fillStyle = "rgb(" + TINT[k].map(c => Math.round(255 - s*(255 - c))).join(",") + ")"; ctx.fillRect(x0, 0, x1 - x0, h); };
+      if(lens === "both"){ lay("amber", 0, w/2); lay("sea", w/2, w); } else lay(lens, 0, w);
+      ctx.globalCompositeOperation = "source-over";
+    }
+    if(phase !== "idle"){
+      const left = clamp(1 - t/(phase === "on" ? ON : AFTER), 0, 1);
+      if(left > 0){ ctx.strokeStyle = "rgba(11,16,22,.6)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(w/2, h/2, 12, -Math.PI/2, -Math.PI/2 + 2*Math.PI*left); ctx.stroke(); }
+    }
+    ctx.fillStyle = "#0b1016"; ctx.beginPath(); ctx.arc(w/2, h/2, 3.5, 0, 7); ctx.fill();
+  }
+  function step(now){
+    t += Math.min(0.05, (now - last)/1000); last = now;
+    if(phase === "on"){ tell(t < 14 ? MSG.on : MSG.fade); if(t >= ON){ phase = "after"; t = 0; tell(lens === "both" ? MSG.split : MSG.off); } }
+    else if(phase === "after" && t >= AFTER){ stop(MSG.done); return; }
+    draw(); raf = requestAnimationFrame(step);
+  }
+  function start(){ phase = "on"; t = 0; busy.lens = true; go.textContent = "Stop"; tell(MSG.on); last = performance.now(); cancelAnimationFrame(raf); raf = requestAnimationFrame(step); }
+  function stop(m){ phase = "idle"; busy.lens = false; cancelAnimationFrame(raf); go.textContent = "Put it on"; tell(m || MSG.idle); draw(); }
+  go.addEventListener("click", () => { if(phase === "idle") start(); else stop(); });
+  picks.forEach(b => b.addEventListener("click", () => {
+    lens = b.dataset.lens; picks.forEach(o => o.setAttribute("aria-pressed", o === b));
+    if(phase !== "idle") stop(); else draw();
+  }));
+  addEventListener("resize", () => { if(cv.clientWidth === g.w) return; g = fit(cv, 0.56); paint(); draw(); });
+  paint(); draw();
+})();
+
+/* ---------- a mood grid, after Russell's Affect Grid: x is pleasantness 1-9, y is energy 1-9 ---------- */
+function AffectGrid(cv, onPick){
+  const G = {marks:[], arrows:[], trail:[], enabled:true, cursor:null, hover:null, overlay:null};
+  let g = fit(cv, 1);
+  const geo = () => { const m = 28; return {m, s:(g.w - 2*m)/9}; };
+  const at = (cx, cy) => {
+    const r = cv.getBoundingClientRect(), {m, s} = geo(), i = Math.floor((cx - r.left - m)/s), j = Math.floor((cy - r.top - m)/s);
+    return i >= 0 && i < 9 && j >= 0 && j < 9 ? {x:i + 1, y:9 - j} : null;
+  };
+  const pos = p => { const {m, s} = geo(); return [m + (p.x - 0.5)*s, m + (9.5 - p.y)*s]; };
+  function arrow(ctx, a, b, color, dash){
+    const [x0, y0] = pos(a), [x1, y1] = pos(b), L = Math.hypot(x1 - x0, y1 - y0);
+    if(L < 12) return;
+    const ux = (x1 - x0)/L, uy = (y1 - y0)/L;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2; ctx.setLineDash(dash ? [5, 5] : []);
+    ctx.beginPath(); ctx.moveTo(x0 + ux*8, y0 + uy*8); ctx.lineTo(x1 - ux*14, y1 - uy*14); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(x1 - ux*8, y1 - uy*8); ctx.lineTo(x1 - ux*17 - uy*5, y1 - uy*17 + ux*5); ctx.lineTo(x1 - ux*17 + uy*5, y1 - uy*17 - ux*5); ctx.closePath(); ctx.fill();
+  }
+  G.draw = function(){
+    const {ctx, w} = g, {m, s} = geo(), mute = C("--mute");
+    ctx.clearRect(0, 0, w, w); ctx.globalAlpha = 1;
+    if(G.overlay){ G.overlay(ctx, w); return; }
+    ctx.strokeStyle = C("--line"); ctx.lineWidth = 1;
+    for(let i=0;i<=9;i++){ ctx.beginPath(); ctx.moveTo(m + i*s, m); ctx.lineTo(m + i*s, m + 9*s); ctx.moveTo(m, m + i*s); ctx.lineTo(m + 9*s, m + i*s); ctx.stroke(); }
+    ctx.strokeStyle = mute; ctx.globalAlpha = 0.45;
+    ctx.beginPath(); ctx.moveTo(m + 4.5*s, m); ctx.lineTo(m + 4.5*s, m + 9*s); ctx.moveTo(m, m + 4.5*s); ctx.lineTo(m + 9*s, m + 4.5*s); ctx.stroke();
+    ctx.globalAlpha = 1; ctx.fillStyle = mute; ctx.font = "11px JetBrains Mono, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("energised", w/2, m/2); ctx.fillText("sleepy", w/2, w - m/2);
+    ctx.save(); ctx.translate(m/2, w/2); ctx.rotate(-Math.PI/2); ctx.fillText("unpleasant", 0, 0); ctx.restore();
+    ctx.save(); ctx.translate(w - m/2, w/2); ctx.rotate(Math.PI/2); ctx.fillText("pleasant", 0, 0); ctx.restore();
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.globalAlpha = 0.75;
+    ctx.textAlign = "left"; ctx.fillText("stressed", m + 5, m + 10); ctx.fillText("low", m + 5, m + 9*s - 10);
+    ctx.textAlign = "right"; ctx.fillText("excited", m + 9*s - 5, m + 10); ctx.fillText("relaxed", m + 9*s - 5, m + 9*s - 10);
+    for(const o of G.trail){   // earlier marks, faint
+      ctx.globalAlpha = 0.35; if(o.b) arrow(ctx, o.a, o.b, C("--sea"));
+      const [x, y] = pos(o.a); ctx.fillStyle = mute; ctx.beginPath(); ctx.arc(x, y, 3, 0, 7); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    for(const a of G.arrows) arrow(ctx, a.a, a.b, a.color, a.dash);
+    ctx.textAlign = "left"; ctx.font = "11px JetBrains Mono, monospace";
+    for(const k of G.marks){
+      const [x, y] = pos(k.p); ctx.fillStyle = k.color; ctx.beginPath(); ctx.arc(x, y, 7, 0, 7); ctx.fill();
+      if(k.label) ctx.fillText(k.label, x > w*0.66 ? x - 10 - ctx.measureText(k.label).width : x + 10, y - 12);
+    }
+    const hi = G.enabled && (document.activeElement === cv ? (G.cursor || {x:5, y:5}) : G.hover);
+    if(hi){ ctx.strokeStyle = C("--dawn"); ctx.lineWidth = 2; ctx.strokeRect(m + (hi.x - 1)*s + 1, m + (9 - hi.y)*s + 1, s - 2, s - 2); }
+    ctx.textBaseline = "alphabetic";
+  };
+  cv.addEventListener("pointermove", e => { if(e.pointerType === "mouse"){ G.hover = at(e.clientX, e.clientY); G.draw(); } });
+  cv.addEventListener("pointerleave", () => { G.hover = null; G.draw(); });
+  cv.addEventListener("click", e => { if(!G.enabled) return; const c = at(e.clientX, e.clientY); if(c){ G.cursor = c; onPick(c); G.draw(); } });
+  cv.addEventListener("keydown", e => {
+    if(!G.enabled) return;
+    const d = {ArrowLeft:[-1, 0], ArrowRight:[1, 0], ArrowUp:[0, 1], ArrowDown:[0, -1]}[e.key], c = G.cursor || {x:5, y:5};
+    if(d){ e.preventDefault(); G.cursor = {x:clamp(c.x + d[0], 1, 9), y:clamp(c.y + d[1], 1, 9)}; G.draw(); }
+    else if(e.key === "Enter" || e.key === " "){ e.preventDefault(); G.cursor = c; onPick(c); G.draw(); }
+  });
+  cv.addEventListener("focus", () => G.draw()); cv.addEventListener("blur", () => G.draw());
+  addEventListener("resize", () => { if(cv.clientWidth !== g.w){ g = fit(cv, 1); G.draw(); } });
+  G.draw();
+  return G;
+}
+
+/* ---------- forecast yourself: before, forecast, eight slow breaths, after ---------- */
+(function(){
+  const cv = document.getElementById("fcGrid"), say = document.getElementById("fcSay"), go = document.getElementById("fcGo"), skip = document.getElementById("fcSkip"), out = document.getElementById("fcOut");
+  const IN = 4.5, OUT = 6.5, N = 8;   // about 5.5 breaths a minute
+  let stage = "now", A = null, F = null, bt = 0, raf = 0;
+  const grid = AffectGrid(cv, p => {
+    if(stage === "now"){ A = p; grid.marks = [{p, color:C("--sea"), label:"now"}]; stage = "forecast"; say.textContent = "Now forecast: where will you be after eight slow breaths? Tap that square."; }
+    else if(stage === "forecast"){ F = p; grid.marks.push({p, color:C("--dawn"), label:"forecast"}); stage = "ready"; grid.enabled = false; go.hidden = false; say.textContent = "Ready. Press Start breathing and follow the circle."; }
+    else if(stage === "after") finish(p);
+  });
+  function guide(ctx, w){
+    const per = IN + OUT, i = Math.floor(bt/per), u = bt - i*per, inhale = u < IN;
+    const k = inhale ? 0.5 - 0.5*Math.cos(Math.PI*u/IN) : 0.5 + 0.5*Math.cos(Math.PI*(u - IN)/OUT);
+    ctx.fillStyle = C("--sea");
+    if(reduce){ ctx.globalAlpha = 0.15 + 0.6*k; ctx.beginPath(); ctx.arc(w/2, w/2, w*0.3, 0, 7); ctx.fill(); }
+    else { ctx.globalAlpha = 0.25 + 0.35*k; ctx.beginPath(); ctx.arc(w/2, w/2, w*(0.1 + 0.25*k), 0, 7); ctx.fill(); }
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--ink"); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.font = "italic 26px Newsreader, Georgia, serif"; ctx.fillText(inhale ? "in" : "out", w/2, w/2);
+    ctx.font = "11px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.fillText(`breath ${Math.min(N, i + 1)} of ${N}`, w/2, w - 22);
+    ctx.textBaseline = "alphabetic";
+  }
+  function breathe(){
+    stage = "breathing"; busy.breath = true; go.hidden = true; skip.hidden = false; out.textContent = "";
+    say.textContent = "Breathe in as the circle grows, and out as it shrinks.";
+    grid.overlay = guide; bt = 0;
+    let last = performance.now();
+    cancelAnimationFrame(raf);
+    (function loop(now){
+      bt += Math.min(0.1, (now - last)/1000); last = now;
+      if(stage !== "breathing") return;
+      if(bt >= N*(IN + OUT)){ after(); return; }
+      grid.draw(); raf = requestAnimationFrame(loop);
+    })(last);
+  }
+  function after(){
+    cancelAnimationFrame(raf); busy.breath = false; skip.hidden = true; grid.overlay = null;
+    stage = "after"; grid.enabled = true;
+    grid.marks = [{p:A, color:C("--mute"), label:"before"}, {p:F, color:C("--dawn"), label:"forecast"}];
+    say.textContent = "Where are you now? Tap the square."; grid.draw();
+  }
+  function finish(B){
+    stage = "done"; grid.enabled = false;
+    grid.marks = [{p:A, color:C("--mute"), label:"before"}, {p:F, color:C("--dawn"), label:"forecast"}, {p:B, color:C("--sea"), label:"after"}];
+    grid.arrows = [{a:A, b:F, color:C("--dawn"), dash:true}, {a:A, b:B, color:C("--sea")}];
+    const moved = dist(A, B), miss = dist(F, B), guess = dist(A, F), way = shift(F, B);
+    let s = `You moved ${squares(moved)}. ` + (miss === 0 ? "Your forecast was exact. " : `Your forecast missed by ${f1(miss)}. `);
+    if(moved < 1) s += guess >= 1 ? "The breaths barely moved you, though you expected them to." : "The breaths barely moved you, and you expected as much.";
+    else if(way) s += `You ended up ${way} than you forecast.`;
+    else s += "Your forecast landed close.";
+    if(guess > moved + 1) s += " Forecasts of feeling often overshoot like that.";
+    out.textContent = s; say.textContent = "Dashed: what you expected. Solid: what happened.";
+    go.textContent = "Try again"; go.hidden = false; grid.draw();
+  }
+  go.addEventListener("click", () => {
+    if(stage === "ready") breathe();
+    else if(stage === "done"){
+      stage = "now"; A = F = null; grid.marks = []; grid.arrows = []; grid.enabled = true;
+      out.textContent = ""; go.hidden = true; go.textContent = "Start breathing";
+      say.textContent = "Tap the square for where you are right now."; grid.draw();
+    }
+  });
+  skip.addEventListener("click", () => { if(stage === "breathing") after(); });
+})();
+
+/* ---------- three networks: default mode, central executive, salience ---------- */
+(function(){
+  const cv = document.getElementById("modesCanvas"), say = document.getElementById("modesSay");
+  const btns = [...document.querySelectorAll("[data-mode]")];
+  const aspect = () => cv.clientWidth < 500 ? 0.72 : 0.6;
+  let g = fit(cv, aspect());
+  // positions on a side view, front to the left; "inner" regions lie on the medial surface or deep inside
+  const NODES = [
+    {k:"mPFC", n:"medial prefrontal", x:.17, y:.42, net:"dmn", inner:true, at:"below"},
+    {k:"PCC", n:"posterior cingulate", x:.66, y:.36, net:"dmn", inner:true, at:"below"},
+    {k:"AG", n:"angular gyrus", x:.78, y:.42, net:"dmn", at:"right"},
+    {k:"HIP", n:"hippocampus", x:.5, y:.66, net:"dmn", inner:true, at:"below"},
+    {k:"dlPFC", n:"lateral prefrontal", x:.25, y:.27, net:"cen", at:"above"},
+    {k:"PPC", n:"parietal", x:.64, y:.2, net:"cen", at:"above"},
+    {k:"AI", n:"insula", x:.36, y:.53, net:"sal", inner:true, at:"below"},
+    {k:"dACC", n:"anterior cingulate", x:.36, y:.25, net:"sal", inner:true, at:"right"}
+  ];
+  const BY = Object.fromEntries(NODES.map(n => [n.k, n]));
+  const LINKS = [["mPFC","PCC"],["PCC","AG"],["PCC","HIP"],["mPFC","HIP"],["mPFC","AG"],["dlPFC","PPC"],["AI","dACC"],["AI","dlPFC",1],["AI","PCC",1]];   // 1 = a switching link, lit only in a flash
+  const GOAL = {rest:{dmn:1, cen:0.2, sal:0.25}, task:{dmn:0.15, cen:1, sal:0.45}, wander:{dmn:0.95, cen:0.1, sal:0.15}};
+  const SAY = {
+    rest:"Resting. The default mode hums along: memories, plans, other people, yourself.",
+    task:"On a task. The executive network takes the lead, and the default mode quietens.",
+    wander:"Wandering. The default mode runs free, and thoughts arrive on their own."
+  };
+  const WORDS = ["yesterday", "tomorrow", "what if", "that song", "them", "me", "later", "home", "why did I", "someday"];
+  let mode = "rest", lvl = {...GOAL.rest}, flash = 0, t = 0, thoughts = [];
+  function outline(ctx, X, Y, W, H){
+    ctx.beginPath();
+    ctx.moveTo(X(.08), Y(.55));
+    ctx.bezierCurveTo(X(.02), Y(.3), X(.2), Y(.06), X(.45), Y(.07));
+    ctx.bezierCurveTo(X(.7), Y(.05), X(.93), Y(.18), X(.94), Y(.45));
+    ctx.bezierCurveTo(X(.95), Y(.6), X(.88), Y(.7), X(.78), Y(.7));
+    ctx.bezierCurveTo(X(.7), Y(.72), X(.6), Y(.7), X(.55), Y(.72));
+    ctx.bezierCurveTo(X(.45), Y(.8), X(.3), Y(.78), X(.24), Y(.66));
+    ctx.bezierCurveTo(X(.2), Y(.62), X(.12), Y(.64), X(.08), Y(.55));
+    ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(X(.81), Y(.78), W*0.12, H*0.08, -0.15, 0, 7); ctx.stroke();   // cerebellum
+    ctx.beginPath(); ctx.moveTo(X(.58), Y(.73)); ctx.bezierCurveTo(X(.6), Y(.84), X(.61), Y(.92), X(.62), Y(.99));
+    ctx.moveTo(X(.66), Y(.72)); ctx.bezierCurveTo(X(.67), Y(.82), X(.67), Y(.9), X(.67), Y(.99)); ctx.stroke();   // brainstem, in front of the cerebellum
+    ctx.beginPath(); ctx.moveTo(X(.3), Y(.56)); ctx.bezierCurveTo(X(.42), Y(.5), X(.55), Y(.48), X(.64), Y(.44)); ctx.stroke();   // lateral sulcus
+    ctx.beginPath(); ctx.moveTo(X(.5), Y(.08)); ctx.bezierCurveTo(X(.47), Y(.22), X(.52), Y(.34), X(.46), Y(.5)); ctx.stroke();   // central sulcus
+  }
+  function draw(){
+    const {ctx, w, h} = g, W = w*0.92, H = h*0.9, ox = (w - W)/2, oy = (h - H)/2;
+    const X = u => ox + u*W, Y = v => oy + v*H, col = {dmn:C("--sea"), cen:C("--dawn"), sal:C("--ember")};
+    const lv = n => Math.min(1, lvl[n.net] + (n.net === "sal" ? 0.8*flash : 0));
+    ctx.clearRect(0, 0, w, h); ctx.globalAlpha = 1;
+    ctx.strokeStyle = C("--line"); ctx.lineWidth = 1.5; outline(ctx, X, Y, W, H);
+    for(const [a, b, sw] of LINKS){
+      const A = BY[a], Bn = BY[b], L = sw ? flash : Math.min(lv(A), lv(Bn));
+      if(L < 0.05) continue;
+      const c = sw ? col.sal : col[A.net];
+      ctx.globalAlpha = 0.15 + 0.5*L; ctx.strokeStyle = c; ctx.lineWidth = 1 + 1.5*L;
+      ctx.beginPath(); ctx.moveTo(X(A.x), Y(A.y)); ctx.lineTo(X(Bn.x), Y(Bn.y)); ctx.stroke();
+      if(!reduce && L > 0.3){   // a signal travelling the link
+        const p = (t*0.5 + A.x*3 + Bn.y*5) % 1;
+        ctx.globalAlpha = L; ctx.fillStyle = c; ctx.beginPath(); ctx.arc(X(A.x + (Bn.x - A.x)*p), Y(A.y + (Bn.y - A.y)*p), 2.5, 0, 7); ctx.fill();
+      }
+    }
+    ctx.font = "10px JetBrains Mono, monospace";
+    for(const n of NODES){
+      const L = lv(n), x = X(n.x), y = Y(n.y), r = 4 + 5*L, c = col[n.net];
+      ctx.globalAlpha = 0.12*L; ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, r*2.6, 0, 7); ctx.fill();
+      ctx.globalAlpha = 0.3 + 0.7*L;
+      if(n.inner){ ctx.strokeStyle = c; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.stroke(); }
+      else { ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); }
+      if(w >= 520){
+        ctx.globalAlpha = 0.45 + 0.55*L; ctx.fillStyle = C("--mute");
+        if(n.at === "right"){ ctx.textAlign = "left"; ctx.fillText(n.n, x + r + 6, y + 3); }
+        else { ctx.textAlign = "center"; ctx.fillText(n.n, x, n.at === "above" ? y - r - 8 : y + r + 14); }
+      }
+    }
+    ctx.font = "italic 15px Newsreader, Georgia, serif"; ctx.textAlign = "center"; ctx.fillStyle = C("--ink");
+    for(const o of thoughts){ ctx.globalAlpha = 0.85*clamp(Math.min(o.age/0.6, 4 - o.age), 0, 1); ctx.fillText(o.w, X(o.x), Y(o.y)); }
+    ctx.globalAlpha = 1; ctx.textAlign = "left";
+  }
+  function frame(dt){
+    t += dt;
+    for(const k in lvl) lvl[k] += (GOAL[mode][k] - lvl[k])*Math.min(1, dt*2.2);
+    flash = Math.max(0, flash - dt*0.9);
+    if(mode === "wander" && thoughts.length < 4 && Math.random() < dt*0.7) thoughts.push({w:WORDS[Math.floor(Math.random()*WORDS.length)], x:0.3 + 0.45*Math.random(), y:0.3 + 0.3*Math.random(), age:0});
+    thoughts.forEach(o => { o.age += dt; o.y -= dt*0.015; });
+    thoughts = thoughts.filter(o => o.age < 4);
+    draw();
+  }
+  btns.forEach(b => b.addEventListener("click", () => {
+    if(b.dataset.mode === mode) return;
+    mode = b.dataset.mode; flash = reduce ? 0 : 1;
+    btns.forEach(o => o.setAttribute("aria-pressed", o === b));
+    say.textContent = SAY[mode];
+    thoughts.forEach(o => { o.age = Math.max(o.age, 3); });
+    if(reduce){ lvl = {...GOAL[mode]}; draw(); }
+  }));
+  addEventListener("resize", () => { if(cv.clientWidth !== g.w){ g = fit(cv, aspect()); draw(); } });
+  say.textContent = SAY.rest;
+  if(reduce) draw(); else animate(frame, onScreen(cv));
+})();
+
+/* ---------- a landscape of states: a ball that wears grooves where it rests ---------- */
+(function(){
+  const $ = id => document.getElementById(id);
+  const cv = $("landCanvas"), heat = $("heat"), heatOut = $("heatOut"), say = $("landSay"), peekB = $("peek"), runB = $("landRun");
+  const out = {found:$("found"), stay:$("stay"), groove:$("groove")};
+  const aspect = () => cv.clientWidth < 500 ? 0.78 : 0.6;
+  let g = fit(cv, aspect());
+  // Tuned in a simulation: below a heat of about 35 the ball never leaves, around 50 to 70 it roams, above 80 it can't settle.
+  const VALLEYS = [
+    {name:"a rut", c:0.1, w:0.03, d:0.34},
+    {name:"focus", c:0.29, w:0.045, d:0.34},
+    {name:"drift", c:0.48, w:0.065, d:0.26},
+    {name:"rest", c:0.67, w:0.05, d:0.34},
+    {name:"awe", c:0.905, w:0.032, d:0.55}
+  ];
+  const BUMPS = [{c:0.96, w:0.07, h:0.4}, {c:0.835, w:0.02, h:0.12}];   // a high wall, and the ridge in front of awe
+  const M = 240, SPEED = 0.05, CARVE = 0.025, CAP = 0.35, RELAX = 5, PULSE = 0.45;
+  const groove = new Float32Array(M), seen = new Float32Array(M);
+  const Tof = u => 0.002 + 0.298*(u/100)**2;
+  const base = x => { let v = 0; for(const b of BUMPS) v += b.h*Math.exp(-((x - b.c)**2)/(2*b.w*b.w)); for(const q of VALLEYS) v -= q.d*Math.exp(-((x - q.c)**2)/(2*q.w*q.w)); return v; };
+  const gAt = x => { const f = clamp(x, 0, 1)*(M - 1), i = Math.min(M - 2, Math.floor(f)), u = f - i; return groove[i]*(1 - u) + groove[i + 1]*u; };
+  const V = x => base(x) - gAt(x) + (x < 0.03 ? 400*(0.03 - x)**2 : 0) + (x > 0.97 ? 400*(x - 0.97)**2 : 0);
+  const dV = x => (V(x + 1e-4) - V(x - 1e-4))/2e-4;
+  const gauss = () => { let u = 0; while(!u) u = Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*Math.random()); };
+  let x, valley, stay, dwell, found, hist, t = 0, pulseAt = -1e9, sample = 0, tick = 0, running = !reduce, peek = false, dirty = true;
+  const temp = () => Math.max(Tof(+heat.value), PULSE*Math.exp(-(t - pulseAt)/3));
+  const lantern = T => 0.07 + 0.06*Math.min(1, T/0.2);
+  const mark = T => { const r = 0.8*lantern(T); for(let i=0;i<M;i++) if(Math.abs(i/(M - 1) - x) < r) seen[i] = 1; };
+  function reset(){
+    x = VALLEYS[0].c; valley = 0; stay = 0; dwell = new Float32Array(5); found = new Set([0]); hist = []; pulseAt = -1e9;
+    for(let i=0;i<M;i++){ const dx = i/(M - 1) - x; groove[i] = CAP*Math.exp(-dx*dx/8e-4); seen[i] = 0; }   // the rut comes already worn
+    mark(temp()); dirty = true;
+  }
+  function step(dt){
+    const T = temp(), h = dt*SPEED, n = Math.max(1, Math.ceil(h/2.5e-4)), hh = h/n;
+    for(let k=0;k<n;k++){ x += -dV(x)*hh + Math.sqrt(2*T*hh)*gauss(); x = clamp(x, 0.005, 0.995); }   // overdamped Langevin
+    const relax = Math.exp(-(0.004 + RELAX*T)*dt);   // heat wears grooves away; time alone barely does
+    for(let i=0;i<M;i++){ const dx = i/(M - 1) - x; groove[i] = Math.min(CAP, groove[i]*relax + CARVE*dt*Math.exp(-dx*dx/8e-4)); }
+    mark(T);
+    let v = -1; VALLEYS.forEach((q, i) => { if(Math.abs(x - q.c) < q.w*1.2) v = i; });
+    if(v !== valley){ valley = v; stay = 0; } else stay += dt;
+    if(v >= 0){
+      dwell[v] += dt;
+      if(dwell[v] > 0.3 && !found.has(v)){ found.add(v); say.textContent = found.size === 5 ? "All five found. Now cool it slowly, and see where it settles." : `Found ${VALLEYS[v].name}.`; }
+    }
+    sample += dt; if(sample >= 0.25){ sample = 0; hist.unshift({x, v}); if(hist.length > 400) hist.pop(); }
+  }
+  function draw(){
+    const {ctx, w, h} = g, T = temp(), r = lantern(T);
+    const top = 16, bot = h*0.64, wf0 = h*0.72, Vlo = -0.8, Vhi = 0.75;
+    const X = u => 10 + u*(w - 20), Y = v => top + (Vhi - clamp(v, Vlo, Vhi))/(Vhi - Vlo)*(bot - top);
+    ctx.clearRect(0, 0, w, h); ctx.globalAlpha = 1;
+    const K = clamp(Math.round(w/2), 60, 300), pts = [];
+    for(let j=0;j<=K;j++){ const u = j/K; pts.push([X(u), Y(V(u)), gAt(u)]); }
+    ctx.beginPath(); ctx.moveTo(X(0), bot); pts.forEach(p => ctx.lineTo(p[0], p[1])); ctx.lineTo(X(1), bot); ctx.closePath();
+    ctx.fillStyle = C("--deep"); ctx.fill();
+    ctx.beginPath(); pts.forEach((p, j) => j ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]));
+    ctx.strokeStyle = C("--mute"); ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.strokeStyle = C("--ember"); ctx.lineWidth = 3;   // worn ground glows
+    for(let j=1;j<=K;j++){ const gv = pts[j][2]; if(gv < 0.02) continue; ctx.globalAlpha = Math.min(1, gv/CAP); ctx.beginPath(); ctx.moveTo(pts[j - 1][0], pts[j - 1][1]); ctx.lineTo(pts[j][0], pts[j][1]); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+    // fog: you see near the ball, and dimly where it has been
+    if(!peek){
+      const fog = ctx.createLinearGradient(X(0), 0, X(1), 0);
+      for(let j=0;j<=120;j++){
+        const u = j/120, vis = Math.max(1 - ((u - x)/r)**2, 0.35*seen[Math.round(u*(M - 1))], 0);
+        fog.addColorStop(u, `rgba(11,16,22,${(1 - vis).toFixed(3)})`);
+      }
+      ctx.fillStyle = fog; ctx.fillRect(0, 0, w, bot + 2);
+    }
+    ctx.font = "11px JetBrains Mono, monospace"; ctx.textAlign = "center";
+    VALLEYS.forEach((q, i) => {
+      const a = peek ? 1 : Math.max(1 - ((q.c - x)/r)**2, found.has(i) && seen[Math.round(q.c*(M - 1))] ? 0.6 : 0);
+      if(a <= 0.05) return;
+      ctx.globalAlpha = a; ctx.fillStyle = found.has(i) ? C("--dawn") : C("--mute");
+      ctx.fillText(q.name, X(q.c), Math.min(bot - 4, Y(V(q.c)) + 20));
+    });
+    const bx = X(x), by = Y(V(x)) - 7;   // the ball, with a halo for heat
+    ctx.fillStyle = C("--dawn");
+    ctx.globalAlpha = 0.18; ctx.beginPath(); ctx.arc(bx, by, 8 + 14*Math.min(1, T/0.3), 0, 7); ctx.fill();
+    ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(bx, by, 6.5, 0, 7); ctx.fill();
+    // the record of where it has been, newest at the top
+    const col = [C("--ember"), C("--dawn"), C("--mute"), C("--sea"), C("--ink")], rows = Math.floor(h - 6 - wf0);
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.textAlign = "left"; ctx.fillStyle = C("--mute"); ctx.globalAlpha = 0.8;
+    ctx.fillText("its path so far, newest at the top", 10, wf0 - 7);
+    for(let i=0;i<Math.min(rows, hist.length);i++){
+      const o = hist[i]; ctx.globalAlpha = 0.85*(1 - i/rows); ctx.fillStyle = o.v >= 0 ? col[o.v] : C("--line");
+      ctx.fillRect(X(o.x) - 1.5, wf0 + i, 3, 2);
+    }
+    ctx.globalAlpha = 1;
+  }
+  function readout(){
+    out.found.textContent = `${found.size} of 5`;
+    out.stay.textContent = valley >= 0 ? `${Math.floor(stay)} s in ${VALLEYS[valley].name}` : "between valleys";
+    out.groove.textContent = Math.round(100*gAt(x)/CAP) + "%";
+  }
+  const word = u => u < 25 ? "cold" : u < 45 ? "cool" : u < 65 ? "warm" : u < 80 ? "hot" : "boiling";
+  function setRun(on){ running = on; runB.textContent = on ? "Pause" : "Run"; }
+  heat.addEventListener("input", () => { heatOut.textContent = word(+heat.value); dirty = true; });
+  $("pulse").addEventListener("click", () => { pulseAt = t; setRun(true); });
+  peekB.addEventListener("click", () => { peek = !peek; peekB.setAttribute("aria-pressed", peek); dirty = true; });
+  runB.addEventListener("click", () => setRun(!running));
+  $("landReset").addEventListener("click", () => { reset(); readout(); say.textContent = "Back in the rut."; });
+  addEventListener("resize", () => { if(cv.clientWidth !== g.w){ g = fit(cv, aspect()); dirty = true; } });
+  reset(); setRun(running); heatOut.textContent = word(+heat.value); readout();
+  say.textContent = reduce ? "Paused, because your device asks for less motion. Press Run to start." : "It starts in a rut. Raise the heat, or try a pulse.";
+  animate(dt => {
+    if(running){ t += dt; step(dt); dirty = true; }
+    if(dirty){ draw(); dirty = false; }
+    if((tick += dt) > 0.2){ tick = 0; readout(); }
+  }, onScreen(cv));
+})();
+
+/* ---------- letters to a later you, kept only in this browser ---------- */
+(function(){
+  const KEY = "glamour-gram:elsewhere:v1";
+  const $ = id => document.getElementById(id);
+  const cv = $("letterGrid"), say = $("letterSay"), txt = $("letterText"), when = $("letterWhen"), status = $("letterStatus"), list = $("sealedList"), forget = $("forget"), waiting = $("waiting");
+  const box = $("arrival"), meta = $("arrivalMeta"), ask = $("arrivalAsk"), body = $("arrivalText"), gap = $("arrivalGap"), back = $("writeBack");
+  const valid = p => !!p && p.x >= 1 && p.x <= 9 && p.y >= 1 && p.y <= 9;
+  function load(){
+    try {
+      const s = JSON.parse(localStorage.getItem(KEY));
+      if(s && Array.isArray(s.letters)) return {letters:s.letters.filter(l => l && typeof l.w === "number" && typeof l.o === "number" && valid(l.p))};
+    } catch(e){}
+    return {letters:[]};
+  }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); return true; } catch(e){ return false; } };
+  function span(ms){
+    const m = ms/6e4, h = m/60, d = h/24;
+    if(m < 1) return "less than a minute"; if(m < 60) return plural(Math.round(m), "minute"); if(h < 24) return plural(Math.round(h), "hour");
+    if(d < 60) return plural(Math.round(d), "day"); if(d < 730) return plural(Math.round(d/30.4), "month"); return plural(Math.round(d/365), "year");
+  }
+  let store = load(), here = null, reading = null, armed = 0;
+  const arrived = () => store.letters.filter(l => !l.r && l.o <= Date.now()).sort((a, b) => a.w - b.w)[0] || null;
+  const trail = () => store.letters.map(l => ({a:l.p, b:l.r && valid(l.q) ? l.q : null}));
+  const grid = AffectGrid(cv, p => {
+    if(reading && !reading.r){   // reading a letter: mark now first, then see it
+      reading.q = p; reading.r = Date.now(); save();
+      ask.hidden = true; body.hidden = false; body.textContent = reading.text || "(No words, just a mark.)";
+      const d = dist(reading.p, p), way = shift(reading.p, p);
+      gap.textContent = d < 1 ? "You're close to where you were then." : `Since then you've moved ${squares(d)}${way ? ", " + way : ""}.`;
+      gap.hidden = false; back.hidden = false;
+      grid.marks = [{p:reading.p, color:C("--mute"), label:"then"}, {p, color:C("--sea"), label:"now"}];
+      grid.arrows = [{a:reading.p, b:p, color:C("--sea")}];
+      const mine = reading.p; grid.trail = trail().filter(o => o.a !== mine);
+      say.textContent = "Then and now, side by side.";
+      waiting.hidden = !arrived(); renderList();
+    } else {
+      here = p; grid.marks = [{p, color:C("--dawn"), label:"now"}]; grid.arrows = [];
+      say.textContent = "Marked. Now write, choose when it opens, and seal it.";
+    }
+  });
+  function showArrival(){
+    reading = arrived(); waiting.hidden = !reading; box.hidden = !reading;
+    grid.trail = trail(); grid.arrows = [];
+    if(reading){
+      meta.textContent = `From you, ${span(Date.now() - reading.w)} ago.`;
+      ask.hidden = false; body.hidden = true; gap.hidden = true; back.hidden = true;
+      grid.marks = []; say.textContent = "Tap where you are now, and the letter opens.";
+    } else {
+      grid.marks = here ? [{p:here, color:C("--dawn"), label:"now"}] : [];
+      say.textContent = here ? "Marked. Now write, choose when it opens, and seal it." : "Tap the square for where you are now.";
+    }
+    grid.draw();
+  }
+  function renderList(){
+    const now = Date.now(), sealed = store.letters.filter(l => !l.r && l.o > now).sort((a, b) => a.o - b.o);
+    list.replaceChildren(...sealed.map(l => {
+      const li = document.createElement("li"), s = document.createElement("span"), b = document.createElement("button");
+      s.textContent = `Sealed ${span(now - l.w)} ago · opens in ${span(l.o - now)}`;
+      b.type = "button"; b.textContent = "Open early";
+      b.addEventListener("click", () => { l.o = Date.now(); save(); renderList(); showArrival(); box.scrollIntoView({block:"nearest", behavior:reduce ? "auto" : "smooth"}); });
+      li.append(s, b); return li;
+    }));
+    list.hidden = !sealed.length;
+    forget.hidden = !store.letters.length;
+  }
+  back.addEventListener("click", () => {
+    here = reading ? reading.q : here; reading = null; box.hidden = true;
+    grid.marks = here ? [{p:here, color:C("--dawn"), label:"now"}] : []; grid.arrows = []; grid.trail = trail(); grid.draw();
+    say.textContent = "Your mark from just now is set. Write back, and seal it.";
+    txt.focus();
+  });
+  $("seal").addEventListener("click", () => {
+    if(!here){ status.textContent = "First mark where you are now on the grid."; cv.focus(); return; }
+    const now = Date.now(), opt = when.options[when.selectedIndex];
+    store.letters.push({w:now, o:now + Number(opt.value), text:txt.value.trim().slice(0, 2000), p:here, r:null, q:null});
+    while(store.letters.length > 60){ const i = store.letters.findIndex(l => l.r); store.letters.splice(i >= 0 ? i : 0, 1); }
+    const ok = save();
+    txt.value = ""; here = null;
+    status.textContent = ok ? `Sealed. It opens ${opt.dataset.say}.` : "Sealed for now, but this browser won't keep it (perhaps a private window). Copy your words somewhere if you want them.";
+    renderList(); showArrival();
+  });
+  forget.addEventListener("click", () => {
+    if(armed && Date.now() - armed < 4000){
+      store = {letters:[]}; try { localStorage.removeItem(KEY); } catch(e){}
+      armed = 0; forget.textContent = "Forget my letters"; here = null;
+      renderList(); showArrival(); status.textContent = "Forgotten. Nothing of them is left in this browser.";
+      return;
+    }
+    armed = Date.now(); forget.textContent = "Tap again to forget them all";
+    setTimeout(() => { if(armed && Date.now() - armed >= 3900){ armed = 0; forget.textContent = "Forget my letters"; } }, 4000);
+  });
+  txt.addEventListener("input", () => { status.textContent = ""; });
+  renderList(); showArrival();
+  setInterval(() => { if(!reading && arrived()) showArrival(); renderList(); }, 30000);
+})();
+
+/* ---------- experience sampling: four interruptions, opt-in ---------- */
+(function(){
+  const $ = id => document.getElementById(id);
+  const toast = $("toast"), q = $("toastQ"), opts = $("toastOpts"), num = $("toastN"), skip = $("toastSkip");
+  const toggles = [...document.querySelectorAll("[data-esm]")];
+  const FEEL = [["bad", -2], ["low", -1], ["okay", 0], ["good", 1], ["great", 2]];
+  const rand = (a, b) => a + (b - a)*Math.random();
+  const S = {on:false, due:0, asked:0, open:false, timer:0, samples:[]};
+  function ui(){ toggles.forEach(b => { b.setAttribute("aria-pressed", S.on); b.textContent = S.on ? "Interruptions on · tap to stop" : "Interrupt me while I read"; }); }
+  function set(on){ S.on = on; if(on){ S.asked = 0; S.due = Date.now() + rand(25e3, 50e3); } else close(); ui(); }
+  function close(){ clearTimeout(S.timer); toast.hidden = true; S.open = false; skip.hidden = false; }
+  const wait = () => { clearTimeout(S.timer); S.timer = setTimeout(() => finish(false), 20000); };
+  function choices(items, pick){
+    opts.replaceChildren(...items.map(([label, v]) => { const b = document.createElement("button"); b.type = "button"; b.textContent = label; b.addEventListener("click", () => pick(v)); return b; }));
+  }
+  function blocked(){ const a = document.activeElement; return document.hidden || busy.lens || busy.breath || !!(a && a.tagName === "TEXTAREA"); }
+  function ask(){
+    S.open = true; S.asked++; num.textContent = S.asked; skip.hidden = false;
+    q.textContent = "Just now, was your mind on this page, or somewhere else?";
+    choices([["On this page", "here"], ["Somewhere else", "away"]], where => {
+      q.textContent = "And how are you feeling?";
+      choices(FEEL, feel => { S.samples.push({t:Date.now(), where, feel}); finish(true); });
+      wait();
+    });
+    toast.hidden = false; wait();
+  }
+  function finish(answered){
+    clearTimeout(S.timer);
+    S.due = Date.now() + rand(35e3, 80e3);
+    const last = S.asked >= 4;
+    if(answered){
+      show();
+      q.textContent = last ? "Thanks. That was the last of four." : "Thanks. Back to reading.";
+      const a = document.createElement("a"); a.href = "#esmBox"; a.textContent = "See your answers"; a.addEventListener("click", close);
+      opts.replaceChildren(a); skip.hidden = true;
+      S.timer = setTimeout(close, 4000);
+    } else close();
+    if(last){ S.on = false; ui(); }
+  }
+  function show(){
+    const s = S.samples, n = s.length, away = s.filter(o => o.where === "away"), here = s.filter(o => o.where === "here");
+    const avg = a => a.length ? a.reduce((sum, o) => sum + o.feel, 0)/a.length : null;
+    const feel = v => v === null ? "–" : FEEL[clamp(Math.round(v) + 2, 0, 4)][0] + " (" + (v > 0 ? "+" : "") + f1(v) + ")";
+    $("esmN").textContent = n; $("esmAway").textContent = n ? `${away.length} of ${n}` : "–";
+    $("esmHere").textContent = feel(avg(here)); $("esmElse").textContent = feel(avg(away));
+    $("esmNote").textContent = `Killingsworth and Gilbert's volunteers were elsewhere 46.9% of the time. You were elsewhere ${Math.round(100*away.length/n)}% of the time, from ${plural(n, "sample")}. That's far too few to mean much, but it's yours.`;
+  }
+  setInterval(() => {
+    if(!S.on || S.open || Date.now() < S.due) return;
+    if(blocked()){ S.due = Date.now() + 6e3; return; }
+    ask();
+  }, 1000);
+  skip.addEventListener("click", () => finish(false));
+  toggles.forEach(b => b.addEventListener("click", () => set(!S.on)));
+})();
+</script>
+</body>
+</html>
