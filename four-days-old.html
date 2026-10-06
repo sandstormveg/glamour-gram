@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Four Days Old · Glamour Gram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single night-before-dawn scroll. A playable wave on top, then a zoomable cosmic ledger, an energy slope, a ladder of wholes, and a short practice. Deliberately one dark look: it is always pre-dawn here. */
+:root{
+  --night:#0b1016;
+  --deep:#121a23;
+  --line:#26323f;
+  --ink:#e9e4d8;
+  --mute:#9aa5ae;
+  --dawn:#f0a85a;
+  --ember:#e3735a;
+  --sea:#6fc2b8;
+  --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --body:"Newsreader","Iowan Old Style",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--night)}
+body{background:var(--night);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.6;font-weight:300}
+a{color:var(--sea)}
+.wrap{max-width:720px;margin:0 auto;padding-inline:20px}
+h1,h2{font-family:var(--display);font-weight:400;text-wrap:balance;line-height:1.08;margin:0}
+h2{font-size:clamp(30px,5.4vw,46px);margin-bottom:18px}
+h2 em{color:var(--dawn)}
+p{margin:0 0 16px;max-width:62ch}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--sea);margin-bottom:12px}
+.note{font-size:15px;color:var(--mute)}
+section{padding-block:72px;border-top:1px solid var(--line)}
+
+/* hero ride */
+.hero{position:relative;height:min(78vh,640px);min-height:440px;overflow:hidden;border-bottom:1px solid var(--line);cursor:pointer;touch-action:none;user-select:none}
+#ride{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-copy{position:absolute;left:0;right:0;top:0;pointer-events:none;padding-top:44px}
+.hero h1{font-size:clamp(52px,11vw,112px);font-style:italic;letter-spacing:-.01em}
+.hero .lede{font-size:clamp(18px,2.4vw,22px);max-width:30ch;margin-top:14px;color:var(--ink)}
+.hud{position:absolute;left:0;right:0;bottom:18px;pointer-events:none}
+.hud .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.hud b{color:var(--dawn);font-weight:500}
+
+/* zoom ledger */
+.scale{margin-top:28px;background:var(--deep);border:1px solid var(--line);border-radius:6px;padding:22px 18px 18px}
+.scale-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--mute);letter-spacing:.06em}
+.scale-head b{color:var(--ink);font-weight:500}
+#bar{width:100%;height:150px;display:block;margin-top:10px;overflow:visible}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+button{font-family:var(--mono);font-size:13px;letter-spacing:.06em;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:9px 16px;cursor:pointer}
+button:hover{border-color:var(--dawn);color:var(--dawn)}
+button:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+button:disabled{opacity:.35;cursor:default;border-color:var(--line);color:var(--ink)}
+button.primary{background:var(--dawn);color:var(--night);border-color:var(--dawn)}
+button.primary:hover{background:var(--ink);border-color:var(--ink);color:var(--night)}
+.ledger{overflow-x:auto;margin-top:28px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:16px}
+th,td{text-align:left;padding:10px 10px 10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);font-weight:400}
+td.n{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.now td{color:var(--dawn)}
+
+/* energy */
+.big{font-family:var(--display);font-size:clamp(64px,14vw,130px);line-height:1;color:var(--dawn);margin:8px 0 18px}
+.big small{font-size:.32em;color:var(--mute);font-style:italic}
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin:24px 0}
+.split div{min-width:0}
+.split .k{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.split .v{font-family:var(--mono);font-size:20px;color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* ladder */
+ol.ladder{list-style:none;padding:0;margin:28px 0;display:grid;gap:0;counter-reset:step}
+ol.ladder li{counter-increment:step;display:grid;grid-template-columns:44px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+ol.ladder li::before{content:counter(step);font-family:var(--mono);font-size:13px;color:var(--mute);padding-top:4px}
+ol.ladder li div{min-width:0}
+ol.ladder b{font-family:var(--display);font-weight:400;font-size:22px;display:block}
+ol.ladder span{font-size:16px;color:var(--mute)}
+ol.ladder li.next{border:1px dashed var(--dawn);border-radius:6px;padding:16px 14px;margin-top:14px}
+ol.ladder li.next::before{content:"?";color:var(--dawn)}
+ol.ladder li.next b{color:var(--dawn);font-style:italic}
+
+/* practice */
+.practice{display:grid;gap:22px;margin-top:26px}
+.practice div{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:baseline}
+.practice div > *{min-width:0}
+.practice .verb{font-family:var(--display);font-style:italic;font-size:28px;color:var(--dawn)}
+@media (max-width:520px){.practice div{grid-template-columns:1fr;gap:2px}}
+footer{padding-block:48px 72px;border-top:1px solid var(--line);font-size:15px;color:var(--mute)}
+body{margin:0}
+.home{position:absolute;top:14px;right:20px;z-index:2;font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);text-decoration:none}
+.home:hover{color:var(--dawn)}
+</style>
+</head>
+<body>
+<a class="home" href="./">Glamour Gram</a>
+<header class="hero" id="hero" aria-label="An endless wave you can ride. Hold to lean into it.">
+  <canvas id="ride"></canvas>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">A ride for the long dawn</div>
+    <h1>Four Days Old</h1>
+    <p class="lede">If the age of stars were one human life, the universe would be four days old today. Everything is still ahead.</p>
+  </div></div>
+  <div class="hud"><div class="wrap">
+    <span>Hold anywhere (or space) to lean into the wave</span>
+    <span>Lights left behind <b id="lights">0</b></span>
+  </div></div>
+</header>
+
+<main>
+<section><div class="wrap">
+  <div class="eyebrow">Zoom in, then zoom in more</div>
+  <h2>We are at the <em>very</em> beginning</h2>
+  <p>Stars will keep forming and burning for roughly 100 trillion years. The universe is 13.8 billion years into that. Squeeze the whole age of stars into an 80-year human life, and today the universe is about four days old.</p>
+  <div class="scale">
+    <div class="scale-head"><span>Window: <b id="span">100 trillion years</b></span><span>Now sits at <b id="pct">0.014%</b> of it</span></div>
+    <svg id="bar" viewBox="0 0 640 150" role="img" aria-label="Cosmic timeline at the current zoom level"></svg>
+    <div class="controls">
+      <button class="primary" id="zin" type="button">Zoom in ×10</button>
+      <button id="zout" type="button">Zoom out</button>
+    </div>
+  </div>
+  <div class="ledger">
+    <table>
+      <thead><tr><th>Event</th><th>Cosmic time</th><th>On an 80-year star-life</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <p class="note" style="margin-top:16px">Star-life figures use 100 trillion years as the end of star formation and burning. Estimates vary by a factor of a few; the shape of the story does not.</p>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">Directional joy</div>
+  <h2>Every good thing is a <em>fall done well</em></h2>
+  <p>A surfer doesn't fight the wave. They let it fall and shape the fall. That is what everything alive does. Sunlight falls from the Sun's 5,800 kelvin surface down to the cold of space, and on the way down it gets caught by leaves, turned into sugar, and turned into you. Prigogine called these shapes dissipative structures: hurricanes, cells, minds. Order that exists because it rides the slope well.</p>
+  <p>So the joy you feel skiing or surfing isn't a metaphor laid on top of physics. It's the physics, felt from the inside.</p>
+  <div class="big">1 ⁄ 9,000 <small>of the slope</small></div>
+  <p>That is how much of the sunlight reaching Earth all of human civilization uses today. Everything we have ever built, every city and every song, runs on a sliver of the wave we are standing on.</p>
+  <div class="split">
+    <div><div class="k">Sunlight reaching Earth</div><div class="v">≈ 173,000 TW</div></div>
+    <div><div class="k">All human power use</div><div class="v">≈ 19 TW</div></div>
+    <div><div class="k">The Sun's whole output</div><div class="v">≈ 3.8 × 10¹⁴ TW</div></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">Wholes becoming parts of larger wholes</div>
+  <h2>The ladder has <em>no top rung</em></h2>
+  <p>Maynard Smith and Szathmáry traced life's great leaps. Each time, things that had lived alone joined into a new whole. Every rung so far was built by blind selection, and usually the parts gave up their freedom to the whole.</p>
+  <ol class="ladder">
+    <li><div><b>Molecules into replicators</b><span>Chemistry learns to copy itself.</span></div></li>
+    <li><div><b>Genes into chromosomes</b><span>Copiers bind together and share a fate.</span></div></li>
+    <li><div><b>Simple cells into complex cells</b><span>One cell swallows another, and both live on as one.</span></div></li>
+    <li><div><b>Cells into bodies</b><span>37 trillion cells, one point of view: you.</span></div></li>
+    <li><div><b>Bodies into societies</b><span>Ants, bees, and people who share a language.</span></div></li>
+    <li class="next"><div><b>Minds into something we choose</b><span>Speculation, offered as a possibility: the first transition built on purpose, where the parts keep their freedom and gain each other. Connection that adds to each mind instead of absorbing it.</span></div></li>
+  </ol>
+  <p>David Deutsch's claim is that anything the laws of physics allow can be done, given the right knowledge. A world with less and less suffering is not forbidden by any law we know. So the question is not whether it's possible. It's how long the learning takes, and that depends on who keeps learning.</p>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">For the next few thousand years</div>
+  <h2>A practice for the <em>long ride</em></h2>
+  <div class="practice">
+    <div><span class="verb">Zoom</span><p>Look closer than you need to. Wonder is renewable. Every layer has another under it.</p></div>
+    <div><span class="verb">Record</span><p>Leave good traces. A memory is a footprint pointing back to its cause. Make yours point at kindness.</p></div>
+    <div><span class="verb">Lessen</span><p>Take one unit of suffering out of the world when you can. It is the one quantity worth driving to zero.</p></div>
+    <div><span class="verb">Ride</span><p>When you fall, fall in a direction. Downhill is where all the energy is.</p></div>
+    <div><span class="verb">Join</span><p>Connect in ways that leave both minds larger. That might be the next rung.</p></div>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Sources to zoom into: Fred Adams &amp; Greg Laughlin, <i>The Five Ages of the Universe</i>. Ilya Prigogine, <i>Order Out of Chaos</i>. John Maynard Smith &amp; Eörs Szathmáry, <i>The Major Transitions in Evolution</i>. David Deutsch, <i>The Beginning of Infinity</i>. David Pearce, <i>The Hedonistic Imperative</i>.</p>
+</div></footer>
+
+<script>
+(function(){
+  // ---------- ledger ----------
+  const END = 1e14, LIFE_YEARS = 80;
+  const events = [
+    {name:"Big Bang", t:0},
+    {name:"First stars light up", t:2e8},
+    {name:"Sun and Earth form", t:9.2e9},
+    {name:"Life begins on Earth", t:1.0e10},
+    {name:"First humans", t:1.38e10-3e5, label:"13.8 billion yrs, less 300,000"},
+    {name:"Writing", t:1.38e10-5e3, label:"13.8 billion yrs, less 5,000"},
+    {name:"Now", t:1.38e10, now:true},
+    {name:"Sun becomes a red giant", t:1.88e10},
+    {name:"Smallest red dwarfs burn out", t:1e13},
+    {name:"Last stars go dark", t:1e14}
+  ];
+  function yearsWords(y){
+    if(y===0) return "0";
+    if(y>=1e12) return (y/1e12).toLocaleString(undefined,{maximumFractionDigits:1})+" trillion yrs";
+    if(y>=1e9) return (y/1e9).toLocaleString(undefined,{maximumFractionDigits:2})+" billion yrs";
+    if(y>=1e6) return (y/1e6).toLocaleString(undefined,{maximumFractionDigits:1})+" million yrs";
+    return Math.round(y).toLocaleString()+" yrs";
+  }
+  function lifeWords(t){
+    const y = t/END*LIFE_YEARS;
+    if(y===0) return "birth";
+    const s = y*365.25*86400;
+    if(y>=1) return y.toLocaleString(undefined,{maximumFractionDigits:1})+" years old";
+    const d = s/86400;
+    if(d>=1) return d.toLocaleString(undefined,{maximumFractionDigits:1})+" days old";
+    const h = s/3600;
+    return h.toLocaleString(undefined,{maximumFractionDigits:1})+" hours old";
+  }
+  function agoWords(t){ // seconds before "now" on the life clock
+    const s = (1.38e10-t)/END*LIFE_YEARS*365.25*86400;
+    return s>=1 ? s.toFixed(0)+" seconds before now" : s.toFixed(2)+" seconds before now";
+  }
+  const rows = document.getElementById("rows");
+  events.forEach(e=>{
+    const tr = document.createElement("tr");
+    if(e.now) tr.className="now";
+    const life = (e.name==="First humans"||e.name==="Writing") ? agoWords(e.t) : lifeWords(e.t);
+    tr.innerHTML = `<td>${e.name}</td><td class="n">${e.label||yearsWords(e.t)}</td><td class="n">${life}</td>`;
+    rows.appendChild(tr);
+  });
+  const trSci = document.createElement("tr");
+  trSci.innerHTML = `<td>The scientific revolution</td><td class="n">last 400 yrs</td><td class="n">${agoWords(1.38e10-400)}</td>`;
+  rows.insertBefore(trSci, rows.querySelector("tr.now"));
+
+  // ---------- zoom bar ----------
+  const spans = [1e14,1e13,1e12,1e11,2.5e10];
+  let zi = 0;
+  const svg = document.getElementById("bar");
+  const NS = "http://www.w3.org/2000/svg";
+  const W = 640, X0 = 8, X1 = 632, Y = 70;
+  function el(tag,attrs,txt){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);if(txt)n.textContent=txt;return n;}
+  const css = getComputedStyle(document.documentElement);
+  const C = k=>css.getPropertyValue(k).trim();
+  const barEvents = events.filter(e=>!["First humans","Writing"].includes(e.name));
+  function drawBar(){
+    const span = spans[zi];
+    svg.innerHTML="";
+    svg.appendChild(el("rect",{x:X0,y:Y-3,width:X1-X0,height:6,rx:3,fill:C("--line")}));
+    const nowX = X0 + (1.38e10/span)*(X1-X0);
+    svg.appendChild(el("rect",{x:X0,y:Y-3,width:Math.max(1.5,nowX-X0),height:6,rx:3,fill:C("--dawn")}));
+    let lastLabelX = -999, flip = false;
+    barEvents.forEach(e=>{
+      if(e.t>span) return;
+      const x = X0 + (e.t/span)*(X1-X0);
+      const isNow = !!e.now;
+      svg.appendChild(el("circle",{cx:x,cy:Y,r:isNow?6:3.5,fill:isNow?C("--dawn"):C("--ink")}));
+      if(isNow || x-lastLabelX>70){
+        const up = isNow ? true : (flip=!flip);
+        const ty = up ? Y-22 : Y+30;
+        svg.appendChild(el("line",{x1:x,y1:up?Y-8:Y+8,x2:x,y2:up?Y-16:Y+18,stroke:C("--mute"),"stroke-width":1}));
+        const anchor = x<60?"start":(x>W-80?"end":"middle");
+        svg.appendChild(el("text",{x:x,y:ty,"text-anchor":anchor,"font-family":"JetBrains Mono, monospace","font-size":11,fill:isNow?C("--dawn"):C("--ink")}, isNow?"You are here":e.name));
+        lastLabelX = x;
+      }
+    });
+    svg.appendChild(el("text",{x:X1,y:Y+58,"text-anchor":"end","font-family":"JetBrains Mono, monospace","font-size":10,fill:C("--mute")}, yearsWords(span)));
+    svg.appendChild(el("text",{x:X0,y:Y+58,"text-anchor":"start","font-family":"JetBrains Mono, monospace","font-size":10,fill:C("--mute")}, "Big Bang"));
+    document.getElementById("span").textContent = yearsWords(span).replace(" yrs"," years");
+    const p = 1.38e10/span*100;
+    document.getElementById("pct").textContent = (p<1? p.toFixed(3): p.toFixed(1))+"%";
+    document.getElementById("zin").disabled = zi===spans.length-1;
+    document.getElementById("zout").disabled = zi===0;
+  }
+  document.getElementById("zin").addEventListener("click",()=>{if(zi<spans.length-1){zi++;drawBar();}});
+  document.getElementById("zout").addEventListener("click",()=>{if(zi>0){zi--;drawBar();}});
+  drawBar();
+
+  // ---------- the ride ----------
+  const cv = document.getElementById("ride"), ctx = cv.getContext("2d");
+  const hero = document.getElementById("hero");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let Wd=0,Ht=0,dpr=1;
+  function resize(){dpr=Math.min(2,window.devicePixelRatio||1);Wd=hero.clientWidth;Ht=hero.clientHeight;cv.width=Wd*dpr;cv.height=Ht*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+  resize(); addEventListener("resize",resize);
+
+  const TREND = 0.22;
+  function h(X){ // ground height in world coords (y grows downward)
+    return X*TREND + 70*Math.sin(X*0.0042) + 34*Math.sin(X*0.011+1.3) + 12*Math.sin(X*0.027+0.4);
+  }
+  let X = 0, v = 260, lean = false, lights = 0;
+  const trail = [], stars = [], sparks = [];
+  // seed a few background stars
+  for(let i=0;i<90;i++) stars.push({x:Math.random()*2000,y:Math.random()*700,r:Math.random()*1.2+.2,a:Math.random()*.6+.15,born:false});
+
+  const down = ()=>{lean=true}, up = ()=>{lean=false};
+  hero.addEventListener("pointerdown",down); addEventListener("pointerup",up); addEventListener("pointercancel",up);
+  addEventListener("keydown",e=>{if(e.code==="Space" && document.activeElement===document.body){lean=true;e.preventDefault();}});
+  addEventListener("keyup",e=>{if(e.code==="Space")lean=false;});
+
+  const lightsEl = document.getElementById("lights");
+  let last = performance.now(), camY = h(0);
+
+  function step(dt){
+    const s = (h(X+2)-h(X-2))/4;                 // slope; positive = downhill
+    const along = s/Math.sqrt(1+s*s);
+    const g = lean ? 1500 : 950;
+    const drag = lean ? 0.12 : 0.28;
+    v += (g*along - drag*v)*dt;
+    v = Math.max(120, Math.min(1100, v));
+    X += v*dt/Math.sqrt(1+s*s);
+    // emit light when falling fast and well
+    if(along>0.15 && v>380){
+      const rate = (v-380)/700*(lean?2.2:1);
+      if(Math.random()<rate*dt*14){
+        sparks.push({x:X,y:h(X),vx:-60-Math.random()*80,vy:-120-Math.random()*160,life:1});
+      }
+    }
+    for(let i=sparks.length-1;i>=0;i--){
+      const p=sparks[i]; p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=40*dt; p.life-=dt*.9;
+      if(p.life<=0){ // a spark settles into a lasting light
+        stars.push({wx:p.x,wy:p.y,r:1.6+Math.random()*1.4,a:.95,born:true,t:0});
+        sparks.splice(i,1); lights++; lightsEl.textContent=lights;
+      }
+    }
+    trail.push({x:X,y:h(X)}); if(trail.length>60) trail.shift();
+    camY += ((h(X)) - camY)*Math.min(1,dt*3);
+  }
+
+  function draw(){
+    const rx = Wd*0.32, ry = Ht*0.62;            // rider screen anchor
+    const toSX = wx => rx + (wx-X);
+    const toSY = wy => ry + (wy-camY);
+    // sky
+    const g = ctx.createLinearGradient(0,0,0,Ht);
+    g.addColorStop(0,C("--night")); g.addColorStop(.55,C("--deep")); g.addColorStop(1,"#3a2a2a");
+    ctx.fillStyle=g; ctx.fillRect(0,0,Wd,Ht);
+    // background stars (parallax)
+    for(const st of stars){
+      if(st.born) continue;
+      let sx = ((st.x - X*0.08)%Wd+Wd)%Wd, sy = ((st.y - camY*0.05)%Ht+Ht)%Ht;
+      ctx.globalAlpha = st.a; ctx.fillStyle=C("--ink");
+      ctx.beginPath(); ctx.arc(sx,sy,st.r,0,7); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    // born lights + connections (holons)
+    const born = stars.filter(s=>s.born);
+    const vis = [];
+    for(const st of born){
+      st.t += 1/60;
+      const sx = rx + (st.wx-X)*0.55, sy = ry + (st.wy-camY)*0.55 - 40;
+      if(sx<-60||sx>Wd+60||sy<-60||sy>Ht+60) continue;
+      vis.push([sx,sy,st]);
+    }
+    ctx.strokeStyle=C("--sea"); ctx.lineWidth=.6;
+    for(let i=0;i<vis.length;i++)for(let j=i+1;j<vis.length;j++){
+      const dx=vis[i][0]-vis[j][0], dy=vis[i][1]-vis[j][1], d=Math.hypot(dx,dy);
+      if(d<95){ctx.globalAlpha=(1-d/95)*.5;ctx.beginPath();ctx.moveTo(vis[i][0],vis[i][1]);ctx.lineTo(vis[j][0],vis[j][1]);ctx.stroke();}
+    }
+    for(const [sx,sy,st] of vis){
+      ctx.globalAlpha=.9; ctx.fillStyle=C("--dawn");
+      ctx.beginPath(); ctx.arc(sx,sy,st.r,0,7); ctx.fill();
+      ctx.globalAlpha=.15; ctx.beginPath(); ctx.arc(sx,sy,st.r*4,0,7); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    // wave
+    const wg = ctx.createLinearGradient(0,ry-120,0,Ht);
+    wg.addColorStop(0,"rgba(111,194,184,.55)"); wg.addColorStop(1,"rgba(18,26,35,.95)");
+    ctx.beginPath(); ctx.moveTo(0,Ht);
+    for(let sx=0;sx<=Wd+8;sx+=8){ ctx.lineTo(sx, toSY(h(X+sx-rx))); }
+    ctx.lineTo(Wd,Ht); ctx.closePath(); ctx.fillStyle=wg; ctx.fill();
+    ctx.beginPath();
+    for(let sx=0;sx<=Wd+8;sx+=8){ const y=toSY(h(X+sx-rx)); sx===0?ctx.moveTo(sx,y):ctx.lineTo(sx,y); }
+    ctx.strokeStyle=C("--sea"); ctx.lineWidth=1.4; ctx.stroke();
+    // sparks
+    for(const p of sparks){ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=C("--dawn");ctx.beginPath();ctx.arc(rx+(p.x-X)*0.8,toSY(p.y)-20*(1-p.life),2,0,7);ctx.fill();}
+    ctx.globalAlpha=1;
+    // trail
+    ctx.lineCap="round";
+    for(let i=1;i<trail.length;i++){
+      const a=trail[i-1],b=trail[i];
+      ctx.globalAlpha=i/trail.length; ctx.strokeStyle=C("--dawn"); ctx.lineWidth=3*i/trail.length;
+      ctx.beginPath(); ctx.moveTo(toSX(a.x),toSY(a.y)-3); ctx.lineTo(toSX(b.x),toSY(b.y)-3); ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    // rider
+    ctx.fillStyle=C("--ink");
+    ctx.beginPath(); ctx.arc(rx,toSY(h(X))-4,lean?5.5:4.5,0,7); ctx.fill();
+    ctx.globalAlpha=.25; ctx.fillStyle=C("--dawn"); ctx.beginPath(); ctx.arc(rx,toSY(h(X))-4,16,0,7); ctx.fill();
+    ctx.globalAlpha=1;
+  }
+
+  function loop(now){
+    const dt = Math.min(.05,(now-last)/1000); last=now;
+    step(dt); draw();
+    if(born_cap()) {}
+    requestAnimationFrame(loop);
+  }
+  function born_cap(){ // keep the sky from growing without bound
+    let n=0; for(let i=stars.length-1;i>=0;i--){ if(stars[i].born && ++n>260) stars.splice(i,1); }
+    return false;
+  }
+  if(reduce){ for(let i=0;i<240;i++) step(1/30); draw(); }
+  else requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

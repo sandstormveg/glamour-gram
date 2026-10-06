@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Glamour Gram</title>
+<meta name="description" content="Natural philosophy for the long dawn: interactive pages on physics, wonder and the futures we could spell into being.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a title page and a short table of contents, like the front of a grimoire that is really a notebook. */
+:root{
+  --night:#0b1016; --deep:#121a23; --line:#26323f; --ink:#e9e4d8; --mute:#9aa5ae;
+  --dawn:#f0a85a; --sea:#6fc2b8;
+  --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --body:"Newsreader","Iowan Old Style",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--night)}
+body{margin:0;background:var(--night);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.6;font-weight:300}
+.wrap{max-width:720px;margin:0 auto;padding-inline:20px}
+header{padding-block:72px 48px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--sea);margin-bottom:14px}
+h1{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(60px,13vw,128px);line-height:1;margin:0}
+h1 span{color:var(--dawn)}
+.lede{font-size:clamp(19px,2.4vw,23px);max-width:36ch;margin:18px 0 0}
+.gloss{font-size:16px;color:var(--mute);max-width:56ch;margin-top:18px}
+ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+li{border-bottom:1px solid var(--line)}
+li a{display:grid;grid-template-columns:52px 1fr;gap:16px;padding:26px 0;color:inherit;text-decoration:none}
+li a > *{min-width:0}
+li .n{font-family:var(--mono);font-size:13px;color:var(--mute);padding-top:10px}
+li b{font-family:var(--display);font-weight:400;font-size:clamp(28px,5vw,40px);line-height:1.1;display:block}
+li span{color:var(--mute);font-size:17px}
+li a:hover b,li a:focus-visible b{color:var(--dawn)}
+li a:focus-visible{outline:2px solid var(--sea);outline-offset:4px}
+footer{padding-block:48px 72px;font-size:15px;color:var(--mute)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Natural philosophy for the long dawn</div>
+  <h1>Glamour <span>Gram</span></h1>
+  <p class="lede">Pages for zooming in, being amazed, and zooming in again.</p>
+  <p class="gloss"><i>Glamour</i> began as a Scots form of <i>grammar</i>: learning so deep it looked like enchantment. These pages are notes toward that kind of learning, about a universe that is still very young.</p>
+</div></header>
+<main><div class="wrap">
+  <ol>
+    <li><a href="four-days-old.html"><span class="n">I</span><div><b>Four Days Old</b><span>Ride an endless wave, zoom into the age of stars, and climb the ladder of wholes.</span></div></a></li>
+    <li><a href="three-letter-spell.html"><span class="n">II</span><div><b>The Three-Letter Spell</b><span>Everything is written in three letters. Spell a diamond, a pencil and yourself.</span></div></a></li>
+  </ol>
+</div></main>
+<footer><div class="wrap">
+  <p>Zoom. Record. Lessen. Ride. Join.</p>
+</div></footer>
+</body>
+</html>
