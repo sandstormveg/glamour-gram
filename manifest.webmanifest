@@ -1,8 +1,8 @@
 {
-  "name": "Glamour Gram",
-  "short_name": "Glamour Gram",
+  "name": "GlamGram",
+  "short_name": "GlamGram",
   "description": "Natural philosophy for the long dawn. Interactive pages about physics and wonder, and a living index that grows a gene with every page.",
-  "id": "./",
+  "id": "/glamour-gram/glamgram",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -15,7 +15,6 @@
   "icons": [
     {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
     {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
-    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
-    {"src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
   ]
 }

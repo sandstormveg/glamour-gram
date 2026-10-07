@@ -7,6 +7,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="GlamGram">
 <script>if("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
 <title>Glamour Gram</title>
 <meta name="description" content="Natural philosophy for the long dawn. A living index: every page is a cell, and every new page adds a gene to the organism.">
@@ -78,7 +79,7 @@ ol.genome span{color:var(--mute);font-size:17px;display:block}
 
 <footer><div class="wrap">
   <p>Zoom. Record. Lessen. Ride. Join.</p>
-  <p class="keep" id="keep" hidden><span id="keepText">Every page works offline. Install Glamour Gram and it opens like an app.</span><button type="button" id="keepBtn">Install</button></p>
+  <p class="keep" id="keep" hidden><span id="keepText">Every page works offline. Install GlamGram and it opens like an app.</span><button type="button" id="keepBtn">Install</button></p>
 </div></footer>
 
 <script>
@@ -587,7 +588,7 @@ else {
   addEventListener("appinstalled", () => { keep.hidden = true; });
   btn.addEventListener("click", async () => { if(!offer) return; offer.prompt(); await offer.userChoice; offer = null; keep.hidden = true; });
   if(/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)){
-    text.textContent = "Every page works offline. To keep Glamour Gram on your home screen, tap Share, then Add to Home Screen.";
+    text.textContent = "Every page works offline. To keep GlamGram on your home screen, tap Share, then Add to Home Screen.";
     btn.hidden = true; keep.hidden = false;
   }
 })();

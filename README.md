@@ -16,4 +16,4 @@ The home page is a living organism. Each page is a cell you can zoom into, then 
 
 Plain HTML, no build step. Pages III onward share `glam.css`. Served with GitHub Pages from the `main` branch.
 
-It's also an installable app that works offline: `manifest.webmanifest` and the service worker `sw.js`. The icons are drawn by `icons/make-icons.js` (run `node make-icons.js` in `icons/`).
+It's also an installable app, GlamGram, that works offline: `manifest.webmanifest` and the service worker `sw.js`. The icons are drawn by `icons/make-icons.js` (run `node make-icons.js` in `icons/`).

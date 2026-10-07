@@ -1,7 +1,7 @@
 /* Glamour Gram service worker: every page stays readable offline.
-   Pages come from the network when it answers within a few seconds, so new versions show at once; the cached copy is the fallback.
+   Pages and the manifest come from the network when it answers within a few seconds, so new versions show at once; the cached copy is the fallback.
    Other files are served from the cache and refreshed in the background. When you add a page, list it in PAGES and bump VERSION. */
-const VERSION = "glamour-gram-v1";
+const VERSION = "glamour-gram-v2";
 const PAGES = ["./", "index.html", "four-days-old.html", "three-letter-spell.html", "the-duet.html", "specious-present.html",
   "microcosm.html", "workarounds.html", "price-of-a-mind.html", "view-from-elsewhere.html", "every-path.html"];
 const FILES = ["glam.css", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png", "icons/apple-touch-icon.png"];
@@ -31,7 +31,7 @@ self.addEventListener("fetch", e => {
   const req = e.request;
   if(req.method !== "GET") return;
   const url = new URL(req.url);
-  if(req.mode === "navigate") e.respondWith(page(e));
+  if(req.mode === "navigate" || url.pathname.endsWith(".webmanifest")) e.respondWith(page(e));
   else if(url.origin === location.origin) e.respondWith(stale(e, req, req));
   else if(FONT_HOSTS.includes(url.hostname)) e.respondWith(font(e));
 });
@@ -61,7 +61,7 @@ async function page(e){
   });
   e.waitUntil(net.catch(() => {}));
   try { return await Promise.race([net, wait(4000).then(async () => (await cached) || net)]); }
-  catch(err){ return (await cached) || (await cache.match("./")) || Response.error(); }
+  catch(err){ return (await cached) || (req.mode === "navigate" && await cache.match("./")) || Response.error(); }
 }
 
 // Stale-while-revalidate: answer from the cache, then refresh it.
