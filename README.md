@@ -12,5 +12,8 @@ The home page is a living organism. Each page is a cell you can zoom into, then 
 - **VI · Nature's Workarounds**: a swallowed bacterium turned nitrogen factory, a brainless maze-solver, and the twelve hallmarks of aging.
 - **VII · The Price of a Mind**: von Neumann machines shuttle data while tissue computes where it stands. What would a mind cost in watts, and an open problem.
 - **VIII · The View from Elsewhere**: you can't see the state you're in. Wear a lens until it fades, forecast your own mood, heat a landscape of mind-states, and write a letter to a later you.
+- **IX · Every Path at Once**: light, a corgi and a column of ants all find the fastest way across a border, and none of them can see it. Race a lifeguard, scrape a mirror into a grating, grow an ant trail, and play fetch with Elvis.
 
 Plain HTML, no build step. Pages III onward share `glam.css`. Served with GitHub Pages from the `main` branch.
+
+It's also an installable app that works offline: `manifest.webmanifest` and the service worker `sw.js`. The icons are drawn by `icons/make-icons.js` (run `node make-icons.js` in `icons/`).

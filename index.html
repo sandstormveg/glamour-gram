@@ -3,6 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1016">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<script>if("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
 <title>Glamour Gram</title>
 <meta name="description" content="Natural philosophy for the long dawn. A living index: every page is a cell, and every new page adds a gene to the organism.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,6 +44,8 @@ ol.genome b{font-family:var(--display);font-weight:400;font-size:clamp(24px,4vw,
 ol.genome a:hover b{color:var(--dawn)}
 ol.genome .gene{font-family:var(--mono);font-size:12px;color:var(--sea);letter-spacing:.06em;margin-top:4px}
 ol.genome span{color:var(--mute);font-size:17px;display:block}
+.keep{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:14px}
+.keep[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -71,6 +78,7 @@ ol.genome span{color:var(--mute);font-size:17px;display:block}
 
 <footer><div class="wrap">
   <p>Zoom. Record. Lessen. Ride. Join.</p>
+  <p class="keep" id="keep" hidden><span id="keepText">Every page works offline. Install Glamour Gram and it opens like an app.</span><button type="button" id="keepBtn">Install</button></p>
 </div></footer>
 
 <script>
@@ -107,7 +115,11 @@ const PAGES = [
   {n:"VIII", slug:"view-from-elsewhere.html", title:"The View from Elsewhere", hue:"--ember", gene:"daydream",
    hook:"You can't see the state you're in. Wear a lens, forecast yourself, heat a landscape, and write to a later you.",
    effect:"Leave it alone and it daydreams; touch it and it snaps back to task.",
-   sections:[["parallax","A parallax"],["lens","The lens"],["forecast","The gap"],["modes","Modes"],["range","Range"],["doors","Doors"],["letter","A letter"],["elsewhere","No true view"]]}
+   sections:[["parallax","A parallax"],["lens","The lens"],["forecast","The gap"],["modes","Modes"],["range","Range"],["doors","Doors"],["letter","A letter"],["elsewhere","No true view"]]},
+  {n:"IX", slug:"every-path.html", title:"Every Path at Once", hue:"--dawn", gene:"ray",
+   hook:"Light, a corgi and a column of ants all find the fastest way across a border. None of them can see it.",
+   effect:"Light crosses the organism and bends in every cell, as if each were a drop of water.",
+   sections:[["lifeguard","The lifeguard"],["fermat","How does light know?"],["every-path","Every path"],["ants","Ants that refract"],["elvis","Elvis"],["right-way","A right way"]]}
 ];
 
 const css = getComputedStyle(document.documentElement);
@@ -295,6 +307,25 @@ const motif = {
     });
     ctx.globalAlpha = 1;
   },
+  ray(x,y,R,t){   // light leaves a lamp along every path across a waterline; the quickest arrives first and lights up
+    const ax = x - R*0.55, ay = y - R*0.42, bx = x + R*0.45, by = y + R*0.48, yI = y + R*0.02, n = 1.33;
+    const T = px => Math.hypot(px - ax, yI - ay) + n*Math.hypot(bx - px, by - yI);
+    let lo = ax, hi = bx; for(let k=0;k<24;k++){ const m1 = lo + (hi - lo)*0.382, m2 = lo + (hi - lo)*0.618; if(T(m1) < T(m2)) hi = m2; else lo = m1; }
+    const xb = (lo + hi)/2, tb = T(xb), s = ((t*0.35) % 1)*tb*1.35;
+    ctx.lineWidth = 1; ctx.strokeStyle = C("--sea"); ctx.globalAlpha = 0.5;
+    ctx.beginPath(); ctx.moveTo(x - R*0.8, yI); ctx.lineTo(x + R*0.8, yI); ctx.stroke();
+    for(let k=-3;k<=3;k++){
+      const px = xb + k*R*0.2, d1 = Math.hypot(px - ax, yI - ay), d2 = Math.hypot(bx - px, by - yI), win = k === 0 && s >= tb;
+      ctx.strokeStyle = win ? C("--dawn") : C("--ink"); ctx.globalAlpha = win ? 0.9 : 0.14;
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(px, yI); ctx.lineTo(bx, by); ctx.stroke();
+      if(s < d1 + n*d2){
+        const air = s < d1, u = air ? s/d1 : (s - d1)/(n*d2);
+        ctx.fillStyle = C("--dawn"); ctx.globalAlpha = 0.85; ctx.beginPath();
+        ctx.arc(air ? ax + (px - ax)*u : px + (bx - px)*u, air ? ay + (yI - ay)*u : yI + (by - yI)*u, Math.max(1, R*0.035), 0, 7); ctx.fill();
+      }
+    }
+    ctx.fillStyle = C("--dawn"); ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(ax, ay, Math.max(1.2, R*0.05), 0, 7); ctx.fill();
+  },
   glow(x,y,R,t){ ctx.fillStyle = C("--dawn"); ctx.globalAlpha = 0.5 + 0.3*Math.sin(t); ctx.beginPath(); ctx.arc(x,y,R*0.15,0,7); ctx.fill(); ctx.globalAlpha = 1; }
 };
 
@@ -437,6 +468,9 @@ function render(t, dt){
     ctx.textAlign = "left";
   });
 
+  // ray gene: light crosses the organism and bends in every cell
+  if(has("ray")) rays(t, dt);
+
   // daydream gene: while it dreams, a haze closes in around it
   if(dream > 0){
     const vg = ctx.createRadialGradient(ox, oy, OR, ox, oy, OR + 0.5*Math.hypot(W, H));
@@ -463,6 +497,77 @@ function daydream(dt){   // returns how fast the organism's time runs
   return 1 - 0.55*dream;
 }
 
+/* ---------- ray gene: a lamp shines through the organism, and every cell bends the light like a drop of water ---------- */
+let lamp = null, aim = null, aimAt = -1e9;
+cv.addEventListener("pointermove", e=>{ const r = cv.getBoundingClientRect(); aim = toWorld(e.clientX - r.left, e.clientY - r.top); aimAt = performance.now(); });
+function trace(x, y, dx, dy){   // one ray: straight lines between cell walls, bent by Snell's law; returns [x, y, n] points
+  const pts = [[x, y, 1]], N_CELL = 1.33;
+  const meet = (cx, cy, r) => { const fx = x - cx, fy = y - cy, b = fx*dx + fy*dy, c = fx*fx + fy*fy - r*r, d = b*b - c; return d < 0 ? null : [-b - Math.sqrt(d), -b + Math.sqrt(d)]; };
+  let inside = -1;
+  if(Math.hypot(x, y) > 0.95){   // from outside, first reach the membrane
+    const m = meet(0, 0, 0.95); if(!m || m[0] < 0) return null;
+    x += dx*m[0]; y += dy*m[0]; pts.push([x, y, 1]);
+  } else cells.forEach((cl, i)=>{ const [cx, cy] = cellXY(cl); if(Math.hypot(x - cx, y - cy) < cl.r) inside = i; });
+  for(let step=0; step<14; step++){
+    let s = Infinity, hit = -1;
+    if(inside >= 0){ const [cx, cy] = cellXY(cells[inside]), m = meet(cx, cy, cells[inside].r); if(m){ s = m[1]; hit = inside; } }
+    else cells.forEach((cl, i)=>{ const [cx, cy] = cellXY(cl), m = meet(cx, cy, cl.r); if(m && m[0] > 1e-6 && m[0] < s){ s = m[0]; hit = i; } });
+    const out = inside < 0 ? meet(0, 0, 0.95) : null;
+    if(hit < 0 || (out && out[1] < s)){ if(out){ x += dx*out[1]; y += dy*out[1]; pts.push([x, y, 1]); } break; }
+    x += dx*s; y += dy*s; pts.push([x, y, inside >= 0 ? N_CELL : 1]);
+    const [cx, cy] = cellXY(cells[hit]), r = cells[hit].r;
+    let nx = (x - cx)/r, ny = (y - cy)/r;                       // the wall's normal, turned to face the incoming ray
+    if(dx*nx + dy*ny > 0){ nx = -nx; ny = -ny; }
+    const eta = inside >= 0 ? N_CELL : 1/N_CELL, ci = -(dx*nx + dy*ny), k = 1 - eta*eta*(1 - ci*ci);
+    if(k < 0){ dx += 2*ci*nx; dy += 2*ci*ny; }                    // trapped: total internal reflection
+    else { const f = eta*ci - Math.sqrt(k); dx = eta*dx + f*nx; dy = eta*dy + f*ny; inside = inside >= 0 ? -1 : hit; }
+    const l = Math.hypot(dx, dy); dx /= l; dy /= l;
+  }
+  return pts;
+}
+function rays(t, dt){
+  const fade = Math.max(0, Math.min(1, (220 - cells[0].r*cam.s)/120));
+  if(fade <= 0) return;
+  const follow = aim && focus < 0 && !reduce && performance.now() - aimAt < 2500;
+  const target = follow ? aim : [1.6*Math.cos(t*0.04 - 2.2), 1.6*Math.sin(t*0.04 - 2.2)];
+  if(!lamp || reduce) lamp = target.slice();
+  else { const k = Math.min(1, dt*(follow ? 8 : 1.2)); lamp[0] += (target[0] - lamp[0])*k; lamp[1] += (target[1] - lamp[1])*k; }
+  const d = Math.hypot(lamp[0], lamp[1]), toward = Math.atan2(-lamp[1], -lamp[0]);
+  const s = Math.max(0, Math.min(1, (1 - d)/0.15)), half = Math.asin(Math.min(1, 0.95/Math.max(d, 0.95)))*(1 - s) + Math.PI*s;
+  const paths = [];
+  for(let k=0;k<21;k++){ const a = toward + half*(2*(k + 0.5)/21 - 1), p = trace(lamp[0], lamp[1], Math.cos(a), Math.sin(a)); if(p) paths.push(p); }
+  ctx.save(); membrane(0.95, t, has("wave")); ctx.clip();
+  ctx.globalCompositeOperation = "lighter"; ctx.strokeStyle = C("--dawn"); ctx.lineWidth = 1; ctx.globalAlpha = 0.13*fade;
+  paths.forEach(p=>{ ctx.beginPath(); p.forEach(([x, y], i)=>{ const [sx, sy] = toScreen(x, y); i ? ctx.lineTo(sx, sy) : ctx.moveTo(sx, sy); }); ctx.stroke(); });
+  ctx.globalAlpha = 0.16*fade; ctx.beginPath();   // brighter inside the drops, where the light slows and bends
+  paths.forEach(p=>{ for(let i=1;i<p.length;i++) if(p[i][2] > 1){ const [x0, y0] = toScreen(p[i - 1][0], p[i - 1][1]), [x1, y1] = toScreen(p[i][0], p[i][1]); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); } });
+  ctx.stroke();
+  // pulses of light along each ray, slower inside the cells; two fronts at a time, each with a short tail
+  if(!reduce){
+    ctx.fillStyle = C("--dawn");
+    const r = Math.min(2.6, Math.max(1.2, cam.s*0.005));
+    paths.forEach(p=>{
+      for(const front of [0, 1.7]) for(let k=0;k<4;k++){
+        let left = (t*0.42 + front) % 3.4 - k*0.025;
+        for(let i=1;i<p.length;i++){
+          const [x0, y0] = p[i - 1], [x1, y1, n] = p[i], len = Math.hypot(x1 - x0, y1 - y0);
+          if(left > len*n){ left -= len*n; continue; }
+          if(left < 0) break;
+          const u = left/(len*n), x = x0 + (x1 - x0)*u, y = y0 + (y1 - y0)*u;
+          if(Math.hypot(x, y) < 0.95){ const [sx, sy] = toScreen(x, y); ctx.globalAlpha = (0.75 - k*0.17)*fade; ctx.beginPath(); ctx.arc(sx, sy, r*(1 - k*0.15), 0, 7); ctx.fill(); }
+          break;
+        }
+      }
+    });
+  }
+  ctx.restore();
+  if(follow && d > 0.2){   // the lamp, in your hand
+    const [sx, sy] = toScreen(lamp[0], lamp[1]), g = ctx.createRadialGradient(sx, sy, 0, sx, sy, 14);
+    g.addColorStop(0, "rgba(240,168,90,0.6)"); g.addColorStop(1, "rgba(240,168,90,0)");
+    ctx.globalAlpha = fade; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sx, sy, 14, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+  }
+}
+
 /* ---------- run ---------- */
 addEventListener("resize", resize);
 resize();
@@ -472,6 +577,20 @@ else {
   let last = performance.now(), t = 0;
   (function loop(now){ const dt = Math.min(0.05, (now-last)/1000); last = now; const k = daydream(dt); t += dt*k; render(t, dt*k); requestAnimationFrame(loop); })(last);
 }
+
+/* ---------- keep it: install as an app, where the browser allows ---------- */
+(function(){
+  const keep = document.getElementById("keep"), btn = document.getElementById("keepBtn"), text = document.getElementById("keepText");
+  if(matchMedia("(display-mode: standalone)").matches || navigator.standalone) return;
+  let offer = null;
+  addEventListener("beforeinstallprompt", e => { e.preventDefault(); offer = e; btn.hidden = false; keep.hidden = false; });
+  addEventListener("appinstalled", () => { keep.hidden = true; });
+  btn.addEventListener("click", async () => { if(!offer) return; offer.prompt(); await offer.userChoice; offer = null; keep.hidden = true; });
+  if(/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)){
+    text.textContent = "Every page works offline. To keep Glamour Gram on your home screen, tap Share, then Add to Home Screen.";
+    btn.hidden = true; keep.hidden = false;
+  }
+})();
 </script>
 </body>
 </html>

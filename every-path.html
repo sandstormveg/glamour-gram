@@ -1,0 +1,904 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1016">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<script>if("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
+<title>Every Path at Once · Glamour Gram</title>
+<meta name="description" content="Light, a corgi and a column of ants all find the fastest way across a border, and none of them can see it. Race a lifeguard, scrape a mirror into a grating, grow an ant trail, and play fetch with Elvis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
+<style>
+/* Layout: the title is light racing along every path from a lamp into water, and the first to arrive lights up. Then the lifeguard's problem, Fermat and the objection, Feynman's arrows on a mirror you can scrape, ants that refract, a corgi that may plan, and the turn back to the reader. */
+[hidden]{display:none!important}
+.hero canvas{cursor:crosshair}
+.controls label{min-width:0;max-width:100%}
+.controls select{min-width:0}
+@media (max-width:420px){.controls select{font-size:12px;padding:6px 4px}}
+blockquote{margin:24px 0;padding:4px 0 4px 18px;border-left:2px solid var(--dawn);font-family:var(--display);font-style:italic;font-size:clamp(20px,3vw,24px);line-height:1.4;max-width:58ch}
+blockquote cite{display:block;margin-top:8px;font-family:var(--mono);font-style:normal;font-size:12px;letter-spacing:.06em;color:var(--mute)}
+.say{font-size:17px;margin:14px 0 0;min-height:1.6em;max-width:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--mute)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.legend i.ring{background:transparent;border:2px solid var(--sea)}
+.legend i.bar{border-radius:0;height:2px;width:16px;vertical-align:3px}
+.duo{display:grid;grid-template-columns:1fr;gap:14px}
+.duo > div{min-width:0}
+@media (min-width:640px){.duo{grid-template-columns:1.1fr 1fr}}
+.callout ul{margin:0;padding-left:20px}
+.callout li{margin-bottom:8px;max-width:62ch}
+input.spectrum{accent-color:var(--ink)}
+.note a{color:var(--sea)}
+</style>
+</head>
+<body>
+<header class="hero" aria-label="Light leaves a lamp along every path at once. The paths bend where they enter water, and the first to reach the eye lights up.">
+  <canvas id="heroCanvas"></canvas>
+  <a class="home corner" href="./">Glamour Gram</a>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">Glamour Gram · IX</div>
+    <h1>Every Path at Once</h1>
+    <p class="lede">Light, a corgi and a column of ants all find the fastest way across a border. None of them can see it. Here is how they find it anyway.</p>
+  </div></div>
+</header>
+
+<main>
+<section id="lifeguard"><div class="wrap">
+  <div class="eyebrow">A race</div>
+  <h2>The shortest way is <em>not the fastest</em></h2>
+  <p>You're a lifeguard. Someone is in trouble, out in the water and further down the beach. You run much faster than you swim. Which way do you go?</p>
+  <p>Straight at them is the shortest path, but it spends too long in the water. Running to the point nearest them and then swimming straight out spends too long on the sand. The fastest way is in between. It bends at the waterline.</p>
+  <div class="instrument">
+    <canvas id="guardCanvas" aria-label="A beach above, the sea below. A lifeguard's route runs to a point on the waterline and swims to the swimmer. Below the beach, a curve shows the total time for every crossing point."></canvas>
+    <div class="controls">
+      <label>Where you reach the water <input type="range" id="guardX" min="0" max="1000" value="380"></label>
+      <label>Who's crossing
+        <select id="guardWho">
+          <option value="guard">You: run 4× as fast as you swim</option>
+          <option value="elvis">Elvis: runs 6.40 m/s, swims 0.91</option>
+          <option value="water">Light: from air into water</option>
+          <option value="glass">Light: from air into glass</option>
+          <option value="diamond">Light: from air into diamond</option>
+          <option value="ants">Ants: smooth plastic to rough felt</option>
+        </select>
+      </label>
+    </div>
+    <div class="controls">
+      <button type="button" class="primary" id="guardRace">Race the fastest</button>
+      <button type="button" id="guardShow" aria-pressed="false">Show the fastest</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Your route</div><div class="v" id="guardTime">–</div></div>
+      <div><div class="k">sin a ÷ sin b</div><div class="v" id="guardSines">–</div></div>
+      <div><div class="k" id="guardSpeedK">Speed ÷ speed</div><div class="v" id="guardSpeeds">–</div></div>
+    </div>
+    <p class="say" id="guardSay" aria-live="polite"></p>
+    <p class="caption">Drag the point where you reach the water, or use the slider. The curve under the beach is the total time for every crossing point, so the best crossing sits right above its lowest point. Angles a and b are measured from the line straight out to sea.</p>
+  </div>
+  <p>Find the bottom of the curve and compare the two numbers. At the fastest crossing, the sines of the two angles are in the same ratio as the two speeds. That's the law of refraction. Ibn Sahl wrote it down in Baghdad in 984, in a book on burning mirrors and lenses. Thomas Harriot found it again in 1602 and Willebrord Snell in 1621, and neither published. René Descartes did, in 1637. In English it's called Snell's law.</p>
+  <p>Now switch the crossing to light. Light is about a quarter slower in water than in air, and it bends by exactly this rule. That's why a straw in a glass looks broken at the surface.</p>
+</div></section>
+
+<section id="fermat"><div class="wrap">
+  <div class="eyebrow">An objection</div>
+  <h2>How does light <em>know?</em></h2>
+  <p>In 1662 Pierre de Fermat showed that the law of refraction follows from one idea: light takes the path of least time. It only works if light is slower in water than in air, which nobody could check. Léon Foucault finally measured it in 1850.</p>
+  <p>The idea was beautiful, and it was a scandal. Claude Clerselier, defending Descartes, wrote back that "nature takes the quickest way" is a moral principle, not a physical one. It gives light a goal. How could a ray leaving a candle know where the water is, and how much time a detour would save?</p>
+  <p>Fermat gave ground. He offered to leave the physics to others, so long as he could keep his geometry.</p>
+  <p>The idea spread anyway. In 1744 Pierre-Louis Maupertuis proposed that nature always spends as little as it can of a quantity he called action. Leonhard Euler, Joseph-Louis Lagrange and William Rowan Hamilton turned that into one of the most powerful tools in physics. A thrown ball, a planet and a pendulum each follow the path that makes their action stationary. But for nearly three centuries nobody could say how a ball, or a ray of light, finds that path. The answer, when it came, was stranger than purpose.</p>
+</div></section>
+
+<section id="every-path"><div class="wrap">
+  <div class="eyebrow">The answer</div>
+  <h2>Light takes <em>every path</em></h2>
+  <p>In 1948 Richard Feynman found a way to do quantum mechanics that never chooses a path at all. Light, or an electron, goes every possible way, and each way carries a little arrow, like the hand of a stopwatch that turns as the light travels. Add up the arrows for all the paths, head to tail. The square of the total arrow's length is how much light arrives.</p>
+  <p>Here is the trick. Far from the fastest path, a small change of route changes the travel time a lot, so neighbouring paths have arrows pointing every which way, and they cancel. Near the fastest path the time hardly changes, so neighbouring arrows agree and add up. Light only seems to choose the quickest way, because everywhere else the paths cancel each other out.</p>
+  <div class="instrument">
+    <canvas id="mirrorCanvas" aria-label="A lamp and an eye above a mirror cut into strips, with a screen between them. Each strip is a path. A chain of arrows adds up every path's arrow, and a gold arrow shows the total."></canvas>
+    <div class="controls">
+      <button type="button" id="mirCover">Cover the middle</button>
+      <button type="button" id="mirGrate">Make a grating</button>
+      <button type="button" id="mirHelp">Keep only the helpers</button>
+      <button type="button" id="mirReset">Reset</button>
+    </div>
+    <div class="controls">
+      <label>Colour <input type="range" class="spectrum" id="mirColour" min="400" max="680" value="530"> <output id="mirNm">530 nm</output></label>
+      <label>Mirror
+        <select id="mirShape">
+          <option value="flat">Flat</option>
+          <option value="ellipse">Ellipse</option>
+          <option value="bowl">Bowl</option>
+        </select>
+      </label>
+    </div>
+    <div class="readout">
+      <div><div class="k">Light at the eye</div><div class="v" id="mirLight">100%</div></div>
+      <div><div class="k">Mirror left</div><div class="v" id="mirLeft">161 of 161 strips</div></div>
+    </div>
+    <p class="say" id="mirSay" aria-live="polite"></p>
+    <p class="caption">A lamp, an eye, a screen between them, and a mirror cut into 161 strips. Each strip is one path, with its own arrow. The chain adds the arrows head to tail, and the gold arrow is the total. Bright strips help, dark strips cancel, and the curve under the mirror is each path's travel time. Drag along the mirror to scrape strips away or put them back. The light's waves are drawn thousands of times too long, so the arrows can be seen.</p>
+  </div>
+  <p>Cover the middle and the eye goes nearly dark, though most of the mirror is still there. The ends cancel themselves. Now make a grating: keep only the left end, and scrape away every strip whose arrow points against the rest. Light reaches the eye from a part of the mirror where it "shouldn't" reflect at all. It only works for one colour. Slide the colour and it fails, which is why the back of a CD throws rainbows.</p>
+  <p>Then keep only the helpers, all along the mirror. The eye gets several times more light than the whole mirror gave it. Removing mirror made it brighter. That's a zone plate, and the same trick is used to focus X-rays, which ordinary lenses can hardly bend.</p>
+  <div class="callout">
+    <div class="eyebrow">Not least, but steady</div>
+    <p>Strictly, light doesn't take the quickest path. It takes a path where a small change of route makes no difference to the time, to first order. Usually that's the quickest. Set the mirror to Bowl and the light that survives takes the slowest of its paths. Set it to Ellipse and every path takes the same time, so every arrow agrees and the mirror focuses.</p>
+    <p>What matters is not the minimum but the flatness. A path survives when its neighbours agree with it.</p>
+  </div>
+  <p>The same holds for everything, not only light. A thrown ball also, in this sense, takes every path, but its arrows spin so fast that only the paths right beside one path survive. That's why big things seem to follow a single route, and why Maupertuis's principle works. Clerselier was right that nature has no purpose. Fermat was right about the path.</p>
+  <p class="note">The length of the total arrow is the same quantity that measured sync among the fireflies in <a href="the-duet.html#fireflies">The Duet</a>: how well a crowd of little arrows agree.</p>
+</div></section>
+
+<section id="ants"><div class="wrap">
+  <div class="eyebrow">Trying with feet</div>
+  <h2>Ants that <em>refract</em></h2>
+  <p>In 2013 Jan Oettler and colleagues gave colonies of the little fire ant, <i>Wasmannia auropunctata</i>, a problem with a border in it. The nest sat on one surface and the food on another. On a smooth plastic sheet the ants walked at about 4.9 millimetres a second. On rough felt they managed 1.7. Over a few days the trails settled, and they didn't run straight. They bent at the border toward the angle Fermat's principle predicts for light. In 15 of 18 trials the trail was closer to Fermat's path than to the straight line.</p>
+  <p>No ant sees the whole route. The authors point to the mechanism behind the classic shortcut experiments with Argentine ants. Ants lay scent, scent fades, and quicker variants of a trail get reinforced more. The colony tries many paths with its feet and keeps the quick ones.</p>
+  <div class="instrument">
+    <canvas id="antCanvas" aria-label="An arena. The nest is on smooth ground at the top left and the food on rough felt at the bottom right. Ants walk between them, and their scent trail forms and bends at the border."></canvas>
+    <div class="controls">
+      <button type="button" class="primary" id="antGo">Start over</button>
+      <button type="button" id="antMove">Move the food</button>
+      <button type="button" id="antFermat" aria-pressed="true">Show Fermat's path</button>
+    </div>
+    <div class="controls">
+      <label>Ground
+        <select id="antGround">
+          <option value="2.83">Plastic to rough felt, 2.8× slower</option>
+          <option value="1.65">Plastic to smooth felt, 1.6× slower</option>
+          <option value="1.72">Smooth felt to rough felt, 1.7× slower</option>
+        </select>
+      </label>
+    </div>
+    <div class="readout">
+      <div><div class="k">Trail from Fermat's path</div><div class="v" id="antFermatGap">–</div></div>
+      <div><div class="k">Trail from the straight line</div><div class="v" id="antStraightGap">–</div></div>
+      <div><div class="k">Trips home</div><div class="v" id="antTrips">0</div></div>
+    </div>
+    <p class="caption">A toy model, sped up and exaggerated, not the ants' real rules. Each ant follows the scent with a little wobble, quicker trips leave stronger scent, and old scent fades. Gaps are measured where the trail crosses the border, as a share of the arena's width. Dashed: Fermat's path. Dotted: the straight line.</p>
+  </div>
+</div></section>
+
+<section id="elvis"><div class="wrap">
+  <div class="eyebrow">Trying in the head</div>
+  <h2>A corgi <em>named Elvis</em></h2>
+  <p>In 2003 the mathematician Tim Pennings published the fetch records of his Welsh corgi, Elvis. On the shore of Lake Michigan, Pennings threw a tennis ball into the water. Elvis sprinted along the beach, plunged in at some point, and swam the rest. Pennings had timed him at 6.40 metres a second on sand and 0.91 in water. On each throw he chased Elvis with a screwdriver, pushed it into the sand where the dog went in, and measured with a tape. After three hours they had 35 throws. He left out the couple of times Elvis was too excited and swam the whole way.</p>
+  <p>The calculus says the best place to go in depends only on how far out the ball is: start swimming when the distance left along the shore is 0.144 times the ball's distance from shore. Most of Elvis's 35 choices sit close to that line. Pennings admitted the dog doesn't know calculus. He has, Pennings wrote, "trouble differentiating even simple polynomials."</p>
+  <div class="instrument">
+    <div class="duo">
+      <div><canvas id="fetchCanvas" aria-label="A beach above and a lake below. The thrower stands at the water's edge, and the ball lands out in the lake down the beach. The dog runs along the shore and swims out."></canvas></div>
+      <div><canvas id="plotCanvas" aria-label="A plot of where the dog went in against how far out the ball was. Elvis's 35 throws, the line the calculus predicts, and your own throws."></canvas></div>
+    </div>
+    <div class="controls">
+      <button type="button" class="primary" id="fetchThrow">Throw the ball</button>
+      <button type="button" id="fetchRule">Let the dog lean</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Ball out</div><div class="v" id="fetchOut">–</div></div>
+      <div><div class="k">Went in, before C</div><div class="v" id="fetchIn">–</div></div>
+      <div><div class="k">Best place, before C</div><div class="v" id="fetchBest">–</div></div>
+      <div><div class="k">Time lost</div><div class="v" id="fetchLost">–</div></div>
+    </div>
+    <p class="say" id="fetchSay" aria-live="polite">Throw the ball, then tap the shoreline where your dog should go in.</p>
+    <div class="legend"><span><i style="background:var(--mute)"></i>Elvis's 35 throws (Pennings 2003)</span><span><i class="bar" style="background:var(--dawn)"></i>the calculus: 0.144 × ball out</span><span><i class="ring"></i>your throws</span><span><i style="background:var(--dawn)"></i>the leaning rule</span></div>
+    <p class="caption">C is the point on the shore nearest the ball. A gold ghost runs the fastest route beside your dog. Everything runs at three times Elvis's speed.</p>
+  </div>
+  <p>How does Elvis do it? In 2006 the psychologists Pierre Perruchet and Jorge Gallego, testing a Labrador named Salsa, proposed a simpler rule: at every moment, do whatever closes the gap to the ball fastest. Keep running while running closes it faster, and plunge in once swimming would. That rule needs no map and no foresight, and on a beach it lands on exactly the same point as the calculus. Press "Let the dog lean" and see.</p>
+  <p>Pennings answered with a new experiment. He stood in the water with Elvis beside him and threw a stick along the shore. Elvis swam in to the beach, ran along it, and dove back in. Swimming toward the shore doesn't close the gap to the stick at all, so a moment-to-moment rule can't do that. It looks as if Elvis chose the whole route before he set off. With Roland Minton, Pennings later worked out exactly when that detour is the fastest way (2007).</p>
+  <p>So the question is open. If Elvis plans, he's doing what light does, with far fewer paths: trying routes in his head and keeping the quick one. That's an interpretation, not a finding.</p>
+</div></section>
+
+<section id="right-way"><div class="wrap">
+  <div class="eyebrow">The turn</div>
+  <h2>There is <em>a right way</em></h2>
+  <p>Here are three ways to find the quickest path without seeing it. Light tries every path at once, and the ones that disagree cancel. Ants try many paths with their feet, and fading scent keeps the quick ones. A dog may try a few in its head before it moves.</p>
+  <p>The last way is yours too. Karl Popper's case for imagination was that it lets our hypotheses die in our stead. Every route you walk through in your head and drop is one you didn't have to walk with your feet.</p>
+  <blockquote>"There is a right way; but we are very liable from heedlessness and stupidity to take the wrong one."<cite>Henry David Thoreau, "Walking" (1862)</cite></blockquote>
+  <p>Light adds one more lesson, about which paths last. Not the perfect ones: the ones where a small wobble costs almost nothing. That part is a metaphor, not physics. You aren't a photon. But it makes a good test for a plan. If one small slip would ruin it, look for a flatter route.</p>
+  <div class="callout">
+    <div class="eyebrow">Try this week</div>
+    <ul>
+      <li>Stand a straw in a glass of water and look from the side. It breaks at the surface, because the light from below took the quickest way to your eye.</li>
+      <li>Tilt a CD or DVD under a lamp. Its tracks are a grating that sends each colour its own way.</li>
+      <li>Throw a ball for a dog on a beach, and watch where it goes in.</li>
+      <li>Find a worn path cutting across the corner of a lawn. People's feet did what the ants do.</li>
+    </ul>
+  </div>
+  <p class="closer">Nobody sees the whole path. Try many, lightly, and keep the ones that forgive a wobble.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Sources: Ibn Sahl, <i>On Burning Mirrors and Lenses</i> (984), in Roshdi Rashed, "A pioneer in anaclastics," <i>Isis</i> 81 (1990). René Descartes, <i>La Dioptrique</i> (1637). Pierre de Fermat, letters to Marin Cureau de la Chambre (1657, 1662), and Claude Clerselier's reply (1662). Léon Foucault, <i>Comptes rendus</i> (1850). Pierre-Louis Maupertuis (1744). Leonhard Euler, <i>Methodus inveniendi</i> (1744). William Rowan Hamilton, <i>Philosophical Transactions</i> (1834). Richard Feynman, "Space-time approach to non-relativistic quantum mechanics," <i>Reviews of Modern Physics</i> 20 (1948). Feynman, Leighton &amp; Sands, <i>The Feynman Lectures on Physics</i>, vol. I, ch. 26 (1963). Richard Feynman, <i>QED: The Strange Theory of Light and Matter</i> (1985). Jacques-Louis Soret on zone plates, <i>Annalen der Physik</i> (1875). Oettler et al., "Fermat's principle of least time predicts refraction of ant trails at substrate borders," <i>PLOS ONE</i> 8 (2013). Goss, Aron, Deneubourg &amp; Pasteels, "Self-organized shortcuts in the Argentine ant," <i>Naturwissenschaften</i> 76 (1989). Timothy Pennings, "Do dogs know calculus?" <i>College Mathematics Journal</i> 34 (2003). Pierre Perruchet &amp; Jorge Gallego, "Do dogs know related rates rather than optimization?" <i>College Mathematics Journal</i> 37 (2006). Roland Minton &amp; Timothy Pennings, "Do dogs know bifurcations?" <i>College Mathematics Journal</i> 38 (2007). Helbing, Keltsch &amp; Molnár, "Modelling the evolution of human trail systems," <i>Nature</i> 388 (1997). Karl Popper, <i>Objective Knowledge</i> (1972). Henry David Thoreau, "Walking," <i>The Atlantic Monthly</i> (1862).</p>
+  <div class="next"><a href="view-from-elsewhere.html">← VIII · The View from Elsewhere</a><a href="./">Back to Glamour Gram</a></div>
+</div></footer>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+function fit(cv, aspect){
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = aspect ? Math.round(w*aspect) : cv.clientHeight;
+  if(aspect) cv.style.height = h + "px";
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const smooth = (a, b, x) => { const u = clamp((x - a)/(b - a), 0, 1); return u*u*(3 - 2*u); };
+function onScreen(el){
+  const s = {v:true};
+  if("IntersectionObserver" in window) new IntersectionObserver(es => { s.v = es[es.length - 1].isIntersecting; }).observe(el);
+  return s;
+}
+function animate(frame, vis){
+  let last = performance.now();
+  (function loop(now){ const dt = Math.min(0.05, (now - last)/1000); last = now; if(!vis || vis.v) frame(dt); requestAnimationFrame(loop); })(last);
+}
+function local(cv, e){ const r = cv.getBoundingClientRect(); return {x: e.clientX - r.left, y: e.clientY - r.top}; }
+// The fastest crossing of a horizontal border at height yB, going from p at speed v1 to q at speed v2 (golden-section search).
+function crossing(p, q, yB, v1, v2){
+  const T = x => Math.hypot(x - p.x, yB - p.y)/v1 + Math.hypot(q.x - x, q.y - yB)/v2;
+  let a = Math.min(p.x, q.x), b = Math.max(p.x, q.x);
+  for(let k=0;k<80;k++){ const m1 = a + (b - a)*0.381966, m2 = a + (b - a)*0.618034; if(T(m1) < T(m2)) b = m2; else a = m1; }
+  return (a + b)/2;
+}
+function arrow(ctx, x0, y0, x1, y1, head){
+  ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+  const a = Math.atan2(y1 - y0, x1 - x0);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 - head*Math.cos(a - 0.45), y1 - head*Math.sin(a - 0.45));
+  ctx.moveTo(x1, y1); ctx.lineTo(x1 - head*Math.cos(a + 0.45), y1 - head*Math.sin(a + 0.45)); ctx.stroke();
+}
+
+/* ---------- hero: light leaves a lamp along every path at once; the first to reach the eye lights up ---------- */
+(function(){
+  const cv = $("heroCanvas"), copy = document.querySelector(".hero-copy .wrap"), N_IDX = 1.33, ARRIVE = 3.2, CYCLE = 6.8;
+  let g = fit(cv), A = null, B = null, yI = 0, side = false, textRight = 0, paths = [], best = 0, V = 1, t = reduce ? ARRIVE*0.78 : 0, moved = false;
+  function text(){ const r = document.createRange(); r.selectNodeContents(copy); const b = r.getBoundingClientRect(), h = cv.getBoundingClientRect(); return {right: b.right - h.left, bottom: b.bottom - h.top}; }
+  function layout(){
+    const {w, h} = g, tb = text(), room = h - tb.bottom;
+    yI = room > 150 ? tb.bottom + 0.5*room : h*0.8;
+    side = w - tb.right > 220; textRight = tb.right;   // wide screens: keep the lamp, the eye and every path to the right of the title
+    if(moved && A && B){ A.y = clamp(A.y, 12, yI - 12); B.y = clamp(B.y, yI + 12, h - 8); A.x = clamp(A.x, 8, w - 8); B.x = clamp(B.x, 8, w - 8); return; }
+    A = side ? {x: tb.right + (w - tb.right)*0.6, y: Math.max(44, h*0.16)} : {x: w*0.84, y: tb.bottom + 0.4*(yI - tb.bottom)};
+    B = {x: side ? tb.right + (w - tb.right)*0.15 : w*0.14, y: h - Math.max(18, h*0.07)};
+  }
+  function build(){
+    const {w} = g, n = w < 560 ? 34 : 50, xb = crossing(A, B, yI, 1, 1/N_IDX), x0 = side && !moved ? textRight + 8 : -0.08*w;
+    const xs = Array.from({length:n}, (_, i) => x0 + (1.08*w - x0)*i/(n - 1));
+    best = 0; xs.forEach((x, i) => { if(Math.abs(x - xb) < Math.abs(xs[best] - xb)) best = i; }); xs[best] = xb;
+    paths = xs.map(x => { const d1 = Math.hypot(x - A.x, yI - A.y), d2 = Math.hypot(B.x - x, B.y - yI); return {x, d1, d2, T: d1 + N_IDX*d2}; });
+    V = paths[best].T/ARRIVE;   // the fastest runner arrives after ARRIVE seconds
+  }
+  function frame(dt){
+    t += dt;
+    const {ctx, w, h} = g, dawn = C("--dawn"), sea = C("--sea"), ink = C("--ink");
+    const tau = reduce ? t : t % CYCLE, s = tau*V;
+    const win = reduce ? 1 : smooth(ARRIVE, ARRIVE + 0.35, tau)*(1 - smooth(CYCLE - 0.7, CYCLE, tau));
+    const rest = reduce ? 0.6 : 1 - 0.65*smooth(ARRIVE + 0.3, ARRIVE + 1.4, tau);
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const water = ctx.createLinearGradient(0, yI, 0, h);
+    water.addColorStop(0, "rgba(111,194,184,0.13)"); water.addColorStop(1, "rgba(111,194,184,0.03)");
+    ctx.fillStyle = water; ctx.fillRect(0, yI, w, h - yI);
+    ctx.strokeStyle = sea; ctx.globalAlpha = 0.45; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, yI); ctx.lineTo(w, yI); ctx.stroke();
+    // every path, faint; the part each runner has covered glows a little
+    paths.forEach((p, i) => {
+      if(i === best) return;
+      ctx.strokeStyle = ink; ctx.globalAlpha = 0.05*rest; ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(p.x, yI); ctx.lineTo(B.x, B.y); ctx.stroke();
+    });
+    const P = paths[best];
+    ctx.strokeStyle = win > 0 ? dawn : ink; ctx.globalAlpha = 0.06 + 0.8*win; ctx.lineWidth = 1 + 1.2*win;
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(P.x, yI); ctx.lineTo(B.x, B.y); ctx.stroke(); ctx.lineWidth = 1;
+    // the runners: one per path, slower in water
+    const dots = reduce ? 0.9 : 0.9*(1 - smooth(ARRIVE + 0.4, ARRIVE + 1.8, tau));
+    if(dots > 0.01){
+      ctx.fillStyle = dawn;
+      paths.forEach((p, i) => {
+        if(s >= p.T) return;
+        let x, y;
+        if(s < p.d1){ const u = s/p.d1; x = A.x + (p.x - A.x)*u; y = A.y + (yI - A.y)*u; }
+        else { const u = (s - p.d1)/N_IDX/p.d2; x = p.x + (B.x - p.x)*u; y = yI + (B.y - yI)*u; }
+        if(x < -4 || x > w + 4) return;
+        ctx.globalAlpha = dots*(i === best ? 1 : 0.75); ctx.beginPath(); ctx.arc(x, y, i === best ? 2.2 : 1.6, 0, 7); ctx.fill();
+      });
+    }
+    // the lamp and the eye
+    const glow = ctx.createRadialGradient(A.x, A.y, 0, A.x, A.y, 26);
+    glow.addColorStop(0, "rgba(240,168,90,0.55)"); glow.addColorStop(1, "rgba(240,168,90,0)");
+    ctx.globalAlpha = 1; ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(A.x, A.y, 26, 0, 7); ctx.fill();
+    ctx.fillStyle = dawn; ctx.beginPath(); ctx.arc(A.x, A.y, 3.5, 0, 7); ctx.fill();
+    ctx.strokeStyle = sea; ctx.globalAlpha = 0.9; ctx.beginPath(); ctx.ellipse(B.x, B.y, 9, 5.5, 0, 0, 7); ctx.stroke();
+    ctx.fillStyle = win > 0 ? dawn : sea; ctx.beginPath(); ctx.arc(B.x, B.y, 2.6, 0, 7); ctx.fill();
+    if(!reduce && tau > ARRIVE && tau < ARRIVE + 1.2){ const u = (tau - ARRIVE)/1.2; ctx.strokeStyle = dawn; ctx.globalAlpha = 0.7*(1 - u); ctx.beginPath(); ctx.arc(B.x, B.y, 6 + 30*u, 0, 7); ctx.stroke(); }
+    ctx.globalAlpha = 1; ctx.font = "10px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "right";
+    ctx.fillText(w < 560 ? "every path at once · tap to move" : "a lamp in air, an eye under water: every path at once · tap to move them", w - 14, h - 10);
+    ctx.textAlign = "left";
+  }
+  function reset(){ layout(); build(); if(!reduce) t = 0; }
+  reset();
+  addEventListener("resize", () => { const w0 = g.w; g = fit(cv); if(g.w !== w0) moved = false; reset(); if(reduce) frame(0); });
+  document.fonts && document.fonts.ready.then(() => { if(!moved){ reset(); if(reduce) frame(0); } });
+  cv.addEventListener("pointerdown", e => {
+    const p = local(cv, e); moved = true;
+    if(p.y < yI) A = {x: p.x, y: p.y}; else B = {x: p.x, y: p.y};
+    reset(); if(reduce) frame(0);
+  });
+  if(reduce) frame(0); else animate(frame, onScreen(cv));
+})();
+
+/* ---------- the lifeguard's problem: the fastest route bends at the waterline ---------- */
+(function(){
+  const cv = $("guardCanvas"), slider = $("guardX"), who = $("guardWho"), raceBtn = $("guardRace"), showBtn = $("guardShow"), say = $("guardSay");
+  const WHO = {
+    guard:   {r: 4,         top: "sand", bottom: "sea", k: "Run ÷ swim", me: "you", them: "swimmer"},
+    elvis:   {r: 6.40/0.91, top: "sand", bottom: "lake", k: "Run ÷ swim", me: "Elvis", them: "ball"},
+    water:   {r: 1.333,     top: "air", bottom: "water", k: "Speed in air ÷ in water", me: "lamp", them: "eye"},
+    glass:   {r: 1.5,       top: "air", bottom: "glass", k: "Speed in air ÷ in glass", me: "lamp", them: "eye"},
+    diamond: {r: 2.417,     top: "air", bottom: "diamond", k: "Speed in air ÷ in diamond", me: "lamp", them: "eye"},
+    ants:    {r: 4.89/1.73, top: "smooth plastic", bottom: "rough felt", k: "Plastic ÷ felt", me: "nest", them: "food"}
+  };
+  let g, geo, cfg = WHO[who.value] || WHO.guard, show = false, race = null, drag = false, snap = false, grains = [];
+  const tell = m => { if(say.textContent !== m) say.textContent = m; };
+  function layout(){
+    g = fit(cv, cv.clientWidth < 520 ? 1.02 : 0.74);
+    const {w, h} = g, sh = Math.round(h*0.7);
+    geo = {sh, yS: Math.round(sh*0.42), L: {x: w*0.1, y: sh*0.13}, S: {x: w*0.86, y: sh*0.88}, x0: w*0.05, x1: w*0.95, gTop: sh + 20, gBot: h - 14};
+    grains = Array.from({length: Math.round(w*geo.yS/240)}, () => ({x: Math.random()*w, y: Math.random()*geo.yS, a: 0.04 + Math.random()*0.1}));
+  }
+  const X = () => snap ? fastest() : geo.x0 + (geo.x1 - geo.x0)*slider.value/1000;   // within a few pixels of the best crossing, the handle snaps to it
+  const route = x => { const d1 = Math.hypot(x - geo.L.x, geo.yS - geo.L.y), d2 = Math.hypot(geo.S.x - x, geo.S.y - geo.yS); return {x, d1, d2, T: d1/cfg.r + d2}; };
+  const fastest = () => crossing(geo.L, geo.S, geo.yS, cfg.r, 1);
+  function where(r, u){   // position along a route after time u, in the same units as r.T
+    if(u*cfg.r < r.d1){ const f = u*cfg.r/r.d1; return {x: geo.L.x + (r.x - geo.L.x)*f, y: geo.L.y + (geo.yS - geo.L.y)*f}; }
+    const f = Math.min(1, (u - r.d1/cfg.r)/r.d2); return {x: r.x + (geo.S.x - r.x)*f, y: geo.yS + (geo.S.y - geo.yS)*f};
+  }
+  function path(ctx, x){ ctx.beginPath(); ctx.moveTo(geo.L.x, geo.L.y); ctx.lineTo(x, geo.yS); ctx.lineTo(geo.S.x, geo.S.y); ctx.stroke(); }
+  function draw(){
+    const {ctx, w, h} = g, {sh, yS, L, S} = geo, ink = C("--ink"), dawn = C("--dawn"), sea = C("--sea"), mute = C("--mute");
+    const you = route(X()), best = route(fastest()), rel = you.T/best.T;
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(240,168,90,0.06)"; ctx.fillRect(0, 0, w, yS);
+    ctx.fillStyle = C("--dawn"); grains.forEach(p => { ctx.globalAlpha = p.a; ctx.fillRect(p.x, p.y, 1.2, 1.2); });
+    ctx.globalAlpha = 1; ctx.fillStyle = "rgba(111,194,184,0.11)"; ctx.fillRect(0, yS, w, sh - yS);
+    ctx.strokeStyle = sea; ctx.lineWidth = 1;
+    for(let k=0;k<7;k++){ const wx = (k*0.37 % 1)*w, wy = yS + (0.15 + (k*0.61 % 0.8))*(sh - yS); ctx.globalAlpha = 0.18; ctx.beginPath(); ctx.arc(wx, wy + 8, 10, 1.15*Math.PI, 1.85*Math.PI); ctx.stroke(); }
+    ctx.globalAlpha = 0.75; ctx.beginPath(); ctx.moveTo(0, yS); ctx.lineTo(w, yS); ctx.stroke();
+    ctx.globalAlpha = 1; ctx.font = "11px JetBrains Mono, monospace"; ctx.fillStyle = mute;
+    ctx.textAlign = "right"; ctx.fillText(cfg.top, w - 10, 16); ctx.fillText(cfg.bottom, w - 10, yS + 16); ctx.textAlign = "left";
+    // the straight line: shortest, not fastest
+    ctx.strokeStyle = mute; ctx.globalAlpha = 0.55; ctx.setLineDash([4, 5]); ctx.beginPath(); ctx.moveTo(L.x, L.y); ctx.lineTo(S.x, S.y); ctx.stroke(); ctx.setLineDash([]);
+    if(show){ ctx.strokeStyle = dawn; ctx.globalAlpha = 0.9; ctx.lineWidth = 2; path(ctx, best.x); }
+    ctx.strokeStyle = ink; ctx.globalAlpha = 0.95; ctx.lineWidth = 2; path(ctx, you.x); ctx.lineWidth = 1;
+    // the normal and the two angles at your crossing
+    const x = you.x, aL = Math.atan2(L.y - yS, L.x - x), aS = Math.atan2(S.y - yS, S.x - x);
+    ctx.strokeStyle = mute; ctx.globalAlpha = 0.7; ctx.setLineDash([2, 4]); ctx.beginPath(); ctx.moveTo(x, yS - 46); ctx.lineTo(x, yS + 46); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle = ink; ctx.globalAlpha = 0.8;
+    ctx.beginPath(); ctx.arc(x, yS, 24, Math.min(-Math.PI/2, aL), Math.max(-Math.PI/2, aL)); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, yS, 24, Math.min(Math.PI/2, aS), Math.max(Math.PI/2, aS)); ctx.stroke();
+    ctx.globalAlpha = 1; ctx.fillStyle = ink; ctx.font = "italic 13px Newsreader, Georgia, serif"; ctx.textAlign = "center";
+    const ma = (-Math.PI/2 + aL)/2, mb = (Math.PI/2 + aS)/2;
+    ctx.fillText("a", x + 34*Math.cos(ma), yS + 34*Math.sin(ma) + 4); ctx.fillText("b", x + 34*Math.cos(mb), yS + 34*Math.sin(mb) + 4);
+    // the handle
+    ctx.fillStyle = C("--night"); ctx.strokeStyle = ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, yS, 7, 0, 7); ctx.fill(); ctx.stroke(); ctx.lineWidth = 1;
+    // the two ends
+    ctx.font = "11px JetBrains Mono, monospace"; ctx.fillStyle = mute;
+    ctx.fillText(cfg.me, L.x, L.y - 10); ctx.fillText(cfg.them, S.x, S.y + 20);
+    ctx.fillStyle = ink; ctx.beginPath(); ctx.arc(L.x, L.y, 4.5, 0, 7); ctx.fill();
+    ctx.fillStyle = C("--ember"); ctx.beginPath(); ctx.arc(S.x, S.y, 4.5, 0, 7); ctx.fill();
+    ctx.strokeStyle = C("--ember"); ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.arc(S.x, S.y, 9, 0, 7); ctx.stroke(); ctx.globalAlpha = 1;
+    // the racers
+    if(race){
+      const u = race.t*race.best.T/2.6;
+      [[race.you, ink], [race.best, dawn]].forEach(([r, col]) => { const p = where(r, u); ctx.fillStyle = col; ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, 7); ctx.fill(); });
+    }
+    ctx.textAlign = "left";
+    // the time for every crossing, under the beach, on the same scale across
+    const {gTop, gBot, x0, x1} = geo, n = 120, rels = [];
+    for(let i=0;i<=n;i++) rels.push(route(x0 + (x1 - x0)*i/n).T/best.T);
+    const top = Math.max(1.02, ...rels), Y = r => gBot - (r - 1)/(top - 1)*(gBot - gTop);
+    ctx.strokeStyle = C("--line"); ctx.beginPath(); ctx.moveTo(0, sh + 0.5); ctx.lineTo(w, sh + 0.5); ctx.stroke();
+    ctx.fillStyle = mute; ctx.fillText("total time for each crossing", 10, sh + 14);
+    ctx.strokeStyle = sea; ctx.lineWidth = 1.5; ctx.beginPath();
+    rels.forEach((r, i) => { const px = x0 + (x1 - x0)*i/n; i ? ctx.lineTo(px, Y(r)) : ctx.moveTo(px, Y(r)); }); ctx.stroke(); ctx.lineWidth = 1;
+    ctx.fillStyle = dawn; ctx.beginPath(); ctx.arc(best.x, Y(1), 3.5, 0, 7); ctx.fill();
+    ctx.strokeStyle = ink; ctx.globalAlpha = 0.5; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(x, yS + 8); ctx.lineTo(x, Y(rel)); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+    ctx.fillStyle = ink; ctx.beginPath(); ctx.arc(x, Y(rel), 4, 0, 7); ctx.fill();
+    // numbers
+    const sa = (x - L.x)/you.d1, sb = (S.x - x)/you.d2;
+    $("guardTime").textContent = snap ? "the fastest" : `+${((rel - 1)*100).toFixed(1)}% time`;
+    $("guardSines").textContent = Math.abs(sb) < 1e-3 ? "–" : (sa/sb).toFixed(2).replace("-", "−");
+    $("guardSpeedK").textContent = cfg.k; $("guardSpeeds").textContent = cfg.r.toFixed(2);
+  }
+  function finish(){
+    race = null; show = true; showBtn.setAttribute("aria-pressed", "true");
+    const you = route(X()), best = route(fastest()), d = you.T/best.T - 1;
+    tell(snap || d < 0.0005 ? "A dead heat. You found the bend: look at the two numbers above." :
+      `The fastest route won by ${(d*100).toFixed(1)}% of its time. Move your crossing ${best.x > you.x ? "further along" : "back"}, toward the gold path.`);
+    draw();
+  }
+  function startRace(){
+    race = {you: route(X()), best: route(fastest()), t: 0};
+    if(reduce){ finish(); return; }
+    tell("Racing...");
+    const end = 2.6*Math.max(race.you.T, race.best.T)/race.best.T + 0.4;
+    let last = performance.now();
+    (function step(now){
+      if(!race) return;
+      race.t += Math.min(0.05, (now - last)/1000); last = now;
+      if(race.t >= end){ finish(); return; }
+      draw(); requestAnimationFrame(step);
+    })(last);
+  }
+  function near(px){
+    const was = snap; snap = Math.abs(px - fastest()) < 6;
+    if(snap && !was) tell(`That's the fastest crossing. sin a ÷ sin b now matches the ratio of the speeds, ${cfg.r.toFixed(2)}.`);
+    if(was && !snap) tell("");
+  }
+  function setX(px){ slider.value = Math.round(clamp((px - geo.x0)/(geo.x1 - geo.x0), 0, 1)*1000); near(px); race = null; draw(); }
+  cv.addEventListener("pointerdown", e => { drag = true; cv.setPointerCapture(e.pointerId); setX(local(cv, e).x); });
+  cv.addEventListener("pointermove", e => { if(drag) setX(local(cv, e).x); });
+  ["pointerup", "pointercancel"].forEach(ev => cv.addEventListener(ev, () => { drag = false; }));
+  slider.addEventListener("input", () => { near(geo.x0 + (geo.x1 - geo.x0)*slider.value/1000); race = null; draw(); });
+  who.addEventListener("change", () => { cfg = WHO[who.value]; snap = false; race = null; tell(""); draw(); });
+  showBtn.addEventListener("click", () => { show = !show; showBtn.setAttribute("aria-pressed", String(show)); draw(); });
+  raceBtn.addEventListener("click", startRace);
+  layout(); draw(); tell("Drag your crossing point, then race the fastest route.");
+  addEventListener("resize", () => { const w0 = g.w; if(cv.clientWidth !== w0){ layout(); draw(); } });
+  document.fonts && document.fonts.ready.then(draw);
+})();
+
+/* ---------- Feynman's mirror: every strip is a path with its own arrow; scrape it into a grating ---------- */
+(function(){
+  const cv = $("mirrorCanvas"), say = $("mirSay"), colour = $("mirColour"), shapeSel = $("mirShape");
+  const N = 161, LAM = 0.045, NM0 = 530;   // the drawn wavelength is 4.5% of the scene's width at 530 nm
+  let g, box, chain, S, P, xs = [], ys = [], Ls = [], flatL = [], th = [], ref = 1, keep = new Array(N).fill(true);
+  let shape = "flat", phi = 0, scale = 0, hover = -1, paint = null, lastI = -1, cut = null;
+  const tell = m => { if(say.textContent !== m) say.textContent = m; };
+  function nmRGB(nm){   // an approximate colour for each wavelength
+    let r = 0, gr = 0, b = 0;
+    if(nm < 440){ r = (440 - nm)/60; b = 1; } else if(nm < 490){ gr = (nm - 440)/50; b = 1; } else if(nm < 510){ gr = 1; b = (510 - nm)/20; }
+    else if(nm < 580){ r = (nm - 510)/70; gr = 1; } else if(nm < 645){ r = 1; gr = (645 - nm)/65; } else r = 1;
+    const f = nm < 420 ? 0.45 + 0.55*(nm - 380)/40 : 1, k = v => Math.round(255*Math.pow(clamp(v*f, 0, 1), 0.8)*0.85 + 30);
+    return `rgb(${k(r)},${k(gr)},${k(b)})`;
+  }
+  function layout(){
+    const wide = cv.clientWidth >= 560;
+    g = fit(cv, wide ? 0.6 : 1.45);
+    const {w, h} = g;
+    box = wide ? {x: 0, y: 0, w: w*0.6, h} : {x: 0, y: 0, w, h: w*0.85};
+    chain = wide ? {x: w*0.6 + 12, y: 22, w: w*0.4 - 24, h: h - 34} : {x: 12, y: w*0.85 + 22, w: w - 24, h: h - w*0.85 - 30};
+    box.wide = wide; geometry();
+  }
+  function geometry(){
+    const {x: bx, y: by, w: W, h: H} = box, yM = by + H*0.66, X0 = bx + W*0.08, X1 = bx + W*0.92, b = 0.46*W;
+    S = {x: bx + W*0.22, y: yM - b}; P = {x: bx + W*0.78, y: yM - b};
+    const cx = (S.x + P.x)/2, c = (P.x - S.x)/2, a = Math.hypot(b, c), L0 = 2*a, D = 0.135*W, um = (X1 - X0)/2;
+    // the bowl is shaped so each path's length falls steadily away from the middle one, which is the longest
+    const bowl = x => {
+      const target = L0 - D*((x - cx)/um)**2; let lo = 0, hi = b;
+      for(let k=0;k<40;k++){ const v = (lo + hi)/2; if(Math.hypot(x - S.x, v) + Math.hypot(x - P.x, v) < target) lo = v; else hi = v; }
+      return S.y + (lo + hi)/2;
+    };
+    xs = Array.from({length:N}, (_, i) => X0 + (X1 - X0)*(i + 0.5)/N);
+    const yOf = (x, s) => s === "ellipse" ? S.y + b*Math.sqrt(Math.max(0, 1 - ((x - cx)/a)**2)) : s === "bowl" ? bowl(x) : yM;
+    const len = s => xs.map(x => { const y = yOf(x, s); return Math.hypot(x - S.x, y - S.y) + Math.hypot(x - P.x, y - P.y); });
+    ys = xs.map(x => yOf(x, shape)); Ls = len(shape); flatL = len("flat");
+    Object.assign(box, {yM, X0, X1, cx, gTop: by + H*0.76, gBot: by + H*0.95});
+    phases();
+  }
+  const sum = (on, ph) => { let x = 0, y = 0, n = 0; for(let i=0;i<N;i++) if(on[i]){ x += Math.cos(ph[i]); y += Math.sin(ph[i]); n++; } return {x, y, n, m: Math.hypot(x, y), a: Math.atan2(y, x)}; };
+  function phases(){
+    const lam = LAM*box.w*colour.value/NM0;
+    th = Ls.map(l => 2*Math.PI*l/lam);
+    ref = sum(new Array(N).fill(true), flatL.map(l => 2*Math.PI*l/lam)).m;   // the whole flat mirror, at this colour
+  }
+  const light = () => { const s = sum(keep, th); return s.m*s.m/(ref*ref); };
+  const fmt = r => r >= 1.95 ? `${r.toFixed(r < 10 ? 1 : 0)} times` : `${(r*100).toFixed(r < 0.1 ? 1 : 0)}%`;
+  function draw(dt){
+    const {ctx, w, h} = g, rgb = nmRGB(+colour.value), ink = C("--ink"), dawn = C("--dawn"), mute = C("--mute");
+    const tot = sum(keep, th), rel = tot.m*tot.m/(ref*ref), {x: bx, y: by, w: W, h: H, cx} = box;
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = C("--line"); ctx.beginPath();
+    if(box.wide){ ctx.moveTo(chain.x - 12.5, 10); ctx.lineTo(chain.x - 12.5, h - 10); } else { ctx.moveTo(10, chain.y - 14.5); ctx.lineTo(w - 10, chain.y - 14.5); }
+    ctx.stroke();
+    // rays from wherever neighbouring strips agree with the total: that's where the light really comes from
+    const ux = Math.cos(tot.a), uy = Math.sin(tot.a), bright = Math.min(1, Math.sqrt(rel));
+    ctx.strokeStyle = rgb;
+    for(let i=2;i<N;i+=4){
+      let lx = 0, ly = 0;
+      for(let j=Math.max(0, i - 6); j<=Math.min(N - 1, i + 6); j++) if(keep[j]){ lx += Math.cos(th[j]); ly += Math.sin(th[j]); }
+      const c = Math.max(0, lx*ux + ly*uy)/13;
+      if(c < 0.05) continue;
+      ctx.globalAlpha = 0.5*c*bright; ctx.beginPath(); ctx.moveTo(S.x, S.y); ctx.lineTo(xs[i], ys[i]); ctx.lineTo(P.x, P.y); ctx.stroke();
+    }
+    // the screen between lamp and eye
+    ctx.globalAlpha = 0.7; ctx.strokeStyle = ink; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(cx, by + H*0.05); ctx.lineTo(cx, by + H*0.36); ctx.stroke(); ctx.lineWidth = 1;
+    // the mirror: bright strips help the total, dark ones work against it
+    const sw = Math.max(1.5, (box.X1 - box.X0)/N*0.8);
+    for(let i=0;i<N;i++){
+      const tx = i ? xs[i] - xs[i - 1] : xs[1] - xs[0], ty = i ? ys[i] - ys[i - 1] : ys[1] - ys[0], tl = Math.hypot(tx, ty), hx = tx/tl*sw/2, hy = ty/tl*sw/2;
+      if(keep[i]){ ctx.strokeStyle = rgb; ctx.globalAlpha = 0.12 + 0.88*(0.5 + 0.5*Math.cos(th[i] - tot.a)); ctx.lineWidth = 7; }
+      else { ctx.strokeStyle = mute; ctx.globalAlpha = 0.3; ctx.lineWidth = 1; }
+      ctx.beginPath(); ctx.moveTo(xs[i] - hx, ys[i] - hy); ctx.lineTo(xs[i] + hx, ys[i] + hy); ctx.stroke();
+    }
+    ctx.lineWidth = 1;
+    if(hover >= 0){ ctx.strokeStyle = ink; ctx.globalAlpha = 0.9; ctx.beginPath(); ctx.moveTo(S.x, S.y); ctx.lineTo(xs[hover], ys[hover]); ctx.lineTo(P.x, P.y); ctx.stroke(); }
+    // each path's travel time, under the mirror
+    let lo = Infinity, hi = -Infinity; Ls.forEach(l => { lo = Math.min(lo, l); hi = Math.max(hi, l); });
+    const Y = l => hi - lo < 1e-6*hi ? (box.gTop + box.gBot)/2 : box.gBot - (l - lo)/(hi - lo)*(box.gBot - box.gTop);
+    ctx.globalAlpha = 1; ctx.font = "10px JetBrains Mono, monospace"; ctx.fillStyle = mute; ctx.fillText("time", bx + 8, box.gTop + 4);
+    ctx.strokeStyle = C("--sea"); ctx.globalAlpha = 0.8; ctx.beginPath(); xs.forEach((x, i) => i ? ctx.lineTo(x, Y(Ls[i])) : ctx.moveTo(x, Y(Ls[i]))); ctx.stroke();
+    if(hover >= 0){ ctx.fillStyle = ink; ctx.beginPath(); ctx.arc(xs[hover], Y(Ls[hover]), 3, 0, 7); ctx.fill(); }
+    // the lamp and the eye
+    ctx.globalAlpha = 1; ctx.fillStyle = rgb; ctx.beginPath(); ctx.arc(S.x, S.y, 4.5, 0, 7); ctx.fill();
+    const eg = ctx.createRadialGradient(P.x, P.y, 0, P.x, P.y, 8 + 22*bright);
+    eg.addColorStop(0, rgb); eg.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.globalAlpha = 0.15 + 0.6*bright; ctx.fillStyle = eg; ctx.beginPath(); ctx.arc(P.x, P.y, 8 + 22*bright, 0, 7); ctx.fill();
+    ctx.globalAlpha = 1; ctx.strokeStyle = ink; ctx.beginPath(); ctx.ellipse(P.x, P.y, 8, 5, 0, 0, 7); ctx.stroke();
+    ctx.fillStyle = ink; ctx.beginPath(); ctx.arc(P.x, P.y, 2, 0, 7); ctx.fill();
+    ctx.fillStyle = mute; ctx.textAlign = "center"; ctx.fillText("lamp", S.x, S.y - 12); ctx.fillText("eye", P.x, P.y - 12); ctx.textAlign = "left";
+    // the chain: every kept strip's arrow, head to tail, all turning together like stopwatch hands
+    const pts = [[0, 0]]; let px = 0, py = 0, hp = null;
+    for(let i=0;i<N;i++) if(keep[i]){ const a = th[i] + phi; if(i === hover) hp = [px, py]; px += Math.cos(a); py += Math.sin(a); pts.push([px, py]); if(i === hover) hp.push(px, py); }
+    let minx = 0, maxx = 0, miny = 0, maxy = 0; pts.forEach(([x, y]) => { minx = Math.min(minx, x); maxx = Math.max(maxx, x); miny = Math.min(miny, y); maxy = Math.max(maxy, y); });
+    const mx = (minx + maxx)/2, my = (miny + maxy)/2; let R = 3; pts.forEach(([x, y]) => { R = Math.max(R, Math.hypot(x - mx, y - my)); });
+    const target = Math.min(chain.w, chain.h)/(2*R)*0.94;
+    scale = !scale || reduce || !dt ? target : scale + (target - scale)*Math.min(1, dt*5);
+    const ox = chain.x + chain.w/2 - mx*scale, oy = chain.y + chain.h/2 - my*scale, Sx = x => ox + x*scale, Sy = y => oy + y*scale;
+    ctx.fillStyle = mute; ctx.fillText("every path's arrow, head to tail", chain.x, chain.y - 8);
+    ctx.strokeStyle = rgb; ctx.globalAlpha = 0.85; ctx.lineWidth = 1.2; ctx.beginPath(); pts.forEach(([x, y], k) => k ? ctx.lineTo(Sx(x), Sy(y)) : ctx.moveTo(Sx(x), Sy(y))); ctx.stroke();
+    if(scale > 9){ ctx.globalAlpha = 0.6; for(let k=1;k<pts.length;k++) arrow(ctx, Sx(pts[k - 1][0]), Sy(pts[k - 1][1]), Sx(pts[k][0]), Sy(pts[k][1]), Math.min(5, scale*0.35)); }
+    if(hp){ ctx.strokeStyle = ink; ctx.globalAlpha = 1; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(Sx(hp[0]), Sy(hp[1])); ctx.lineTo(Sx(hp[2]), Sy(hp[3])); ctx.stroke(); }
+    if(tot.n){ ctx.strokeStyle = dawn; ctx.globalAlpha = 1; ctx.lineWidth = 2.5; arrow(ctx, Sx(0), Sy(0), Sx(px), Sy(py), Math.min(12, 4 + Math.hypot(px, py)*scale*0.08)); }
+    ctx.lineWidth = 1; ctx.globalAlpha = 1;
+    $("mirLight").textContent = rel >= 1.95 ? `${rel.toFixed(rel < 10 ? 1 : 0)}×` : `${(rel*100).toFixed(rel < 0.1 ? 1 : 0)}%`;
+    $("mirLeft").textContent = `${tot.n} of ${N} strips`;
+  }
+  function stripAt(p){
+    if(p.x < box.X0 - 6 || p.x > box.X1 + 6) return -1;
+    const i = clamp(Math.floor((p.x - box.X0)/(box.X1 - box.X0)*N), 0, N - 1);
+    return Math.abs(p.y - ys[i]) < 18 ? i : -1;
+  }
+  function scrape(i){
+    const a = lastI < 0 ? i : lastI;
+    for(let k=Math.min(a, i); k<=Math.max(a, i); k++) keep[k] = paint;
+    lastI = i; cut = null;
+  }
+  cv.addEventListener("pointerdown", e => {
+    const i = stripAt(local(cv, e)); if(i < 0) return;
+    cv.setPointerCapture(e.pointerId); paint = !keep[i]; lastI = -1; scrape(i); hover = i; afterEdit();
+  });
+  cv.addEventListener("pointermove", e => {
+    const p = local(cv, e);
+    if(paint !== null){ const i = clamp(Math.floor((p.x - box.X0)/(box.X1 - box.X0)*N), 0, N - 1); scrape(i); hover = i; afterEdit(); }
+    else { hover = stripAt(p); if(reduce) draw(0); }
+  });
+  ["pointerup", "pointercancel"].forEach(ev => cv.addEventListener(ev, () => { paint = null; lastI = -1; }));
+  cv.addEventListener("pointerleave", () => { if(paint === null){ hover = -1; if(reduce) draw(0); } });
+  function afterEdit(){ if(paint !== null) tell(`${keep.filter(Boolean).length} of ${N} strips left. Light at the eye: ${fmt(light())} of the whole flat mirror.`); if(reduce) draw(0); }
+  function set(fn, msg){ keep = keep.map((_, i) => fn(i)); tell(msg()); if(reduce) draw(0); }
+  const middle = i => Math.abs(xs[i] - box.cx) <= 0.18*box.w;
+  $("mirCover").addEventListener("click", () => { cut = null; set(i => !middle(i), () => `With the middle covered, only ${fmt(light())} gets through, though ${keep.filter(Boolean).length} of ${N} strips are left. The ends cancel themselves.`); });
+  $("mirGrate").addEventListener("click", () => {
+    const left = xs.map((x, i) => x < box.x + 0.36*box.w && !middle(i)), l = sum(left, th);
+    cut = {nm: +colour.value, kind: "grating"};
+    set(i => left[i] && Math.cos(th[i] - l.a) > 0, () => `Only the left end is left, scraped into stripes, and light reaches the eye from there: ${fmt(light())} of the whole mirror's. Now slide the colour.`);
+  });
+  $("mirHelp").addEventListener("click", () => {
+    const all = sum(new Array(N).fill(true), th);
+    cut = {nm: +colour.value, kind: "zone plate"};
+    set(i => Math.cos(th[i] - all.a) > 0, () => `Every strip that pointed against the total is gone, and the eye gets ${fmt(light())} the light of the whole mirror. Less mirror, more light.`);
+  });
+  $("mirReset").addEventListener("click", () => { cut = null; set(() => true, () => "The whole mirror again. The light comes from the middle, where neighbouring arrows agree."); });
+  colour.addEventListener("input", () => {
+    $("mirNm").textContent = colour.value + " nm"; phases();
+    if(cut && Math.abs(colour.value - cut.nm) > 12) tell(`This ${cut.kind} was cut for ${cut.nm} nm. At ${colour.value} nm its strips no longer agree: ${fmt(light())}.`);
+    else if(cut) tell(`Back near ${cut.nm} nm, the colour it was cut for: ${fmt(light())}.`);
+    if(reduce) draw(0);
+  });
+  shapeSel.addEventListener("change", () => {
+    shape = shapeSel.value; geometry(); keep = new Array(N).fill(true); cut = null; scale = 0;
+    tell(shape === "ellipse" ? `On an ellipse, with the lamp and eye at its two foci, every path takes the same time. Every arrow agrees, so the light focuses: ${fmt(light())} a flat mirror's.` :
+         shape === "bowl" ? "On this bowl the middle path is the slowest of all, but its neighbours agree with it, so that's where the light comes from. Look at the time curve: a hill, flat on top." :
+         "A flat mirror. The middle path is the quickest, and its neighbours agree with it.");
+    if(reduce) draw(0);
+  });
+  layout(); tell("The whole mirror. The light comes from the middle, where neighbouring arrows agree. Drag along the mirror to scrape it.");
+  addEventListener("resize", () => { if(cv.clientWidth !== g.w){ layout(); scale = 0; if(reduce) draw(0); } });
+  if(reduce) draw(0); else animate(dt => { phi += dt*0.5; draw(dt); }, onScreen(cv));
+})();
+
+/* ---------- ants that refract: a toy model where quicker trips leave stronger scent ---------- */
+(function(){
+  const cv = $("antCanvas"), ground = $("antGround"), fermatBtn = $("antFermat"), goBtn = $("antGo");
+  const M = 61, YB = 0.3, V1 = 0.4, NANTS = 120, RHO = 0.06, EPS = 0.05, REPICK = 0.8, WOBBLE = 2, SHARP = 8;
+  const KERNEL = [0.15, 0.5, 1, 0.5, 0.15], NEST = {x: 0.12, y: 0.1};
+  const GROUNDS = {"2.83": ["smooth plastic", "rough felt"], "1.65": ["smooth plastic", "smooth felt"], "1.72": ["smooth felt", "rough felt"]};
+  const xs = Array.from({length: M}, (_, j) => 0.02 + 0.96*j/(M - 1));
+  let g, food = {x: 0.86, y: 0.56}, ratio = +ground.value, v2 = V1/ratio, T = [], tBest = 1, xF = 0, xS = 0;
+  let tau = new Float64Array(M), ants = [], trips = 0, showF = true, started = false, tick = 0, fibres = [];
+  const gauss = () => { let u = 0; for(let i=0;i<6;i++) u += Math.random(); return (u - 3)/Math.sqrt(0.5); };
+  const clampJ = j => clamp(j, 0, M - 1);
+  function solve(){
+    v2 = V1/ratio;
+    T = xs.map(x => Math.hypot(x - NEST.x, YB - NEST.y)/V1 + Math.hypot(food.x - x, food.y - YB)/v2);
+    tBest = Math.min(...T);
+    xF = crossing(NEST, food, YB, V1, v2);
+    xS = NEST.x + (food.x - NEST.x)*(YB - NEST.y)/(food.y - NEST.y);
+  }
+  function pick(){
+    let tot = 0; for(let j=0;j<M;j++) tot += tau[j] + EPS;
+    let r = Math.random()*tot; for(let j=0;j<M;j++){ r -= tau[j] + EPS; if(r <= 0) return j; } return M - 1;
+  }
+  function lay(j){ const q = Math.pow(tBest/T[j], SHARP); for(let d=-2; d<=2; d++){ const k = j + d; if(k >= 0 && k < M) tau[k] += q*KERNEL[d + 2]; } }
+  function release(){
+    tau = new Float64Array(M); trips = 0; started = true;
+    ants = Array.from({length: NANTS}, (_, i) => ({j: Math.floor(Math.random()*M), leg: 0, s: 0, wait: i*0.05}));
+  }
+  function legLen(an){ const x = xs[an.j]; return an.leg === 0 || an.leg === 3 ? Math.hypot(x - NEST.x, YB - NEST.y) : Math.hypot(food.x - x, food.y - YB); }
+  function step(dt){
+    const fade = Math.exp(-RHO*dt);
+    for(let j=0;j<M;j++) tau[j] *= fade;
+    for(const an of ants){
+      if(an.wait > 0){ an.wait -= dt; continue; }
+      an.s += (an.leg === 0 || an.leg === 3 ? V1 : v2)*dt;   // legs: 0 nest to border, 1 border to food, 2 food to border, 3 border to nest
+      const len = legLen(an);
+      if(an.s >= len){
+        an.s -= len; an.leg = (an.leg + 1) % 4;
+        if(an.leg === 2) lay(an.j);
+        if(an.leg === 0){ lay(an.j); trips++; an.j = clampJ((Math.random() < REPICK ? pick() : an.j) + Math.round(gauss()*WOBBLE)); an.s = 0; }
+      }
+    }
+  }
+  function trail(){   // where the trail crosses the border: scent-weighted, around the strongest bin
+    let jm = 0; for(let j=0;j<M;j++) if(tau[j] > tau[jm]) jm = j;
+    let sw = 0, sx = 0; for(let d=-4; d<=4; d++){ const k = jm + d; if(k >= 0 && k < M){ sw += tau[k]; sx += tau[k]*xs[k]; } }
+    return sw > 1 ? sx/sw : null;
+  }
+  function where(an){
+    const x = xs[an.j], len = legLen(an), u = clamp(an.s/len, 0, 1);
+    const [a, b] = an.leg === 0 ? [NEST, {x, y: YB}] : an.leg === 1 ? [{x, y: YB}, food] : an.leg === 2 ? [food, {x, y: YB}] : [{x, y: YB}, NEST];
+    return {x: a.x + (b.x - a.x)*u, y: a.y + (b.y - a.y)*u, dx: b.x - a.x, dy: b.y - a.y};
+  }
+  function layout(){
+    g = fit(cv, 0.66);
+    fibres = Array.from({length: Math.round(g.w*g.h/90)}, () => ({x: Math.random(), y: YB + Math.random()*(0.66 - YB), a: Math.random()*Math.PI, l: 2 + Math.random()*5}));
+  }
+  function draw(){
+    const {ctx, w, h} = g, s = w, ink = C("--ink"), dawn = C("--dawn"), sea = C("--sea"), mute = C("--mute");
+    const [top, bottom] = GROUNDS[ground.value], rough = bottom === "rough felt", felt = top === "smooth felt";
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = felt ? "rgba(154,165,174,0.07)" : "rgba(233,228,216,0.05)"; ctx.fillRect(0, 0, w, YB*s);
+    ctx.fillStyle = "rgba(227,115,90,0.06)"; ctx.fillRect(0, YB*s, w, h - YB*s);
+    ctx.strokeStyle = mute; ctx.lineWidth = 1;
+    fibres.forEach((f, k) => { if(!rough && k % 3) return; ctx.globalAlpha = rough ? 0.16 : 0.1; ctx.beginPath(); ctx.moveTo(f.x*s, f.y*s); ctx.lineTo(f.x*s + Math.cos(f.a)*f.l, f.y*s + Math.sin(f.a)*f.l); ctx.stroke(); });
+    ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.moveTo(0, YB*s); ctx.lineTo(w, YB*s); ctx.stroke();
+    ctx.globalAlpha = 1; ctx.font = "11px JetBrains Mono, monospace"; ctx.fillStyle = mute; ctx.textAlign = "right";
+    ctx.fillText(top, w - 10, 16); ctx.fillText(bottom, w - 10, YB*s + 16); ctx.textAlign = "left";
+    // the scent: one faint route per crossing point, brighter where more scent lies
+    let tm = 0; for(let j=0;j<M;j++) tm = Math.max(tm, tau[j]);
+    if(tm > 0.05){
+      ctx.strokeStyle = sea; ctx.lineWidth = 2.2;
+      for(let j=0;j<M;j++){
+        const a = tau[j]/tm; if(a < 0.04) continue;
+        ctx.globalAlpha = 0.75*a*Math.min(1, tm/3); ctx.beginPath(); ctx.moveTo(NEST.x*s, NEST.y*s); ctx.lineTo(xs[j]*s, YB*s); ctx.lineTo(food.x*s, food.y*s); ctx.stroke();
+      }
+      ctx.lineWidth = 1;
+    }
+    if(showF){
+      ctx.strokeStyle = dawn; ctx.globalAlpha = 0.9; ctx.setLineDash([6, 5]);
+      ctx.beginPath(); ctx.moveTo(NEST.x*s, NEST.y*s); ctx.lineTo(xF*s, YB*s); ctx.lineTo(food.x*s, food.y*s); ctx.stroke();
+      ctx.strokeStyle = ink; ctx.globalAlpha = 0.55; ctx.setLineDash([1.5, 4]);
+      ctx.beginPath(); ctx.moveTo(NEST.x*s, NEST.y*s); ctx.lineTo(food.x*s, food.y*s); ctx.stroke(); ctx.setLineDash([]);
+    }
+    // the ants; the ones heading home carry a crumb
+    for(const an of ants){
+      if(an.wait > 0) continue;
+      const p = where(an), l = Math.hypot(p.dx, p.dy) || 1, ux = p.dx/l*2.6, uy = p.dy/l*2.6, x = p.x*s, y = p.y*s;
+      ctx.globalAlpha = 0.9; ctx.strokeStyle = ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - ux, y - uy); ctx.lineTo(x + ux, y + uy); ctx.stroke();
+      if(an.leg >= 2){ ctx.fillStyle = dawn; ctx.beginPath(); ctx.arc(x + ux*1.2, y + uy*1.2, 1.4, 0, 7); ctx.fill(); }
+    }
+    ctx.lineWidth = 1;
+    // the nest and the food
+    ctx.globalAlpha = 1; ctx.fillStyle = "#05080c"; ctx.strokeStyle = mute; ctx.beginPath(); ctx.arc(NEST.x*s, NEST.y*s, 7, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = dawn; ctx.beginPath(); ctx.arc(food.x*s, food.y*s, 6, 0, 7); ctx.fill();
+    ctx.fillStyle = mute; ctx.font = "10px JetBrains Mono, monospace";
+    ctx.fillText("nest", NEST.x*s + 11, NEST.y*s - 6); ctx.textAlign = "center"; ctx.fillText("food", food.x*s, food.y*s + (food.y > 0.6 ? -11 : 18)); ctx.textAlign = "left";
+  }
+  function readout(){
+    const x = trail(), pct = v => `${(v*100).toFixed(1)}%`;
+    $("antFermatGap").textContent = x === null ? "–" : pct(Math.abs(x - xF));
+    $("antStraightGap").textContent = x === null ? "–" : pct(Math.abs(x - xS));
+    $("antTrips").textContent = trips.toLocaleString("en");
+  }
+  function settle(secs){ for(let t=0; t<secs; t+=1/30) step(1/30); }   // for reduced motion: run the colony ahead, then show it
+  function frame(dt){
+    if(!started) release();
+    const n = Math.max(1, Math.round(dt*120)); for(let k=0;k<n;k++) step(dt/n);
+    draw(); if((tick += dt) > 0.25){ tick = 0; readout(); }
+  }
+  function refresh(){ if(reduce){ settle(45); draw(); readout(); } }
+  goBtn.addEventListener("click", () => { release(); if(reduce){ settle(45); draw(); } readout(); });
+  $("antMove").addEventListener("click", () => {
+    let f; do { f = {x: 0.3 + Math.random()*0.64, y: 0.44 + Math.random()*0.16}; } while(Math.hypot(f.x - food.x, f.y - food.y) < 0.18);
+    food = f; solve(); tau = tau.map(v => v*0.15); if(!started) release(); refresh(); readout();
+  });
+  ground.addEventListener("change", () => { ratio = +ground.value; solve(); tau = tau.map(v => v*0.15); if(!started) release(); refresh(); readout(); });
+  fermatBtn.addEventListener("click", () => { showF = !showF; fermatBtn.setAttribute("aria-pressed", String(showF)); if(reduce) draw(); });
+  solve(); layout();
+  addEventListener("resize", () => { if(cv.clientWidth !== g.w){ layout(); if(reduce) draw(); } });
+  if(reduce){ release(); settle(45); draw(); readout(); }
+  else { draw(); animate(frame, onScreen(cv)); }
+})();
+
+/* ---------- Elvis: run along the beach, swim the rest; where should the dog go in? ---------- */
+(function(){
+  const fc = $("fetchCanvas"), pc = $("plotCanvas"), say = $("fetchSay"), side = matchMedia("(min-width:640px)");
+  const RUN = 6.40, SWIM = 0.91, K = SWIM/Math.sqrt(RUN*RUN - SWIM*SWIM), CX = 15, PACE = 3;   // Pennings fixed his tape about 15 m down the beach, at C
+  const W = {x0: -1.5, x1: 18.5, y0: -3.5};
+  const ELVIS = [10.5,2.0, 17.0,2.1, 4.7,0.9, 10.9,2.2, 15.3,2.3, 7.2,1.0, 15.6,3.9, 11.6,2.2, 11.2,1.3, 11.8,2.2,
+    10.3,1.8, 6.6,1.0, 11.5,1.8, 15.0,3.8, 7.5,1.4, 11.7,1.5, 14.0,2.6, 9.2,1.7, 14.5,1.9, 11.5,2.1,
+    12.2,2.3, 13.4,1.5, 13.5,1.8, 6.0,0.9, 12.7,2.3, 19.2,4.2, 6.5,1.0, 14.2,1.9, 14.5,2.0, 6.6,0.8,
+    11.4,1.3, 11.8,2.4, 14.2,2.5, 12.5,1.5, 15.3,3.3];   // Pennings (2003), Table 2: ball out x, went in y before C, in metres
+  let gf, gp, ball = null, run = null, busy = false, hoverX = null, mine = [], rule = [], grains = [], waves = [];
+  const tell = m => { if(say.textContent !== m) say.textContent = m; };
+  const time = (ex, out) => ex/RUN + Math.hypot(CX - ex, out)/SWIM;
+  function at(ex, out, t){   // where a dog going in at ex is after t seconds
+    const t1 = ex/RUN;
+    if(t < t1) return {x: RUN*t, y: 0, dx: 1, dy: 0, swim: false};
+    const d = Math.hypot(CX - ex, out), u = Math.min(1, (t - t1)*SWIM/d);
+    return {x: ex + (CX - ex)*u, y: out*u, dx: CX - ex, dy: out, swim: true};
+  }
+  function layout(){
+    gf = fit(fc, 1);
+    gp = fit(pc, side.matches ? gf.h/pc.clientWidth : 0.78);
+    grains = Array.from({length: Math.round(gf.w*0.9)}, () => ({x: Math.random(), y: Math.random(), a: 0.04 + Math.random()*0.1}));
+    waves = Array.from({length: 9}, (_, k) => ({x: (k*0.37 + 0.1) % 1, y: 0.12 + (k*0.61 % 0.85)}));
+  }
+  function dog(ctx, p, col, alpha, s){
+    const l = Math.hypot(p.dx, p.dy) || 1, ux = p.dx/l, uy = p.dy/l, x = p.x, y = p.y;
+    ctx.globalAlpha = alpha; ctx.fillStyle = col;
+    if(p.swim){
+      ctx.strokeStyle = col; ctx.globalAlpha = alpha*0.5; ctx.beginPath(); ctx.ellipse(x, y, 7, 4, Math.atan2(uy, ux), 0, 7); ctx.stroke();
+      ctx.globalAlpha = alpha; ctx.beginPath(); ctx.arc(x + ux*2, y + uy*2, 2.8, 0, 7); ctx.fill();
+    } else {
+      ctx.beginPath(); ctx.ellipse(x, y, Math.max(5, 0.45*s), Math.max(2.6, 0.22*s), Math.atan2(uy, ux), 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(x + ux*Math.max(6, 0.5*s), y + uy*Math.max(6, 0.5*s) - 1.5, 2.6, 0, 7); ctx.fill();
+    }
+  }
+  function drawFetch(){
+    const {ctx, w, h} = gf, s = w/(W.x1 - W.x0), X = x => (x - W.x0)*s, Y = y => (y - W.y0)*s, y0 = Y(0);
+    const ink = C("--ink"), dawn = C("--dawn"), sea = C("--sea"), mute = C("--mute");
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(240,168,90,0.07)"; ctx.fillRect(0, 0, w, y0);
+    ctx.fillStyle = dawn; grains.forEach(p => { ctx.globalAlpha = p.a; ctx.fillRect(p.x*w, p.y*(y0 - 2), 1.2, 1.2); });
+    ctx.globalAlpha = 1; ctx.fillStyle = "rgba(111,194,184,0.1)"; ctx.fillRect(0, y0, w, h - y0);
+    ctx.strokeStyle = sea; ctx.lineWidth = 1;
+    waves.forEach(v => { ctx.globalAlpha = 0.16; ctx.beginPath(); ctx.arc(v.x*w, y0 + v.y*(h - y0) + 8, 9, 1.15*Math.PI, 1.85*Math.PI); ctx.stroke(); });
+    ctx.globalAlpha = 0.8; ctx.beginPath(); ctx.moveTo(0, y0); ctx.lineTo(w, y0); ctx.stroke();
+    ctx.globalAlpha = 1; ctx.font = "10px JetBrains Mono, monospace"; ctx.fillStyle = mute;
+    ctx.fillText("beach", 8, 14); ctx.fillText("Lake Michigan", 8, y0 + 15);
+    // metre ticks along the shore, and the line out through C
+    ctx.strokeStyle = mute;
+    for(let m=1; m<=17; m++){ ctx.globalAlpha = m % 5 ? 0.25 : 0.55; ctx.beginPath(); ctx.moveTo(X(m), y0 - (m % 5 ? 3 : 5)); ctx.lineTo(X(m), y0); ctx.stroke(); }
+    ctx.globalAlpha = 0.45; ctx.setLineDash([2, 4]); ctx.beginPath(); ctx.moveTo(X(CX), y0); ctx.lineTo(X(CX), h); ctx.stroke(); ctx.setLineDash([]);
+    ctx.globalAlpha = 1; ctx.textAlign = "center"; ctx.fillText("C", X(CX), y0 - 9); ctx.fillText("A", X(0), y0 - 30);
+    ctx.textAlign = "right"; ctx.fillText("5 m", w - 8, h - 14);
+    ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.moveTo(w - 8 - 5*s, h - 8); ctx.lineTo(w - 8, h - 8); ctx.stroke(); ctx.textAlign = "left";
+    // the thrower at A
+    ctx.globalAlpha = 0.9; ctx.strokeStyle = ink; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(X(-0.6), y0 - 4); ctx.lineTo(X(-0.6), y0 - 16); ctx.stroke();
+    ctx.fillStyle = ink; ctx.beginPath(); ctx.arc(X(-0.6), y0 - 20, 3.2, 0, 7); ctx.fill(); ctx.lineWidth = 1;
+    if(ball){
+      const bx = X(CX), by = Y(ball.out);
+      // a preview of the route under the pointer
+      if(ball.landed && !busy && hoverX !== null){
+        ctx.strokeStyle = ink; ctx.globalAlpha = 0.35; ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.moveTo(X(0), y0); ctx.lineTo(X(hoverX), y0); ctx.lineTo(bx, by); ctx.stroke(); ctx.setLineDash([]);
+        ctx.globalAlpha = 0.8; ctx.fillStyle = ink; ctx.beginPath(); ctx.arc(X(hoverX), y0, 3, 0, 7); ctx.fill();
+      }
+      if(run){
+        const out = ball.out;
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = dawn; ctx.globalAlpha = 0.8; ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.moveTo(X(0), y0); ctx.lineTo(X(run.best), y0); ctx.lineTo(bx, by); ctx.stroke(); ctx.setLineDash([]);
+        if(!run.lean){ ctx.strokeStyle = ink; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.moveTo(X(0), y0); ctx.lineTo(X(run.ex), y0); ctx.lineTo(bx, by); ctx.stroke(); }
+        ctx.lineWidth = 1;
+        const me = at(run.ex, out, run.t), ghost = at(run.best, out, run.t), P = q => ({...q, x: X(q.x), y: Y(q.y) - (q.swim ? 0 : 3)});
+        if(run.lean && !me.swim){ ctx.strokeStyle = dawn; ctx.globalAlpha = 0.45; ctx.setLineDash([1.5, 3]); ctx.beginPath(); ctx.moveTo(X(me.x), y0); ctx.lineTo(bx, by); ctx.stroke(); ctx.setLineDash([]); }
+        if(!run.lean) dog(ctx, P(ghost), dawn, 0.55, s);
+        dog(ctx, P(me), run.lean ? dawn : ink, 1, s);
+      } else if(ball.landed){
+        dog(ctx, {x: X(0.4), y: y0 - 3, dx: 1, dy: 0, swim: false}, ink, 1, s);
+      }
+      // the ball, in flight or floating
+      const f = ball.f, cx = X(CX*f), cy = Y(ball.out*f), lift = 4*f*(1 - f)*5*s;
+      if(f < 1){ ctx.globalAlpha = 0.3; ctx.fillStyle = "#000"; ctx.beginPath(); ctx.ellipse(cx, cy, 4, 2, 0, 0, 7); ctx.fill(); }
+      ctx.globalAlpha = 1; ctx.fillStyle = "#d9df7a"; ctx.beginPath(); ctx.arc(cx, cy - lift, 3.6, 0, 7); ctx.fill();
+      if(f === 1){ ctx.strokeStyle = sea; ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.ellipse(cx, cy + 1, 8, 3.5, 0, 0, 7); ctx.stroke(); }
+    } else {
+      dog(ctx, {x: X(0.4), y: y0 - 3, dx: 1, dy: 0, swim: false}, ink, 1, s);
+    }
+    ctx.globalAlpha = 1;
+  }
+  function drawPlot(){
+    const {ctx, w, h} = gp, m = {l: 30, r: 10, t: 12, b: 30}, ink = C("--ink"), dawn = C("--dawn"), sea = C("--sea"), mute = C("--mute");
+    const X = x => m.l + x/20*(w - m.l - m.r), Y = y => h - m.b - (y + 0.5)/5.5*(h - m.t - m.b);
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.lineWidth = 1;
+    ctx.strokeStyle = C("--line"); ctx.fillStyle = mute; ctx.textAlign = "center";
+    for(let x=0; x<=20; x+=5){ ctx.beginPath(); ctx.moveTo(X(x), Y(-0.5)); ctx.lineTo(X(x), Y(5)); ctx.stroke(); ctx.fillText(x, X(x), h - m.b + 13); }
+    ctx.textAlign = "right";
+    for(let y=0; y<=5; y++){ ctx.beginPath(); ctx.moveTo(X(0), Y(y)); ctx.lineTo(X(20), Y(y)); ctx.stroke(); ctx.fillText(y, m.l - 6, Y(y) + 3.5); }
+    ctx.fillText("ball out (m)", X(20), h - 4); ctx.textAlign = "left"; ctx.fillText("went in, before C (m)", X(0) + 6, m.t + 8);
+    ctx.strokeStyle = dawn; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.9; ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(20), Y(20*K)); ctx.stroke(); ctx.lineWidth = 1;
+    ctx.fillStyle = mute; ctx.globalAlpha = 0.95;
+    for(let i=0; i<ELVIS.length; i+=2){ ctx.beginPath(); ctx.arc(X(ELVIS[i]), Y(ELVIS[i + 1]), 2.6, 0, 7); ctx.fill(); }
+    ctx.fillStyle = dawn; rule.forEach(([x, y]) => { ctx.beginPath(); ctx.arc(X(x), Y(y), 3.2, 0, 7); ctx.fill(); });
+    ctx.strokeStyle = sea; ctx.lineWidth = 1.8; mine.forEach(([x, y]) => { ctx.beginPath(); ctx.arc(X(x), Y(clamp(y, -0.45, 5)), 4.5, 0, 7); ctx.stroke(); });
+    ctx.lineWidth = 1; ctx.globalAlpha = 1;
+  }
+  function play(update, done){   // run an animation until update says stop; with reduced motion, jump to the end
+    if(reduce){ update(1e4); done(); return; }
+    busy = true; let last = performance.now();
+    (function step(now){
+      const dt = Math.min(0.05, (now - last)/1000); last = now;
+      if(update(dt)){ drawFetch(); requestAnimationFrame(step); } else { busy = false; done(); }
+    })(last);
+  }
+  function throwBall(after){
+    ball = {out: 4 + Math.random()*11, f: 0, landed: false}; run = null; hoverX = null;
+    ["fetchOut", "fetchIn", "fetchBest", "fetchLost"].forEach(id => { $(id).textContent = "–"; });
+    tell("The ball is in the air...");
+    play(dt => (ball.f = Math.min(1, ball.f + dt/1.1)) < 1, () => {
+      ball.f = 1; ball.landed = true; $("fetchOut").textContent = `${ball.out.toFixed(1)} m`; drawFetch();
+      if(after) after(); else tell("Now tap the shoreline where your dog should go in.");
+    });
+  }
+  function race(ex, lean){
+    const out = ball.out, best = CX - K*out, end = Math.max(time(ex, out), time(best, out));
+    run = {ex, best, lean, t: 0}; hoverX = null;
+    ["fetchIn", "fetchBest", "fetchLost"].forEach(id => { $(id).textContent = "–"; });
+    tell(lean ? "The dog runs while running closes the gap to the ball faster than swimming would..." : "Go!");
+    play(dt => (run.t = Math.min(end, run.t + dt*PACE)) < end, () => {
+      const lost = time(ex, out) - time(best, out), y = CX - ex;
+      (lean ? rule : mine).push([out, y]);
+      $("fetchIn").textContent = y >= 0 ? `${y.toFixed(1)} m` : `${(-y).toFixed(1)} m past C`;
+      $("fetchBest").textContent = `${(K*out).toFixed(1)} m`;
+      $("fetchLost").textContent = `${lost.toFixed(2)} s`;
+      tell(lean ? `The leaning dog went in ${y.toFixed(1)} m before C, right where the calculus says. It never planned a route. It ran until running stopped closing the gap faster than swimming would.` :
+        lost < 0.05 ? `A dead heat, near enough: ${lost.toFixed(2)} s behind the gold ghost. Close to the best place, a small miss costs almost nothing.` :
+        lost < 0.4 ? `${lost.toFixed(2)} s behind the gold ghost. Close to the best place, a miss costs very little. That's why Elvis's points can scatter and still be nearly as fast.` :
+        `${lost.toFixed(1)} s behind the gold ghost. ${y > K*out ? "Your dog went in too soon and swam too far." : "Your dog ran too far along the beach."} Tap again to try another spot.`);
+      drawFetch(); drawPlot();
+    });
+  }
+  const worldX = e => local(fc, e).x/(gf.w/(W.x1 - W.x0)) + W.x0;
+  fc.addEventListener("pointerdown", e => {
+    if(busy) return;
+    if(!ball || !ball.landed){ tell("Throw the ball first."); return; }
+    race(clamp(worldX(e), 0, W.x1 - 0.5), false);
+  });
+  fc.addEventListener("pointermove", e => { if(busy || !ball || !ball.landed || e.pointerType === "touch") return; hoverX = clamp(worldX(e), 0, W.x1 - 0.5); drawFetch(); });
+  fc.addEventListener("pointerleave", () => { if(hoverX !== null && !busy){ hoverX = null; drawFetch(); } });
+  $("fetchThrow").addEventListener("click", () => { if(!busy) throwBall(); });
+  $("fetchRule").addEventListener("click", () => {
+    if(busy) return;
+    const go = () => race(CX - K*ball.out, true);
+    if(ball && ball.landed) go(); else throwBall(go);
+  });
+  layout(); drawFetch(); drawPlot();
+  addEventListener("resize", () => { if(fc.clientWidth !== gf.w || pc.clientWidth !== gp.w){ layout(); drawFetch(); drawPlot(); } });
+  document.fonts && document.fonts.ready.then(() => { drawFetch(); drawPlot(); });
+})();
+</script>
+</body>
+</html>
