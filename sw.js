@@ -1,9 +1,9 @@
 /* Glamour Gram service worker: every page stays readable offline.
    Pages and the manifest come from the network when it answers within a few seconds, so new versions show at once; the cached copy is the fallback.
    Other files are served from the cache and refreshed in the background. When you add a page, list it in PAGES and bump VERSION. */
-const VERSION = "glamour-gram-v2";
+const VERSION = "glamour-gram-v3";
 const PAGES = ["./", "index.html", "four-days-old.html", "three-letter-spell.html", "the-duet.html", "specious-present.html",
-  "microcosm.html", "workarounds.html", "price-of-a-mind.html", "view-from-elsewhere.html", "every-path.html"];
+  "microcosm.html", "workarounds.html", "price-of-a-mind.html", "view-from-elsewhere.html", "every-path.html", "everyone-like-you.html"];
 const FILES = ["glam.css", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png", "icons/apple-touch-icon.png"];
 const FONT_CSS = [
   "https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap",

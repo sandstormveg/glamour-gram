@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1016">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="GlamGram">
+<script>if("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
+<title>Everyone Like You · Glamour Gram</title>
+<meta name="description" content="No message, no second meeting, no way to check. Copies can still cooperate, because what you choose is a clue to what everyone like you chooses. Play your twin and Newcomb's boxes, watch Hamilton's rule decide a dish, bend a forecast its subject can hear, and play the game physics caps at 85%.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
+<style>
+/* Layout: the title is a field of copies that all choose at once, faster than light could tell them. Then a dilemma with your own copy, the same threshold in evolution, Newcomb's predictor and the people who read us, a forecast its subject can hear, the ceiling physics puts on agreeing without talking, copies across the cosmos (flagged), and the turn: the nearest copy is tomorrow's you. */
+[hidden]{display:none!important}
+.hero canvas{cursor:pointer}
+.controls label{min-width:0;max-width:100%}
+.controls select{min-width:0}
+@media (max-width:420px){.controls select{font-size:12px;padding:6px 4px}}
+blockquote{margin:24px 0;padding:4px 0 4px 18px;border-left:2px solid var(--dawn);font-family:var(--display);font-style:italic;font-size:clamp(20px,3vw,24px);line-height:1.4;max-width:58ch}
+blockquote cite{display:block;margin-top:8px;font-family:var(--mono);font-style:normal;font-size:12px;letter-spacing:.06em;color:var(--mute)}
+.say{font-size:17px;margin:14px 0 0;min-height:1.6em;max-width:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--mute)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.legend i.bar{border-radius:0;height:2px;width:16px;vertical-align:3px}
+.legend i.dash{border-radius:0;height:0;width:16px;border-top:2px dashed var(--mute);vertical-align:3px}
+.legend i.ring{background:transparent;border:2px solid var(--dawn)}
+.callout ul{margin:0;padding-left:20px}
+.callout li{margin-bottom:8px;max-width:62ch}
+.note a{color:var(--sea)}
+h3{margin-top:40px}
+sup{line-height:0;font-size:.7em}
+.pay{display:grid;grid-template-columns:auto 1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:22px 0 8px;max-width:440px;font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums}
+.pay > div{display:contents}
+.pay > div > div{background:var(--deep);padding:10px 12px;min-width:0}
+.pay .h{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.pay b{color:var(--dawn);font-weight:500}
+.plan{font-family:var(--mono);font-size:12px;color:var(--mute)}
+.plan span{min-width:3.4em}
+.plan button{padding:6px 11px;font-size:12px}
+</style>
+</head>
+<body>
+<header class="hero" aria-label="A field of small lights, each a copy of you in its own room. They all change colour in the same instant, and each sends out a ring of light that reaches no one in time.">
+  <canvas id="heroCanvas"></canvas>
+  <a class="home corner" href="./">Glamour Gram</a>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">Glamour Gram · X</div>
+    <h1>Everyone Like You</h1>
+    <p class="lede">No message, no second meeting, no way to check. Copies can still cooperate, because what you choose is a clue to what everyone like you chooses. Genes worked it out first.</p>
+  </div></div>
+</header>
+
+<main>
+<section id="twin"><div class="wrap">
+  <div class="eyebrow">A dilemma</div>
+  <h2>A dilemma <em>with yourself</em></h2>
+  <p>You're alone in a room with a dollar. You can keep it, or send it to someone in another room, and money you send triples on the way. They have the same choice. You'll never meet, never talk, and never play again.</p>
+  <div class="pay" role="table" aria-label="What each of you ends with">
+    <div role="row" style="display:contents"><div></div><div class="h" role="columnheader">They send</div><div class="h" role="columnheader">They keep</div></div>
+    <div role="row" style="display:contents"><div class="h" role="rowheader">You send</div><div role="cell"><b>$3</b> · $3</div><div role="cell"><b>$0</b> · $4</div></div>
+    <div role="row" style="display:contents"><div class="h" role="rowheader">You keep</div><div role="cell"><b>$4</b> · $0</div><div role="cell"><b>$1</b> · $1</div></div>
+  </div>
+  <p class="note">Gold: what you end with. Grey: what they end with.</p>
+  <p>Whatever the other room does, keeping leaves you a dollar better off. That's the prisoner's dilemma, and against a stranger the textbook answer is to keep.</p>
+  <p>Now change one thing. The other room holds an exact copy of you, made a minute ago, with your memories and your habits of thought. It's weighing the same dollar with the same mind. Do you still keep it?</p>
+  <div class="instrument">
+    <canvas id="roomCanvas" aria-label="Two rooms with a wall between them, you in one and the other player in the other. Below, a chart of what sending and keeping earn on average, against the chance that the other room holds a copy of you."></canvas>
+    <div class="controls">
+      <label>Chance it's a copy of you <input type="range" id="roomR" min="0" max="100" value="90"> <output id="roomROut">90%</output></label>
+    </div>
+    <div class="controls">
+      <button type="button" class="primary" id="roomSend">Send $1</button>
+      <button type="button" id="roomKeep">Keep it</button>
+      <button type="button" id="roomMany">Play 100 rooms each way</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">You've won</div><div class="v" id="roomTotal">–</div></div>
+      <div><div class="k">Always sending</div><div class="v" id="roomSendAvg">–</div></div>
+      <div><div class="k">Always keeping</div><div class="v" id="roomKeepAvg">–</div></div>
+    </div>
+    <p class="say" id="roomSay" aria-live="polite">Choose. The other room is choosing too.</p>
+    <p class="caption">Each round, the other room holds a copy of you with the chance you set. A copy makes your choice. Otherwise it holds a stranger, who tosses a coin. The two lines are what each choice earns on average at every setting. Nothing passes through the wall until both have chosen.</p>
+  </div>
+  <p>Slide toward a stranger and watch the lines cross. Sending pays as soon as the other room holds a copy more than one time in three.</p>
+  <p>But the first argument hasn't gone away. Hold the other room's choice fixed, and keeping always earns one dollar more. The question is whether you're allowed to hold it fixed. Causal decision theory says yes: your choice can't reach through the wall, so take the extra dollar. Evidential decision theory, after Richard Jeffrey (1965), says no: your choice is evidence about the other room's, so choose the world you'd rather find yourself in. Against a stranger the two theories agree. Against a copy they part.</p>
+  <p>Douglas Hofstadter argued in 1983 that people who are equally rational, and know it, should see that they'll reason alike, and so cooperate. He called it superrationality. Then he put a one-shot dilemma, for real money, to twenty friends. Fourteen defected.</p>
+</div></section>
+
+<section id="evolution"><div class="wrap">
+  <div class="eyebrow">Natural selection</div>
+  <h2>Evolution sides <em>with the evidence</em></h2>
+  <p>This sounds like a puzzle for philosophers. It's older than philosophers. A gene sits in many bodies at once, so a gene that makes a body help its relatives is helping copies of itself, in rooms it will never see.</p>
+  <p>In 1964 W. D. Hamilton worked out when such a gene spreads: when r × b &gt; c. The help is worth b to the one who gets it and costs c to the one who gives it, and r is their relatedness. Relatedness sounds like family, but in the modern theory it's a statistic: how well the giver's genes predict the receiver's (Grafen 1985). Family is just the commonest way to make that prediction good.</p>
+  <p>Put in the dollar game's numbers, a cost of 1 and a gift of 3, and Hamilton's rule says r &gt; 1/3. That's exactly where the lines crossed in the other room. In 1994 the philosopher Brian Skyrms showed why it's no coincidence. When like tends to meet like, natural selection scores each strategy by what it tends to meet. That's Jeffrey's evidential rule, not the dominance argument. Selection doesn't take sides in the philosophy. It counts who's left.</p>
+  <div class="instrument">
+    <canvas id="dishCanvas" aria-label="A dish of cells, gold for senders and blue for keepers, with lines to the partners they meet. Beside it, a chart of the share of senders over the last two hundred generations."></canvas>
+    <div class="controls">
+      <label>Chance a partner is kin, r <input type="range" id="dishR" min="0" max="100" value="20"> <output id="dishROut">0.20</output></label>
+      <label>Gift ÷ cost <input type="range" id="dishB" min="12" max="60" value="30"> <output id="dishBOut">3.0×</output></label>
+    </div>
+    <div class="controls">
+      <button type="button" class="primary" id="dishHalf">Start half and half</button>
+      <button type="button" id="dishFew">Start with a few senders</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Senders now</div><div class="v" id="dishShare">–</div></div>
+      <div><div class="k">r × gift − cost</div><div class="v" id="dishRule">–</div></div>
+      <div><div class="k">Hamilton's rule says</div><div class="v" id="dishVerdict">–</div></div>
+    </div>
+    <p class="say" id="dishSay" aria-live="polite">At r = 0.20, senders shrink. Raise r past one in three.</p>
+    <p class="caption">A toy model. Each generation, every cell meets a partner: one of its own kind with chance r, otherwise anyone. Senders pay 1 to give their partner the gift. Then cells reproduce in proportion to what they have, and offspring settle near their parents. Gold cells send, blue cells keep. Now and then a cell is born the other kind. Close to the threshold, selection is weak and luck can carry either side for a while.</p>
+  </div>
+  <p>Your body is the extreme case. Its roughly 30 trillion cells all grew from one fertilized egg, so they're as close to copies as cells get (Sender, Fuchs &amp; Milo 2016). Nearly all of them give up passing on their genes and work for the few cells that will. Biologists think starting every life from a single cell is part of what keeps the cells alike enough to cooperate (Grosberg &amp; Strathmann 2007). A cancer is a lineage of cells that has started reproducing for itself (Aktipis et al. 2015).</p>
+  <p>Some genes skip the family and check for copies directly. Hamilton imagined a gene that gives its carriers a visible tag and makes them help others with the tag. Richard Dawkins called it a green beard (1976). Green beards turned out to be real. In the social amoeba <i>Dictyostelium</i>, cells carrying the gene <i>csA</i> stick to one another as they gather into a fruiting body, and in mixed groups on soil they made 82% of the spores (Queller et al. 2003). Yeast cells with <i>FLO1</i> clump into flocs that shield the cells inside from alcohol and poisons, and they stick mainly to each other (Smukalla et al. 2008).</p>
+  <p>A green beard checks the tag, not the behaviour, so a cheat can grow the beard without the kindness. Programmers have met the same weakness. When programs can read each other's code, "cooperate with exact copies of me" works, but one changed character breaks it (Tennenholtz 2004). A sturdier program cooperates with anything it can prove will cooperate back, and a theorem of logic, Löb's, lets two such programs find each other (Bárász et al. 2014).</p>
+</div></section>
+
+<section id="omega"><div class="wrap">
+  <div class="eyebrow">A predictor</div>
+  <h2>Two boxes and <em>a prediction</em></h2>
+  <p>In 1960 William Newcomb, a physicist at the Lawrence Livermore laboratory, made up a puzzle while thinking about the prisoner's dilemma. The philosopher Robert Nozick published it in 1969. Online, the predictor in it is often called Omega.</p>
+  <p>A being that predicts people's choices very well sets two boxes in front of you. Box A is glass and holds $1,000. Box B is closed. Yesterday the predictor put $1,000,000 in B if it predicted you'd take only B, and nothing if it predicted you'd take both. You can take B alone, or both. Whatever is in B is already there.</p>
+  <div class="instrument">
+    <canvas id="boxCanvas" aria-label="The predictor, drawn as an eye, beside two boxes: a glass box holding a thousand dollars and a closed box that opens when you choose."></canvas>
+    <div class="controls">
+      <label>The predictor is right <input type="range" id="boxAcc" min="500" max="1000" step="5" value="900"> <output id="boxAccOut">90.0%</output></label>
+    </div>
+    <div class="controls">
+      <button type="button" class="primary" id="boxOne">Take only B</button>
+      <button type="button" id="boxBoth">Take both</button>
+      <button type="button" id="boxMany">Play 1,000 times each way</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">You've won</div><div class="v" id="boxTotal">–</div></div>
+      <div><div class="k">Only B, on average</div><div class="v" id="boxOneAvg">–</div></div>
+      <div><div class="k">Both, on average</div><div class="v" id="boxBothAvg">–</div></div>
+    </div>
+    <p class="say" id="boxSay" aria-live="polite">The boxes were filled yesterday. Choose.</p>
+    <p class="caption">The predictor reads your habits, not your click: with the accuracy you set, it foresaw whatever you're about to choose. Whatever is in B, taking both gets you $1,000 more. Taking only B pays more on average whenever the predictor beats a coin toss by a twentieth of a percentage point.</p>
+  </div>
+  <p>In 1979 David Lewis showed that the twin's dilemma is this puzzle in disguise. Your copy is a predictor of you, with its own dollar at stake. Lewis himself took both boxes.</p>
+  <p>People still split. When Martin Gardner put the puzzle to the readers of <i>Scientific American</i> in 1973, their letters favoured one box by about five to two. Newcomb was a one-boxer. In a <i>Guardian</i> poll in 2016, 53.5% of readers took one box. In the 2020 PhilPapers survey of philosophers, 31% took one box and 39% took two, and among decision theorists two boxes won by 73% to 21%. Two-boxers agree that one-boxers walk away richer. Lewis named a paper after the one-boxers' taunt, "Why ain'cha rich?" (1981). His answer was that the predictor reserved its riches for the irrational.</p>
+  <h3>The predictor <em>is other people</em></h3>
+  <p>You don't need a godlike predictor to be in Newcomb's problem. You only need people who can read you a little. After half an hour of conversation, strangers predicted each other's choices in a one-shot dilemma better than chance (Frank, Gilovich &amp; Regan 1993). The effect is real but small, and small talk alone isn't enough (Manson, Gervais &amp; Kline 2013; Sparks, Burleigh &amp; Barclay 2016). The philosopher David Gauthier called people like this translucent: neither transparent nor opaque (1986).</p>
+  <p>Derek Parfit made the stakes plain (1984). You're stranded in the desert at night. A driver will take you to town if they believe you'll pay them when you get there, and you're a poor liar. Once in town, paying is a pure loss. If you're the kind of person who'd reason that way, it shows on your face, and you stay in the desert.</p>
+  <p>The economist Robert Frank argued that this is what some emotions are for (1988). Guilt, gratitude and indignation push us to do what doesn't pay in the moment. Because other people can partly see them, they make us worth trusting, and that pays over a life. Robert Trivers went a step further. If others read your motives, it can pay to hide your motives even from yourself, so they don't leak (1976; von Hippel &amp; Trivers 2011). Kevin Simler and Robin Hanson's book on the hidden motives in everyday life is called <i>The Elephant in the Brain</i> (2018).</p>
+  <p class="note">Put together, these ideas suggest that conscience is how evolution takes one box. That's an interpretation, and a contested one, not a finding.</p>
+</div></section>
+
+<section id="forecast"><div class="wrap">
+  <div class="eyebrow">A predictor in the open</div>
+  <h2>A forecast <em>you can hear</em></h2>
+  <p>Newcomb's predictor keeps its prediction in a closed box. Most real predictions are announced: polls, forecasts, credit scores, the next video your phone lines up. The people they predict can hear them.</p>
+  <p>Karl Popper called a prediction's influence on what it predicts the Oedipus effect, after the oracle whose prophecy set Oedipus on the road to fulfilling it (1957). Robert Merton told of a sound bank ruined by a rumour that it was failing, as everyone came for their money at once (1948). Oskar Morgenstern's example was a chase (1928). Sherlock Holmes flees Professor Moriarty by train, from London toward Dover. If Moriarty will follow him to Dover, Holmes should get off early, at Canterbury. But Moriarty can foresee that, and Holmes can foresee Moriarty foreseeing it, and so on forever.</p>
+  <p>Can an announced prediction ever be right? In 1954 Emile Grunberg and Franco Modigliani, and separately Herbert Simon, proved that it often can. If people's reactions change smoothly with what they hear, then some forecast, once announced, comes true. It's a fixed point, the same mathematics as the theorem that when you stir a cup of coffee, some point in it ends up where it started (Brouwer 1911).</p>
+  <div class="instrument">
+    <canvas id="fcCanvas" aria-label="A plot. Across: the forecast a person hears. Up: the real chance they then go for a run. A dashed diagonal marks forecasts that come true, and gold steps trace a forecaster announcing again and again."></canvas>
+    <div class="controls">
+      <label>This person
+        <select id="fcWho">
+          <option value="hint">Takes the hint</option>
+          <option value="ignore">Ignores it</option>
+          <option value="push">Pushes back a little</option>
+          <option value="shove">Pushes back hard</option>
+          <option value="contrary">Does the opposite</option>
+          <option value="coin">Opposite, coin at 50%</option>
+        </select>
+      </label>
+    </div>
+    <div class="controls">
+      <button type="button" class="primary" id="fcStep">Announce a forecast</button>
+      <button type="button" id="fcRun">Announce 20 times</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Forecasts that come true</div><div class="v" id="fcFixed">–</div></div>
+      <div><div class="k">Last forecast</div><div class="v" id="fcLast">–</div></div>
+      <div><div class="k">The real chance</div><div class="v" id="fcReal">–</div></div>
+    </div>
+    <p class="say" id="fcSay" aria-live="polite">Tell them they'll probably go and they go. Tell them they won't and they don't.</p>
+    <div class="legend"><span><i class="bar" style="background:var(--ink)"></i>what they actually do</span><span><i class="dash"></i>forecast equals real chance</span><span><i class="bar" style="background:var(--dawn)"></i>the forecaster's announcements</span><span><i class="ring"></i>forecasts that come true</span></div>
+    <p class="caption">A forecaster announces the chance that someone will go for a run tomorrow, and they hear it. The curve is the real chance they go, for each forecast they might hear. Each announcement uses what happened last time as the next forecast, like a model retrained on its own effects. Drag the points to reshape the person. Tap the plot to choose the first forecast.</p>
+  </div>
+  <p>Try to drag the curve so it never meets the diagonal. You can't, unless the curve jumps. The jump is the contrarian: someone who does the opposite of whatever they're told, the moment they hear it. For them no announced forecast can come true. Alan Turing used the same trick in 1936 to prove that no program can tell, for every program, whether it will ever stop. Hand a program the prediction about itself, and have it do the opposite.</p>
+  <p>Now pick the contrarian with a coin. If they toss a coin when the forecast is exactly 50%, then "50%" comes true. Randomness is the way out on both sides. John von Neumann proved in 1928 that in a game of pure conflict, a player who randomizes in the right proportions can't be outguessed. In 1944 he and Morgenstern worked out Holmes's best plan: get off at Canterbury with probability 60%. Even so, they noted, Holmes is "as good as 48% dead" as his train pulls out of Victoria. Forecasters learn the same lesson. A forecaster who follows a predictable rule can't stay calibrated, right 70% of the times it says 70%, against every possible run of events, because the events could be chosen to defy it (Oakes 1985). One who adds a little randomness can (Foster &amp; Vohra 1998).</p>
+  <p>Animals found the coin first. A hunting bat is a predictor its prey can hear. In the 1960s Kenneth Roeder showed that many moths have ears with only two sensory cells. When a bat is far off, the moth turns and flies away. When the bat is close and loud, the moth's flight breaks into loops, spirals and dives. Biologists call it protean behaviour, after the shape-shifting sea god (Humphries &amp; Driver 1970).</p>
+  <p>Machine learning has met all this again as performative prediction. A model's forecasts change the behaviour it was trained on, so retraining chases its own effects, and whether it settles depends on how hard people react (Perdomo et al. 2020). Pick "Pushes back hard": a forecast that would come true is sitting right there, and retraining never reaches it.</p>
+  <p>The predictors have a limit too. In 2008 David Wolpert proved, with the same diagonal trick, that no device inside a universe can be guaranteed to predict everything in it, whatever the laws of physics. The prediction is part of what it predicts.</p>
+  <p>So predicting someone who can see the prediction isn't impossible in general. It's impossible when they're set on proving it wrong and never hesitate. If their reaction changes smoothly, or they'll toss a coin at the tipping point, some forecast comes true. It may be hard to reach, and there may be several, including some that nobody wanted.</p>
+</div></section>
+
+<section id="ceiling"><div class="wrap">
+  <div class="eyebrow">Physics</div>
+  <h2>Nature sets <em>a ceiling</em></h2>
+  <p>Everything so far runs on correlation: two choices that match more often than chance, with no message between them. How strong can such a correlation be? Physics has measured the answer, with a game named CHSH after the four physicists whose 1969 inequality it's built on: John Clauser, Michael Horne, Abner Shimony and Richard Holt.</p>
+  <p>Two players are taken far apart. Each is asked a random question, 0 or 1, and must answer 0 or 1 at once, before any signal could pass between them. They win if their answers match, except when both were asked 1. Then they win if their answers differ. They can agree on any plan they like beforehand.</p>
+  <div class="instrument">
+    <canvas id="bellCanvas" aria-label="Alice and Bob far apart, each asked 0 or 1. Below, how often they win for each pair of questions, and their overall win rate against the limits of 75% and 85.4%."></canvas>
+    <div class="controls">
+      <label>They share
+        <select id="bellMode">
+          <option value="plan">A plan</option>
+          <option value="photons">Entangled photons</option>
+        </select>
+      </label>
+    </div>
+    <div class="controls plan" id="bellPlan">
+      <span>Alice</span><button type="button" data-k="0">asked 0, says 0</button><button type="button" data-k="1">asked 1, says 0</button>
+    </div>
+    <div class="controls plan" id="bellPlanB">
+      <span>Bob</span><button type="button" data-k="2">asked 0, says 0</button><button type="button" data-k="3">asked 1, says 0</button>
+    </div>
+    <div class="controls" id="bellPhotons" hidden>
+      <label>Bob's tilt <input type="range" id="bellTilt" min="-45" max="45" step="0.5" value="0"> <output id="bellTiltOut">0°</output></label>
+      <button type="button" id="bellBest">Best tilt</button>
+    </div>
+    <div class="controls">
+      <button type="button" class="primary" id="bellRound">Play a round</button>
+      <button type="button" id="bellMany">Play 1,000</button>
+      <button type="button" id="bellAll">Try all 16 plans</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Won so far</div><div class="v" id="bellWon">–</div></div>
+      <div><div class="k">This setup's odds</div><div class="v" id="bellOdds">75.0%</div></div>
+      <div><div class="k">Best possible</div><div class="v" id="bellBestK">75%</div></div>
+    </div>
+    <p class="say" id="bellSay" aria-live="polite">Tap a plan button to change an answer, then play.</p>
+    <p class="caption">With a plan, each player answers from it. With photons, each player measures one photon of an entangled pair through a polarizer, turned by their question: Alice to 0° or 45°, Bob to plus or minus his tilt. This simulation cheats: to get the odds right, its code looks at both settings at once. Real photons can't, and they still win.</p>
+  </div>
+  <p>No plan wins more than three rounds in four. Follow the rules around a loop. Alice's answer to 0 must match Bob's answer to 0, which must match Alice's answer to 1, which must differ from Bob's answer to 1, which must match Alice's answer to 0. So Alice's answer to 0 would have to differ from itself, and at least one rule always breaks. Choosing a plan at random doesn't help, because an average of plans can't beat the best of them.</p>
+  <p>Entangled photons do better. Set Bob's tilt to 22.5° and they win about 85.4% of rounds, the most quantum mechanics allows (Tsirelson 1980). This isn't only theory. In 2015, teams in Delft, Vienna and Boulder ran it with the two main loopholes closed at once. On 30 November 2016, about 100,000 people played a video game to supply the random questions for 13 experiments on five continents (the BIG Bell Test, 2018). The 2022 Nobel Prize in Physics went to Alain Aspect, John Clauser and Anton Zeilinger for this line of work.</p>
+  <p>The photons still can't carry a message. Each player's answers, on their own, look like coin tosses, and the pattern only shows when the two lists are laid side by side. Here is the strange part. Winning every round wouldn't carry a message either. Sandu Popescu and Daniel Rohrlich described such a perfect partnership in 1994, and nothing in relativity forbids it. Nature stops at 85.4%. Quantum mechanics sets that limit, but nobody knows a deeper reason for it. One proposal, information causality, says that any stronger correlation would let a message of n bits reveal more than n bits about the sender's data (Pawłowski et al. 2009).</p>
+  <p>The cooperation on the rest of this page runs on the ordinary kind of correlation, a shared plan: genes, upbringing, habits of mind. In this game a shared plan tops out at 75%, because the two questions are drawn separately. In the twin's dilemma both players face the same question, so a shared plan can match every time. A copy of you needs no special physics. Only a shared past.</p>
+</div></section>
+
+<section id="everywhere"><div class="wrap">
+  <div class="eyebrow">Speculation, flagged</div>
+  <h2>Everyone, <em>everywhere</em></h2>
+  <p>Now take the twin's dilemma out into cosmology.</p>
+  <p>If space is infinite and filled with matter roughly as it is here, then by plain probability every possible arrangement of particles turns up somewhere, again and again. Max Tegmark estimated that your nearest exact copy would be about 10<sup>10<sup>28</sup></sup> metres away (2003). Whether space is infinite, nobody knows. Measurements say it's very nearly flat, which fits an infinite universe without proving one.</p>
+  <p>Far more common would be minds that are merely similar, shaped by the same physics and the same pressures of natural selection. Evolution repeats itself: eyes evolved separately at least forty times (Salvini-Plawen &amp; Mayr 1977). If minds out there decide anything like the way you do, your choices are weak evidence about theirs.</p>
+  <p>In 2017 Caspar Oesterheld followed this to an odd conclusion, now called evidential cooperation in large worlds. If you give weight to the values of minds elsewhere, that's evidence that minds like you, elsewhere, give weight to yours. So everyone who reasons this way should work toward one compromise among all their values. Here at home, he argues, that favours pluralism and ordinary cooperation. Deals like this, struck with no contact at all, are sometimes called acausal trade.</p>
+  <div class="callout">
+    <div class="eyebrow">How much weight it bears</div>
+    <ul>
+      <li>It needs a very large universe. That's possible, not established.</li>
+      <li>It needs the evidential way of choosing, which most decision theorists reject.</li>
+      <li>It needs real correlation with minds we know almost nothing about, and some idea of what they value.</li>
+      <li>Its practical advice, to cooperate and keep many values in view, stands on ordinary grounds anyway. That makes it cheap to follow. It doesn't make it more likely to be true.</li>
+    </ul>
+  </div>
+  <p>It sounds like Immanuel Kant: act only on a rule you could will everyone to follow (1785). But nothing here is commanded. It's arithmetic about correlated choices, and whether the arithmetic reaches across the cosmos depends on facts about physics and minds that nobody has.</p>
+</div></section>
+
+<section id="nearest"><div class="wrap">
+  <div class="eyebrow">The turn</div>
+  <h2>The nearest <em>copy</em></h2>
+  <p>Your nearest copy isn't 10<sup>10<sup>28</sup></sup> metres away. It wakes up in your bed tomorrow.</p>
+  <p>The psychiatrist George Ainslie argues that willpower is the twin's dilemma played out across time (2001). Your successive selves are separate players, each tempted in its own moment. What binds them is that each choice is evidence about the next. If you break a resolution tonight, that's a sign you'll break it every night, so tonight's choice becomes a vote on all of them. A resolution has force because a lapse is bad news about you.</p>
+  <p>Evidence can be faked, and the faker can be you. In 1984 George Quattrone and Amos Tversky had students hold an arm in cold water, then told them that people with healthy hearts tolerate cold better after exercise, or worse. On the second try, most shifted their tolerance in whichever direction meant a healthy heart. Their endurance couldn't change their hearts. David Lewis's name for this mistake is managing the news (1981).</p>
+  <p>So there's a line to draw. Choosing as if for everyone like you is sound when your choice really is being worked out in those other places: in a copy, in a predictor that read you, in tomorrow's you. It's self-deception when the other place doesn't run on your choices at all, like a heart. Functional decision theory tries to draw that line (Yudkowsky &amp; Soares 2017). Whether it draws it in the right place is still argued.</p>
+  <blockquote>"To believe your own thought, to believe that what is true for you in your private heart is true for all men,—that is genius."<cite>Ralph Waldo Emerson, "Self-Reliance" (1841)</cite></blockquote>
+  <p>Emerson meant it about genius. It's also a claim about correlation. You're never deciding only for yourself. You decide for tomorrow's you, for everyone who reasons the way you do, for everyone who can read you a little, and, if the universe is large enough, for copies you'll never meet. The twin's dilemma isn't a puzzle about strangers. It's the shape of every choice made by something that has copies.</p>
+  <div class="callout">
+    <div class="eyebrow">Try this week</div>
+    <ul>
+      <li>Next time you're about to break a resolution, ask what this choice predicts about the next hundred.</li>
+      <li>Play the dollar game with a friend. Each of you writes Send or Keep in secret, then reveal. Talk for ten minutes, and play again.</li>
+      <li>Notice one thing you do mainly to prove to yourself what kind of person you are. Is it a policy, or are you managing the news?</li>
+      <li>On a summer night, watch the moths around a light where bats are hunting. A moth that suddenly drops or spirals may just have heard one close by.</li>
+    </ul>
+  </div>
+  <p class="closer">You never choose alone. Choose the way you'd want everyone like you to choose.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Sources: Richard Jeffrey, <i>The Logic of Decision</i> (1965). Douglas Hofstadter, "Metamagical Themas," <i>Scientific American</i> (1983), collected in <i>Metamagical Themas</i> (1985). W. D. Hamilton, "The genetical evolution of social behaviour," <i>Journal of Theoretical Biology</i> 7 (1964). Alan Grafen, "A geometric view of relatedness," <i>Oxford Surveys in Evolutionary Biology</i> 2 (1985). Brian Skyrms, "Darwin meets <i>The Logic of Decision</i>: correlation in evolutionary game theory," <i>Philosophy of Science</i> 61 (1994). Sender, Fuchs &amp; Milo, "Revised estimates for the number of human and bacteria cells in the body," <i>PLOS Biology</i> 14 (2016). Grosberg &amp; Strathmann, "The evolution of multicellularity: a minor major transition?" <i>Annual Review of Ecology, Evolution, and Systematics</i> 38 (2007). Aktipis et al., "Cancer across the tree of life: cooperation and cheating in multicellularity," <i>Philosophical Transactions of the Royal Society B</i> 370 (2015). Richard Dawkins, <i>The Selfish Gene</i> (1976). Queller, Ponte, Bozzaro &amp; Strassmann, "Single-gene greenbeard effects in the social amoeba <i>Dictyostelium discoideum</i>," <i>Science</i> 299 (2003). Smukalla et al., "<i>FLO1</i> is a variable green beard gene that drives biofilm-like cooperation in budding yeast," <i>Cell</i> 135 (2008). Moshe Tennenholtz, "Program equilibrium," <i>Games and Economic Behavior</i> 49 (2004). Bárász, Christiano, Fallenstein, Herreshoff, LaVictoire &amp; Yudkowsky, "Robust cooperation in the prisoner's dilemma: program equilibrium via provability logic" (2014). Robert Nozick, "Newcomb's problem and two principles of choice," in <i>Essays in Honor of Carl G. Hempel</i> (1969). Martin Gardner, "Mathematical Games," <i>Scientific American</i> (July 1973 and March 1974). David Lewis, "Prisoners' dilemma is a Newcomb problem," <i>Philosophy &amp; Public Affairs</i> 8 (1979); "Why ain'cha rich?" <i>Noûs</i> 15 (1981); "Causal decision theory," <i>Australasian Journal of Philosophy</i> 59 (1981). Alex Bellos, <i>The Guardian</i> (November 2016). Bourget &amp; Chalmers, "Philosophers on philosophy: the 2020 PhilPapers survey," <i>Philosophers' Imprint</i> 23 (2023). Frank, Gilovich &amp; Regan, "The evolution of one-shot cooperation: an experiment," <i>Ethology and Sociobiology</i> 14 (1993). Manson, Gervais &amp; Kline, "Defectors cannot be detected during 'small talk' with strangers," <i>PLOS ONE</i> 8 (2013). Sparks, Burleigh &amp; Barclay, "We can see inside: accurate prediction of Prisoner's Dilemma decisions in announced games following a face-to-face interaction," <i>Evolution and Human Behavior</i> 37 (2016). David Gauthier, <i>Morals by Agreement</i> (1986). Derek Parfit, <i>Reasons and Persons</i> (1984). Robert Frank, <i>Passions Within Reason</i> (1988). Robert Trivers, foreword to <i>The Selfish Gene</i> (1976). von Hippel &amp; Trivers, "The evolution and psychology of self-deception," <i>Behavioral and Brain Sciences</i> 34 (2011). Kevin Simler &amp; Robin Hanson, <i>The Elephant in the Brain</i> (2018). Karl Popper, <i>The Poverty of Historicism</i> (1957). Robert K. Merton, "The self-fulfilling prophecy," <i>The Antioch Review</i> 8 (1948). Oskar Morgenstern, <i>Wirtschaftsprognose</i> (1928). Grunberg &amp; Modigliani, "The predictability of social events," <i>Journal of Political Economy</i> 62 (1954). Herbert Simon, "Bandwagon and underdog effects and the possibility of election predictions," <i>Public Opinion Quarterly</i> 18 (1954). L. E. J. Brouwer, "Über Abbildung von Mannigfaltigkeiten," <i>Mathematische Annalen</i> 71 (1911). Alan Turing, "On computable numbers," <i>Proceedings of the London Mathematical Society</i> (1936). John von Neumann, "Zur Theorie der Gesellschaftsspiele," <i>Mathematische Annalen</i> 100 (1928). John von Neumann &amp; Oskar Morgenstern, <i>Theory of Games and Economic Behavior</i> (1944). David Oakes, "Self-calibrating priors do not exist," <i>Journal of the American Statistical Association</i> 80 (1985). Foster &amp; Vohra, "Asymptotic calibration," <i>Biometrika</i> 85 (1998). Kenneth Roeder, <i>Nerve Cells and Insect Behavior</i> (1963). Humphries &amp; Driver, "Protean defence by prey animals," <i>Oecologia</i> 5 (1970). Perdomo, Zrnic, Mendler-Dünner &amp; Hardt, "Performative prediction," <i>ICML</i> (2020). David Wolpert, "Physical limits of inference," <i>Physica D</i> 237 (2008). Clauser, Horne, Shimony &amp; Holt, <i>Physical Review Letters</i> 23 (1969). Boris Tsirelson, <i>Letters in Mathematical Physics</i> 4 (1980). Hensen et al., <i>Nature</i> 526 (2015); Giustina et al. and Shalm et al., <i>Physical Review Letters</i> 115 (2015). The BIG Bell Test Collaboration, "Challenging local realism with human choices," <i>Nature</i> 557 (2018). Popescu &amp; Rohrlich, "Quantum nonlocality as an axiom," <i>Foundations of Physics</i> 24 (1994). Pawłowski et al., "Information causality as a physical principle," <i>Nature</i> 461 (2009). Max Tegmark, "Parallel universes," <i>Scientific American</i> (2003). Salvini-Plawen &amp; Mayr, "On the evolution of photoreceptors and eyes," <i>Evolutionary Biology</i> 10 (1977). Caspar Oesterheld, "Multiverse-wide cooperation via correlated decision making" (2017). Immanuel Kant, <i>Groundwork of the Metaphysics of Morals</i> (1785). George Ainslie, <i>Breakdown of Will</i> (2001). Quattrone &amp; Tversky, "Causal versus diagnostic contingencies: on self-deception and on the voter's illusion," <i>Journal of Personality and Social Psychology</i> 46 (1984). Yudkowsky &amp; Soares, "Functional decision theory: a new theory of instrumental rationality" (2017). Ralph Waldo Emerson, "Self-Reliance," <i>Essays</i> (1841).</p>
+  <div class="next"><a href="every-path.html">← IX · Every Path at Once</a><a href="./">Back to Glamour Gram</a></div>
+</div></footer>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+function fit(cv, aspect){
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = aspect ? Math.round(w*aspect) : cv.clientHeight;
+  if(aspect) cv.style.height = h + "px";
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const smooth = (a, b, x) => { const u = clamp((x - a)/(b - a), 0, 1); return u*u*(3 - 2*u); };
+function onScreen(el){
+  const s = {v:true};
+  if("IntersectionObserver" in window) new IntersectionObserver(es => { s.v = es[es.length - 1].isIntersecting; }).observe(el);
+  return s;
+}
+function animate(frame, vis){
+  let last = performance.now();
+  (function loop(now){ const dt = clamp((now - last)/1000, 0, 0.05); last = now; if(!vis || vis.v) frame(dt); requestAnimationFrame(loop); })(last);
+}
+function local(cv, e){ const r = cv.getBoundingClientRect(); return {x: e.clientX - r.left, y: e.clientY - r.top}; }
+const coin = () => Math.random() < 0.5 ? 1 : 0;
+const pct = (v, d = 0) => `${(v*100).toFixed(d)}%`;
+const usd = v => "$" + Math.round(v).toLocaleString("en-US");
+const usd2 = v => "$" + v.toFixed(2);
+
+/* ---------- hero: everyone like you chooses at once, and the light from each choice is still on its way ---------- */
+(function(){
+  const cv = $("heroCanvas"), copy = document.querySelector(".hero-copy .wrap"), home = document.querySelector(".home.corner"), CYCLE = 3.6, LIGHT = 42, LIFE = 2.4;
+  let g = fit(cv), dots = [], boxes = [], me = {x: 0, y: 0}, choice = reduce ? 1 : 0, flipAt = -99, tapAt = -99, t = 0;
+  function text(){   // a tight box around each line of the title text, and the home link, in canvas pixels
+    const c = cv.getBoundingClientRect(), r = document.createRange(), walk = document.createTreeWalker(copy, NodeFilter.SHOW_TEXT), out = [];
+    const add = b => { if(b.width) out.push({l: b.left - c.left, r: b.right - c.left, t: b.top - c.top, b: b.bottom - c.top}); };
+    for(let n = walk.nextNode(); n; n = walk.nextNode()) if(n.textContent.trim()){ r.selectNodeContents(n); Array.from(r.getClientRects()).forEach(add); }
+    add(home.getBoundingClientRect());
+    return out;
+  }
+  const clear = (x, y) => boxes.reduce((d, B) => Math.min(d, Math.hypot(Math.max(B.l - x, 0, x - B.r), Math.max(B.t - y, 0, y - B.b))), Infinity);
+  function layout(){
+    const {w, h} = g, gap = w < 560 ? 30 : 40;
+    boxes = text();
+    let best = -Infinity;   // "you" goes where there's room, as near the lower right as it can
+    for(let gx = 0.1; gx < 0.91; gx += 0.04) for(let gy = 0.2; gy < 0.86; gy += 0.04){
+      const x = gx*w, y = gy*h, sc = Math.min(clear(x, y), 70) - 0.15*Math.hypot(x - 0.7*w, y - 0.6*h);
+      if(sc > best){ best = sc; me = {x, y}; }
+    }
+    dots = [];
+    for(let k=0; dots.length < (w < 560 ? 28 : 58) && k < 6000; k++){
+      const x = 12 + Math.random()*(w - 24), y = 12 + Math.random()*(h - 42);
+      if(clear(x, y) < 14) continue;   // keep the words clear
+      if(Math.hypot(x - me.x, y - me.y) < 1.4*gap || dots.some(d => Math.hypot(d.x - x, d.y - y) < gap)) continue;
+      dots.push({x, y, r: 1.5 + Math.random()*1.5, copy: Math.random() < 0.88, c: choice, tw: Math.random()*6.28});
+    }
+  }
+  // Every copy runs the same rule, so they all choose in the same instant. One in eight is a stranger, choosing at random.
+  function choose(c){ choice = c; flipAt = reduce ? t - 0.9 : t; dots.forEach(d => { d.c = d.copy ? c : coin(); }); }
+  function frame(dt){
+    t += dt;
+    if(!reduce && t - flipAt > CYCLE && t - tapAt > 2.5*CYCLE) choose(1 - choice);
+    const {ctx, w, h} = g, dawn = C("--dawn"), sea = C("--sea"), col = c => c ? dawn : sea, age = t - flipAt;
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    if(age < LIFE){   // the light of every choice, slowed enormously: when everyone chose, none of it had reached anyone
+      const rad = 4 + LIGHT*age, a = 0.2*(1 - age/LIFE);
+      ctx.lineWidth = 1;
+      dots.forEach(d => { ctx.strokeStyle = col(d.c); ctx.globalAlpha = a; ctx.beginPath(); ctx.arc(d.x, d.y, rad, 0, 7); ctx.stroke(); });
+      ctx.strokeStyle = col(choice); ctx.globalAlpha = Math.min(1, 2.5*a); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(me.x, me.y, rad + 6, 0, 7); ctx.stroke(); ctx.lineWidth = 1;
+    }
+    const flash = reduce ? 0 : Math.max(0, 1 - age/0.45);
+    dots.forEach(d => {
+      ctx.globalAlpha = clamp(0.6 + (reduce ? 0 : 0.22*Math.sin(t*1.1 + d.tw)) + 0.3*flash, 0, 1);
+      ctx.fillStyle = col(d.c); ctx.beginPath(); ctx.arc(d.x, d.y, d.r + 1.2*flash, 0, 7); ctx.fill();
+    });
+    const glow = ctx.createRadialGradient(me.x, me.y, 0, me.x, me.y, 24);
+    glow.addColorStop(0, choice ? "rgba(240,168,90,0.5)" : "rgba(111,194,184,0.5)"); glow.addColorStop(1, "rgba(11,16,22,0)");
+    ctx.globalAlpha = 1; ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(me.x, me.y, 24, 0, 7); ctx.fill();
+    ctx.fillStyle = col(choice); ctx.beginPath(); ctx.arc(me.x, me.y, 4 + 1.5*flash, 0, 7); ctx.fill();
+    ctx.strokeStyle = C("--ink"); ctx.globalAlpha = 0.8; ctx.beginPath(); ctx.arc(me.x, me.y, 9, 0, 7); ctx.stroke();
+    ctx.globalAlpha = 1; ctx.font = "10px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute");
+    ctx.fillText("you", me.x + 14, me.y + 4);
+    ctx.textAlign = "right";
+    ctx.fillText(w < 900 ? "everyone like you, at once · tap to choose" : "everyone like you chooses at once; the light from each choice arrives too late to tell anyone · tap to choose", w - 14, h - 10);
+    ctx.textAlign = "left";
+  }
+  function reset(){ layout(); dots.forEach(d => { d.c = d.copy ? choice : coin(); }); if(reduce) flipAt = t - 0.9; }
+  reset();
+  addEventListener("resize", () => { const w0 = g.w, h0 = g.h; g = fit(cv); if(g.w !== w0 || g.h !== h0) reset(); if(reduce) frame(0); });
+  document.fonts && document.fonts.ready.then(() => { reset(); if(reduce) frame(0); });
+  cv.addEventListener("pointerdown", () => { choose(1 - choice); tapAt = t; if(reduce) frame(0); });
+  if(reduce) frame(0); else animate(frame, onScreen(cv));
+})();
+
+/* ---------- the other room: send or keep, against a copy of you or a stranger ---------- */
+(function(){
+  const cv = $("roomCanvas"), slider = $("roomR"), out = $("roomROut"), say = $("roomSay");
+  const SEND = x => 1.5 + 1.5*x, KEEP = x => 2.5 - 1.5*x;   // what each choice earns on average; the lines cross at one in three
+  let g, geo, show = null, total = 0, rooms = 0, sims = null;
+  const r = () => slider.value/100;
+  const tell = m => { if(say.textContent !== m) say.textContent = m; };
+  function play(mine){   // 1 sends, 0 keeps
+    const isCopy = Math.random() < r(), theirs = isCopy ? mine : coin();
+    return {mine, theirs, isCopy, you: (mine ? 0 : 1) + (theirs ? 3 : 0), them: (theirs ? 0 : 1) + (mine ? 3 : 0), t: 0};
+  }
+  function layout(){
+    g = fit(cv, cv.clientWidth < 520 ? 1.1 : 0.64);
+    const {w, h} = g, top = Math.round(h*0.44), mid = w/2;
+    geo = {top, mid, cy: Math.round(top*0.46), x0: 40, x1: w - 16, y0: top + 34, y1: h - 30,   // each room: its centre, the person, the table
+      rooms: [{c: (mid - 6)/2, p: mid*0.3, k: mid*0.68, s: 1}, {c: (mid + w + 6)/2, p: w - mid*0.3, k: w - mid*0.68, s: -1}]};
+  }
+  function dollar(ctx, x, y, a){
+    ctx.globalAlpha = a; ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(x, y, 8, 0, 7); ctx.fill();
+    ctx.fillStyle = C("--night"); ctx.font = "500 9px JetBrains Mono, monospace"; ctx.textAlign = "center"; ctx.fillText("$1", x, y + 3); ctx.globalAlpha = 1;
+  }
+  function draw(){
+    const {ctx, w, h} = g, {top, mid, cy, x0, x1, y0, y1, rooms: rm} = geo, ink = C("--ink"), mute = C("--mute"), dawn = C("--dawn"), sea = C("--sea");
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    // two rooms, and a wall between them
+    ctx.strokeStyle = C("--line"); ctx.lineWidth = 1;
+    ctx.strokeRect(6.5, 6.5, mid - 19, top - 13); ctx.strokeRect(mid + 12.5, 6.5, w - mid - 19, top - 13);
+    ctx.fillStyle = C("--line"); ctx.fillRect(mid - 6, 0, 12, top);
+    const s = show, T = s ? s.t : 0, reveal = s && T > 0.6, SPOTS = [[0, 0], [-17, 0], [-8.5, -15], [-8.5, 15]];
+    ctx.textAlign = "center";
+    rm.forEach((R, side) => {
+      const me = side === 0, chose = s ? (me ? s.mine : s.theirs) : 0, got = s ? (me ? s.theirs : s.mine) : 0;
+      ctx.font = "11px JetBrains Mono, monospace"; ctx.fillStyle = mute;
+      ctx.fillText(me ? "you" : reveal ? (s.isCopy ? "a copy of you" : "a stranger") : "the other room", R.c, 24);
+      ctx.strokeStyle = me || !reveal || s.isCopy ? ink : mute; ctx.lineWidth = 1.5;   // the person
+      ctx.beginPath(); ctx.arc(R.p, cy - 6, 7, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.arc(R.p, cy + 18, 13, Math.PI*1.15, Math.PI*1.85); ctx.stroke(); ctx.lineWidth = 1;
+      if(me ? s : reveal){   // the choice: yours as soon as you make it, theirs once the rooms are opened
+        ctx.font = "12px JetBrains Mono, monospace"; ctx.fillStyle = chose ? dawn : sea; ctx.globalAlpha = clamp((T - (me ? 0 : 0.6))/0.3, 0, 1);
+        ctx.fillText(chose ? "sends" : "keeps", R.p, cy + 38); ctx.globalAlpha = 1;
+      } else if(!me){ ctx.font = "italic 20px Bodoni Moda, Georgia, serif"; ctx.fillStyle = mute; ctx.fillText("?", R.p, cy + 42); }
+      // the table: your own dollar stays unless you sent it, and three arrive if the other side sent one
+      const own = !s || !chose || T < 1.0 ? 1 : 0, came = s && got && T >= 1.6 ? 3 : 0;
+      for(let i=0; i < own + came; i++) dollar(ctx, R.k + SPOTS[i][0]*R.s, cy + SPOTS[i][1], i < own ? 1 : clamp((T - 1.6)/0.2, 0, 1));
+      if(s && T > 1.9){ ctx.font = "13px JetBrains Mono, monospace"; ctx.fillStyle = ink; ctx.globalAlpha = clamp((T - 1.9)/0.3, 0, 1); ctx.fillText(`ends with ${usd(me ? s.you : s.them)}`, R.c, top - 18); ctx.globalAlpha = 1; }
+    });
+    if(s && T >= 1.0 && T < 1.6){   // once both have chosen, a sent dollar goes over the wall, and triples when it lands
+      const u = (T - 1.0)/0.6;
+      [[s.mine, rm[0].k, rm[1].k], [s.theirs, rm[1].k, rm[0].k]].forEach(([sent, a, b]) => { if(sent) dollar(ctx, a + (b - a)*u, cy - Math.sin(Math.PI*u)*(cy - 14), 1); });
+    }
+    // what each choice earns on average, for every chance of facing a copy
+    const X = v => x0 + (x1 - x0)*v, Y = v => y1 - (y1 - y0)*v/4;
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.strokeStyle = C("--line");
+    for(let d=0; d<=4; d++){ ctx.beginPath(); ctx.moveTo(x0, Y(d)); ctx.lineTo(x1, Y(d)); ctx.stroke(); ctx.fillStyle = mute; ctx.textAlign = "right"; ctx.fillText("$" + d, x0 - 6, Y(d) + 3); }
+    ctx.textAlign = "left"; ctx.fillText("average win", x0, y0 - 12); ctx.fillText("a stranger", x0, y1 + 16);
+    ctx.textAlign = "right"; ctx.fillText("a copy", x1, y1 + 16);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = dawn; ctx.beginPath(); ctx.moveTo(X(0), Y(SEND(0))); ctx.lineTo(X(1), Y(SEND(1))); ctx.stroke();
+    ctx.strokeStyle = sea; ctx.beginPath(); ctx.moveTo(X(0), Y(KEEP(0))); ctx.lineTo(X(1), Y(KEEP(1))); ctx.stroke();
+    ctx.lineWidth = 1;
+    ctx.fillStyle = dawn; ctx.fillText("send", X(1) - 2, Y(SEND(1)) - 8);
+    ctx.fillStyle = sea; ctx.textAlign = "left"; ctx.fillText("keep", X(0) + 2, Y(KEEP(0)) - 8);
+    ctx.strokeStyle = ink; ctx.beginPath(); ctx.arc(X(1/3), Y(2), 5, 0, 7); ctx.stroke();
+    ctx.fillStyle = mute; ctx.textAlign = "center"; ctx.fillText("1 in 3", X(1/3), Y(2) + 20);
+    const v = r();
+    ctx.strokeStyle = ink; ctx.globalAlpha = 0.5; ctx.setLineDash([2, 4]); ctx.beginPath(); ctx.moveTo(X(v), y0); ctx.lineTo(X(v), y1); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+    [[SEND(v), dawn], [KEEP(v), sea]].forEach(([y, col]) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(X(v), Y(y), 4.5, 0, 7); ctx.fill(); });
+    if(sims && sims.v === +slider.value){   // your hundred rooms each way, as rings
+      ctx.lineWidth = 1.5;
+      [[sims.send, dawn], [sims.keep, sea]].forEach(([y, col]) => { ctx.strokeStyle = col; ctx.beginPath(); ctx.arc(X(v), Y(y), 8, 0, 7); ctx.stroke(); });
+      ctx.lineWidth = 1;
+    }
+    ctx.textAlign = "left";
+  }
+  function readouts(){
+    out.textContent = `${slider.value}%`;
+    $("roomTotal").textContent = rooms ? `${usd(total)} · ${rooms} room${rooms > 1 ? "s" : ""}` : "–";
+    const fresh = sims && sims.v === +slider.value;
+    $("roomSendAvg").textContent = fresh ? `${usd2(sims.send)} a room` : "–";
+    $("roomKeepAvg").textContent = fresh ? `${usd2(sims.keep)} a room` : "–";
+  }
+  function go(mine){
+    const s = show = play(mine); total += s.you; rooms++;
+    const did = s.theirs ? "sent" : "kept";
+    tell(`${s.isCopy ? `It was a copy of you, so it ${did} too.` : `It was a stranger, who tossed a coin and ${did}.`} ${s.you === s.them ? `You each end with ${usd(s.you)}.` : `You end with ${usd(s.you)}. They end with ${usd(s.them)}.`}`);
+    readouts(); if(reduce){ s.t = 9; draw(); }
+  }
+  $("roomSend").addEventListener("click", () => go(1));
+  $("roomKeep").addEventListener("click", () => go(0));
+  $("roomMany").addEventListener("click", () => {
+    let a = 0, b = 0; for(let i=0;i<100;i++){ a += play(1).you; b += play(0).you; }
+    sims = {v: +slider.value, send: a/100, keep: b/100};
+    tell(`A hundred rooms each way, ${slider.value}% copies. Always sending won ${usd2(sims.send)} a room. Always keeping won ${usd2(sims.keep)}.`);
+    readouts(); if(reduce) draw();
+  });
+  slider.addEventListener("input", () => { readouts(); if(reduce) draw(); });
+  layout(); readouts(); draw();
+  addEventListener("resize", () => { layout(); draw(); });
+  document.fonts && document.fonts.ready.then(draw);
+  if(!reduce) animate(dt => { if(show) show.t += dt; draw(); }, onScreen(cv));
+})();
+
+/* ---------- Hamilton's dish: senders pay to help their partner, and partners are kin some of the time ---------- */
+(function(){
+  const cv = $("dishCanvas"), rS = $("dishR"), bS = $("dishB"), say = $("dishSay");
+  const BASE = 3, MU = 0.002, GEN = 0.42, pos = [], near = [];
+  for(let k=0; pos.length < 240 && k < 60000; k++){   // fixed places for the cells, spread evenly over a disc
+    const a = Math.random()*Math.PI*2, d = Math.sqrt(Math.random())*0.94, x = d*Math.cos(a), y = d*Math.sin(a);
+    if(pos.every(p => Math.hypot(p.x - x, p.y - y) > 0.08)) pos.push({x, y});
+  }
+  const n = pos.length;
+  pos.forEach((p, i) => { near[i] = []; pos.forEach((q, j) => { if(i !== j && Math.hypot(p.x - q.x, p.y - q.y) < 0.17) near[i].push(j); }); });
+  let g, geo, type = new Uint8Array(n), hist = [], clock = 0, meets = [];
+  const r = () => rS.value/100, b = () => bS.value/10;
+  const count = () => type.reduce((s, v) => s + v, 0);
+  const tell = m => { if(say.textContent !== m) say.textContent = m; };
+  function start(share){ for(let i=0;i<n;i++) type[i] = Math.random() < share ? 1 : 0; hist = [count()/n]; meets = []; clock = 0; }
+  function flip(want){   // one cell becomes the growing kind, most likely beside one that already is: offspring settle near their parents
+    let sum = 0; const wts = new Float64Array(n);
+    for(let i=0;i<n;i++){ if(type[i] === want) continue; let k = 0.15; for(const j of near[i]) if(type[j] === want) k++; wts[i] = k; sum += k; }
+    let u = Math.random()*sum;
+    for(let i=0;i<n;i++){ if(!wts[i]) continue; u -= wts[i]; if(u <= 0){ type[i] = want; return; } }
+  }
+  function generation(){
+    const k = count(), x = k/n, R = r(), B = b();
+    const wc = BASE + (R + (1 - R)*x)*B - 1, wd = BASE + (1 - R)*x*B;   // senders pay 1; everyone gains the gift from a sending partner
+    let x1 = x ? x*wc/(x*wc + (1 - x)*wd) : 0;
+    x1 = x1*(1 - 2*MU) + MU;
+    let k1 = 0; for(let i=0;i<n;i++) if(Math.random() < x1) k1++;
+    for(let d = k1 - k; d !== 0; d -= Math.sign(d)) flip(d > 0 ? 1 : 0);
+    hist.push(k1/n); if(hist.length > 200) hist.shift();
+    meets = [];   // a few of this generation's meetings, to watch
+    for(let m=0;m<9;m++){
+      const i = Math.floor(Math.random()*n); let j = Math.floor(Math.random()*n);
+      if(Math.random() < R){ const kin = near[i].filter(q => type[q] === type[i]); if(kin.length) j = kin[Math.floor(Math.random()*kin.length)]; }
+      if(j !== i) meets.push([i, j]);
+    }
+  }
+  function layout(){
+    const narrow = cv.clientWidth < 560;
+    g = fit(cv, narrow ? 1.34 : 0.52);
+    const {w, h} = g;
+    geo = narrow ? {cx: w/2, cy: w*0.45, R: w*0.42, x0: 40, x1: w - 10, y0: w*0.94 + 16, y1: h - 26}
+                 : {cx: h/2, cy: h/2, R: h/2 - 12, x0: h + 40, x1: w - 12, y0: 22, y1: h - 26};
+  }
+  function draw(){
+    const {ctx, w, h} = g, {cx, cy, R, x0, x1, y0, y1} = geo, dawn = C("--dawn"), sea = C("--sea"), mute = C("--mute");
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(111,194,184,0.05)"; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.fill();
+    ctx.strokeStyle = sea; ctx.globalAlpha = 0.5; ctx.stroke(); ctx.globalAlpha = 1;
+    const P = i => [cx + pos[i].x*R, cy + pos[i].y*R], cr = Math.max(2, R*0.034), u = clamp(clock/GEN, 0, 1);
+    meets.forEach(([i, j]) => {   // a line to the partner; a sender's gift travels along it
+      const [ax, ay] = P(i), [bx, by] = P(j);
+      ctx.strokeStyle = type[i] ? dawn : sea; ctx.globalAlpha = 0.4*(1 - u); ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+      if(type[i]){ ctx.fillStyle = dawn; ctx.globalAlpha = 0.95*(1 - u*u); ctx.beginPath(); ctx.arc(ax + (bx - ax)*u, ay + (by - ay)*u, 2.2, 0, 7); ctx.fill(); }
+    });
+    for(let i=0;i<n;i++){ const [x, y] = P(i); ctx.globalAlpha = 0.9; ctx.fillStyle = type[i] ? dawn : sea; ctx.beginPath(); ctx.arc(x, y, cr, 0, 7); ctx.fill(); }
+    // the share of senders, generation by generation
+    ctx.globalAlpha = 1; ctx.strokeStyle = C("--line"); ctx.lineWidth = 1;
+    const Y = v => y1 - (y1 - y0)*v, X = i => x0 + (x1 - x0)*i/199;
+    [0, 0.5, 1].forEach(v => { ctx.beginPath(); ctx.moveTo(x0, Y(v)); ctx.lineTo(x1, Y(v)); ctx.stroke(); });
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.fillStyle = mute; ctx.textAlign = "right";
+    [[1, "100%"], [0.5, "50%"], [0, "0"]].forEach(([v, l]) => ctx.fillText(l, x0 - 6, Y(v) + 3));
+    ctx.textAlign = "left"; ctx.fillText("senders, last 200 generations", x0, y1 + 17);
+    ctx.strokeStyle = dawn; ctx.lineWidth = 1.6; ctx.beginPath();
+    hist.forEach((v, i) => { const px = X(i + 200 - hist.length), py = Y(v); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+    ctx.stroke(); ctx.lineWidth = 1;
+  }
+  function readouts(){
+    const R = r(), B = b(), m = R*B - 1;
+    $("dishROut").textContent = R.toFixed(2); $("dishBOut").textContent = `${B.toFixed(1)}×`;
+    $("dishShare").textContent = pct(count()/n);
+    $("dishRule").textContent = Math.abs(m) < 0.005 ? "0.00" : `${m > 0 ? "+" : "−"}${Math.abs(m).toFixed(2)}`;
+    $("dishVerdict").textContent = Math.abs(m) < 0.005 ? "a tie" : m > 0 ? "senders spread" : "senders shrink";
+  }
+  function changed(){
+    const R = r(), B = b(), m = R*B - 1, need = 1/B;
+    readouts();
+    tell(Math.abs(m) < 0.005 ? `At r = ${R.toFixed(2)} the gift exactly pays for itself. Drift decides.` :
+      m > 0 ? `At r = ${R.toFixed(2)}, senders spread. They would shrink below r = ${need.toFixed(2)}.` : `At r = ${R.toFixed(2)}, senders shrink. Raise r past ${need.toFixed(2)}, one over the gift.`);
+    if(reduce){ for(let k=0;k<150;k++) generation(); readouts(); draw(); }
+  }
+  rS.addEventListener("input", changed); bS.addEventListener("input", changed);
+  $("dishHalf").addEventListener("click", () => { start(0.5); changed(); draw(); });
+  $("dishFew").addEventListener("click", () => { start(0.05); changed(); draw(); });
+  start(0.5); layout(); readouts(); draw();
+  addEventListener("resize", () => { layout(); draw(); });
+  document.fonts && document.fonts.ready.then(draw);
+  if(reduce){ for(let k=0;k<150;k++) generation(); readouts(); draw(); }
+  else animate(dt => { clock += dt; if(clock >= GEN){ clock -= GEN; generation(); readouts(); } draw(); }, onScreen(cv));
+})();
+
+/* ---------- Newcomb's boxes: yesterday the predictor filled box B, if it foresaw you taking only B ---------- */
+(function(){
+  const cv = $("boxCanvas"), acc = $("boxAcc"), out = $("boxAccOut"), say = $("boxSay");
+  let g, show = null, total = 0, plays = 0, sims = null;
+  const a = () => acc.value/1000;
+  const tell = m => { if(say.textContent !== m) say.textContent = m; };
+  function play(one){ const right = Math.random() < a(), saw = right ? one : !one, B = saw ? 1e6 : 0; return {one, saw, right, B, won: B + (one ? 0 : 1000), t: 0}; }
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.84 : 0.46); }
+  function bills(ctx, x, y, k, wd){   // a little stack of money
+    for(let i=0;i<k;i++){ ctx.fillStyle = i % 2 ? "#d9a050" : C("--dawn"); ctx.fillRect(x - wd/2, y - i*4, wd, 3); }
+  }
+  function draw(){
+    const {ctx, w, h} = g, ink = C("--ink"), mute = C("--mute"), dawn = C("--dawn"), sea = C("--sea"), s = show, T = s ? s.t : 0;
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const narrow = w < 520, by = h*0.48, bw = Math.min(118, w*(narrow ? 0.25 : 0.17)), bh = bw*0.8;
+    const ex = Math.max(46, w*0.14), ey = by, ax = w*(narrow ? 0.46 : 0.47), bx = w*(narrow ? 0.8 : 0.75);
+    // the predictor: an eye that has already looked
+    const look = s ? clamp(T/0.4, 0, 1) : 0.5 + 0.5*Math.sin(performance.now()/1400);
+    ctx.strokeStyle = sea; ctx.lineWidth = 1.5; ctx.beginPath();
+    ctx.moveTo(ex - 24, ey); ctx.quadraticCurveTo(ex, ey - 22, ex + 24, ey); ctx.quadraticCurveTo(ex, ey + 22, ex - 24, ey); ctx.stroke(); ctx.lineWidth = 1;
+    ctx.fillStyle = sea; ctx.beginPath(); ctx.arc(ex + 6*look - 3, ey, 7, 0, 7); ctx.fill();
+    ctx.fillStyle = C("--night"); ctx.beginPath(); ctx.arc(ex + 6*look - 3, ey, 3, 0, 7); ctx.fill();
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.fillStyle = mute; ctx.textAlign = "center";
+    ctx.fillText("the predictor", ex, ey + 34);
+    ctx.font = "11px JetBrains Mono, monospace";
+    if(s && T > 0.4){ ctx.fillStyle = ink; ctx.fillText("foresaw", ex, ey + 52); ctx.fillText(s.saw ? "only B" : "both", ex, ey + 66); }
+    // box A, glass: $1,000 in plain view
+    const takeA = s && !s.one && T > 0.2, takeB = s && T > 0.2;
+    ctx.fillStyle = "rgba(111,194,184,0.07)"; ctx.fillRect(ax - bw/2, by - bh/2, bw, bh);
+    ctx.strokeStyle = takeA ? dawn : ink; ctx.globalAlpha = takeA ? 1 : 0.55; ctx.lineWidth = takeA ? 2 : 1;
+    ctx.strokeRect(ax - bw/2 + 0.5, by - bh/2 + 0.5, bw, bh); ctx.globalAlpha = 1; ctx.lineWidth = 1;
+    bills(ctx, ax, by + bh*0.22, 3, bw*0.4);
+    ctx.fillStyle = ink; ctx.fillText("$1,000", ax, by - bh*0.12);
+    ctx.fillStyle = mute; ctx.fillText("A · glass", ax, by + bh/2 + 18);
+    // box B: filled or left empty yesterday; it opens once you've chosen
+    const open = s ? clamp((T - 0.5)/0.4, 0, 1) : 0;
+    ctx.fillStyle = C("--deep"); ctx.fillRect(bx - bw/2, by - bh/2, bw, bh);
+    if(open > 0){
+      ctx.globalAlpha = open;
+      if(s.B){ bills(ctx, bx, by + bh*0.36, 9, bw*0.62); ctx.fillStyle = ink; ctx.fillText("$1,000,000", bx, by - bh*0.3); }
+      else { ctx.fillStyle = mute; ctx.fillText("empty", bx, by + 4); }
+      ctx.globalAlpha = 1;
+    }
+    else { ctx.font = "italic 26px Bodoni Moda, Georgia, serif"; ctx.fillStyle = mute; ctx.fillText("?", bx, by + 9); ctx.font = "11px JetBrains Mono, monospace"; }
+    ctx.strokeStyle = takeB ? dawn : ink; ctx.lineWidth = takeB ? 2 : 1;
+    ctx.beginPath(); ctx.moveTo(bx - bw/2, by - bh/2); ctx.lineTo(bx - bw/2, by + bh/2); ctx.lineTo(bx + bw/2, by + bh/2); ctx.lineTo(bx + bw/2, by - bh/2); ctx.stroke();
+    ctx.save(); ctx.translate(bx - bw/2, by - bh/2); ctx.rotate(-0.7*open);   // the lid swings up on a hinge at its left edge
+    ctx.fillStyle = C("--deep"); ctx.fillRect(0, -5, bw, 5); ctx.strokeRect(0, -5, bw, 5); ctx.restore(); ctx.lineWidth = 1;
+    ctx.fillStyle = mute; ctx.fillText("B · opaque", bx, by + bh/2 + 18);
+    ctx.globalAlpha = 1 - open; ctx.fillText("filled yesterday", bx, by - bh/2 - 12); ctx.globalAlpha = 1;
+    if(s && T > 1.0){ ctx.font = "13px JetBrains Mono, monospace"; ctx.fillStyle = ink; ctx.globalAlpha = clamp((T - 1.0)/0.3, 0, 1); ctx.fillText(`you take ${s.one ? "only B" : "both"}: ${usd(s.won)}`, (ax + bx)/2, h - 12); ctx.globalAlpha = 1; }
+    ctx.textAlign = "left";
+  }
+  function readouts(){
+    out.textContent = `${(a()*100).toFixed(1)}%`;
+    $("boxTotal").textContent = plays ? usd(total) : "–";
+    const fresh = sims && sims.v === +acc.value;
+    $("boxOneAvg").textContent = fresh ? usd(sims.one) : "–";
+    $("boxBothAvg").textContent = fresh ? usd(sims.both) : "–";
+  }
+  function go(one){
+    const s = show = play(one); total += s.won; plays++;
+    tell(`It foresaw you taking ${s.saw ? "only B" : "both"}${s.right ? "" : ", and this time it was wrong"}, so B holds ${s.B ? "$1,000,000" : "nothing"}. You take ${s.one ? "only B" : "both"}: ${usd(s.won)}. That's ${usd(total)} over ${plays} play${plays > 1 ? "s" : ""}.`);
+    readouts(); if(reduce){ s.t = 9; draw(); }
+  }
+  $("boxOne").addEventListener("click", () => go(true));
+  $("boxBoth").addEventListener("click", () => go(false));
+  $("boxMany").addEventListener("click", () => {
+    let o = 0, t2 = 0; for(let i=0;i<1000;i++){ o += play(true).won; t2 += play(false).won; }
+    sims = {v: +acc.value, one: o/1000, both: t2/1000};
+    tell(`A thousand plays each way with a predictor that's right ${(a()*100).toFixed(1)}% of the time. Taking only B averaged ${usd(sims.one)}. Taking both averaged ${usd(sims.both)}.`);
+    readouts();
+  });
+  acc.addEventListener("input", () => { readouts(); if(reduce) draw(); });
+  layout(); readouts(); draw();
+  addEventListener("resize", () => { layout(); draw(); });
+  document.fonts && document.fonts.ready.then(draw);
+  if(!reduce) animate(dt => { if(show) show.t += dt; draw(); }, onScreen(cv));
+})();
+
+/* ---------- a forecast you can hear: where a person's reaction meets the diagonal, the forecast comes true ---------- */
+(function(){
+  const cv = $("fcCanvas"), who = $("fcWho"), say = $("fcSay");
+  const XS = [0, 1/6, 2/6, 3/6, 4/6, 5/6, 1];
+  const PRESET = {
+    hint:   XS.map(x => 0.06 + 0.88*smooth(0.15, 0.85, x)),
+    ignore: XS.map(() => 0.6),
+    push:   XS.map(x => 0.75 - 0.4*x),
+    shove:  XS.map(x => clamp(1.25 - 1.7*x, 0, 1))
+  };
+  const HINT = {
+    hint: "Tell them they'll probably go and they go. Tell them they won't and they don't.",
+    ignore: "They don't listen, so the only forecast that comes true is the one you'd make in private.",
+    push: "They push back a little against whatever they hear. Announce a few times and the forecasts settle.",
+    shove: "They push back hard. A forecast that comes true exists, but announcing what happened last time never reaches it.",
+    contrary: "They do the opposite of whatever they hear. No forecast comes true, and you can't drag this curve: it jumps.",
+    coin: "The opposite again, except at exactly 50%, where they toss a coin. Tap the middle of the plot to start at 50%."
+  };
+  let g, geo, ys = PRESET.hint.slice(), jump = null, p0 = 0.25, web = [], drag = -1;
+  const tell = m => { if(say.textContent !== m) say.textContent = m; };
+  const f = x => {
+    if(jump) return x < 0.5 ? 0.95 : x > 0.5 ? 0.05 : jump === "coin" ? 0.5 : 0.05;
+    const i = Math.min(5, Math.floor(x*6)), u = x*6 - i; return ys[i] + (ys[i + 1] - ys[i])*u;
+  };
+  function fixed(){   // forecasts that come true: where the curve meets the diagonal
+    if(jump) return jump === "coin" ? [0.5] : [];
+    const out = [], E = 1e-9;
+    for(let i=0;i<6;i++){
+      const d0 = ys[i] - XS[i], d1 = ys[i + 1] - XS[i + 1];
+      if(Math.abs(d0) < E) out.push(XS[i]);
+      else if(Math.abs(d1) >= E && d0*d1 < 0) out.push(XS[i] + (XS[i + 1] - XS[i])*d0/(d0 - d1));
+    }
+    if(Math.abs(ys[6] - 1) < E) out.push(1);
+    return out;
+  }
+  function layout(){
+    g = fit(cv, cv.clientWidth < 520 ? 1 : 0.6);
+    geo = {x0: 50, x1: g.w - 16, y0: 14, y1: g.h - 40};
+  }
+  const X = v => geo.x0 + (geo.x1 - geo.x0)*v, Y = v => geo.y1 - (geo.y1 - geo.y0)*v;
+  const unX = px => clamp((px - geo.x0)/(geo.x1 - geo.x0), 0, 1), unY = py => clamp((geo.y1 - py)/(geo.y1 - geo.y0), 0, 1);
+  function draw(){
+    const {ctx, w, h} = g, {x0, x1, y0, y1} = geo, ink = C("--ink"), mute = C("--mute"), dawn = C("--dawn");
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = C("--line"); ctx.lineWidth = 1; ctx.strokeRect(x0 + 0.5, y0 + 0.5, x1 - x0, y1 - y0);
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.fillStyle = mute;
+    ctx.textAlign = "center"; [0, 0.5, 1].forEach(v => ctx.fillText(pct(v), X(v), y1 + 14));
+    ctx.fillText("the forecast they hear", (x0 + x1)/2, y1 + 31);
+    ctx.textAlign = "right"; [0, 0.5, 1].forEach(v => ctx.fillText(pct(v), x0 - 6, Y(v) + 3));
+    ctx.save(); ctx.translate(11, (y0 + y1)/2); ctx.rotate(-Math.PI/2); ctx.textAlign = "center"; ctx.fillText("the real chance they go", 0, 0); ctx.restore();
+    // the diagonal: forecasts that would come true
+    ctx.strokeStyle = mute; ctx.globalAlpha = 0.8; ctx.setLineDash([4, 5]); ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(1), Y(1)); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+    // how the person reacts to each forecast
+    ctx.strokeStyle = ink; ctx.lineWidth = 2;
+    if(jump){
+      ctx.beginPath(); ctx.moveTo(X(0), Y(0.95)); ctx.lineTo(X(0.5), Y(0.95)); ctx.moveTo(X(0.5), Y(0.05)); ctx.lineTo(X(1), Y(0.05)); ctx.stroke();
+      ctx.lineWidth = 1.5;
+      if(jump === "coin"){ ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(X(0.5), Y(0.95)); ctx.lineTo(X(0.5), Y(0.05)); ctx.stroke(); ctx.setLineDash([]); }
+      ctx.fillStyle = C("--night"); ctx.beginPath(); ctx.arc(X(0.5), Y(0.95), 4, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(X(0.5), Y(0.05), 4, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = ink; ctx.beginPath(); ctx.arc(X(0.5), Y(jump === "coin" ? 0.5 : 0.05), 4, 0, 7); ctx.fill();
+    } else {
+      ctx.beginPath(); XS.forEach((x, i) => { i ? ctx.lineTo(X(x), Y(ys[i])) : ctx.moveTo(X(x), Y(ys[i])); }); ctx.stroke();
+      ctx.lineWidth = 1.5;
+      XS.forEach((x, i) => { ctx.fillStyle = C("--night"); ctx.strokeStyle = i === drag ? dawn : ink; ctx.beginPath(); ctx.arc(X(x), Y(ys[i]), 6, 0, 7); ctx.fill(); ctx.stroke(); });
+    }
+    ctx.lineWidth = 1;
+    // the forecaster: announce, see what happened (up to the curve), make that the next forecast (across to the diagonal)
+    if(web.length){
+      ctx.strokeStyle = dawn; ctx.globalAlpha = 0.85; ctx.lineWidth = 1.4; ctx.beginPath();
+      web.forEach(([x, y], i) => { i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y)); }); ctx.stroke(); ctx.lineWidth = 1; ctx.globalAlpha = 1;
+    }
+    ctx.fillStyle = dawn; ctx.beginPath(); ctx.moveTo(X(p0), y1 - 8); ctx.lineTo(X(p0) - 5, y1); ctx.lineTo(X(p0) + 5, y1); ctx.fill();
+    ctx.strokeStyle = dawn; ctx.lineWidth = 2;
+    fixed().forEach(v => { ctx.beginPath(); ctx.arc(X(v), Y(v), 9, 0, 7); ctx.stroke(); });
+    ctx.lineWidth = 1; ctx.textAlign = "left";
+  }
+  function readouts(){
+    const fx = fixed(), m = web.length;
+    $("fcFixed").textContent = fx.length ? fx.map(v => pct(v)).join(", ") : "none";
+    $("fcLast").textContent = m > 1 ? pct(web[m - 2][0]) : "–";
+    $("fcReal").textContent = m > 1 ? pct(web[m - 2][1]) : "–";
+  }
+  function step(){
+    if(!web.length) web = [[p0, 0]];
+    const p = web[web.length - 1][0], y = f(p);
+    web.push([p, y], [y, y]);
+    if(web.length > 81) web.splice(0, 2);
+    return [p, y];
+  }
+  $("fcStep").addEventListener("click", () => {
+    const [p, y] = step();
+    tell(Math.abs(y - p) < 0.005 ? `Announced ${pct(p)}, and the real chance was ${pct(y)}. The forecast came true.` : `Announced ${pct(p)}. Hearing it, the real chance they go is ${pct(y)}. Next time, the forecaster will say ${pct(y)}.`);
+    readouts(); draw();
+  });
+  $("fcRun").addEventListener("click", () => {
+    let p, y, ps = [];
+    for(let k=0;k<20;k++){ [p, y] = step(); ps.push(p); }
+    const a = ps[19], b = ps[18], c = ps[17];
+    tell(Math.abs(y - p) < 0.005 ? `After 20 announcements the forecasts settled at ${pct(p)}, and that forecast comes true.` :
+      Math.abs(a - c) < 0.005 ? `After 20 announcements the forecaster is still flipping between ${pct(Math.min(a, b))} and ${pct(Math.max(a, b))}, and is wrong every time.` :
+      `After 20 announcements the forecasts are still moving: last ${pct(p)}, with the real chance at ${pct(y)}.`);
+    readouts(); draw();
+  });
+  who.addEventListener("change", () => {
+    const v = who.value; jump = v === "contrary" || v === "coin" ? v : null;
+    if(!jump) ys = PRESET[v].slice();
+    web = []; p0 = 0.25; tell(HINT[v]); readouts(); draw();
+  });
+  cv.addEventListener("pointerdown", e => {
+    const p = local(cv, e);
+    if(!jump){
+      let best = -1, bd = 20;
+      XS.forEach((x, i) => { const d = Math.hypot(X(x) - p.x, Y(ys[i]) - p.y); if(d < bd){ bd = d; best = i; } });
+      if(best >= 0){ drag = best; cv.setPointerCapture(e.pointerId); draw(); return; }
+    }
+    if(p.x >= geo.x0 - 8 && p.x <= geo.x1 + 8 && p.y >= geo.y0 - 8 && p.y <= geo.y1 + 20){
+      p0 = unX(p.x); if(jump === "coin" && Math.abs(p0 - 0.5) < 0.05) p0 = 0.5;
+      web = []; tell(`The first forecast will be ${pct(p0)}. Press Announce.`); readouts(); draw();
+    }
+  });
+  cv.addEventListener("pointermove", e => {
+    if(drag < 0) return;
+    ys[drag] = unY(local(cv, e).y); web = []; readouts(); draw();
+  });
+  ["pointerup", "pointercancel"].forEach(k => cv.addEventListener(k, () => {
+    if(drag < 0) return;
+    drag = -1; const fx = fixed();
+    tell(fx.length === 1 ? `One forecast comes true now: ${pct(fx[0])}.` : `${fx.length} forecasts come true now: ${fx.map(v => pct(v)).join(", ")}.`);
+    draw();
+  }));
+  layout(); readouts(); draw();
+  addEventListener("resize", () => { layout(); draw(); });
+  document.fonts && document.fonts.ready.then(draw);
+})();
+
+/* ---------- the CHSH game: two players, two random questions, no time for a message ---------- */
+(function(){
+  const cv = $("bellCanvas"), mode = $("bellMode"), tiltS = $("bellTilt"), say = $("bellSay");
+  const plan = [0, 0, 0, 0];   // Alice's answers to questions 0 and 1, then Bob's
+  let g, wins = 0, n = 0, tally = [[0, 0], [0, 0], [0, 0], [0, 0]], last = null, t0 = -9, now = 0;
+  const tell = m => { if(say.textContent !== m) say.textContent = m; };
+  const photons = () => mode.value === "photons";
+  const ang = () => [0, 45, +tiltS.value, -tiltS.value];   // polarizers in degrees: Alice for questions 0 and 1, then Bob
+  const c2 = d => Math.cos(d*Math.PI/180)**2;            // two photons of the pair give the same answer with this chance
+  const NEED = ["same", "same", "same", "differ"];
+  function odds(){   // this setup's exact chance of winning a round
+    if(!photons()){ let k = 0; for(const x of [0, 1]) for(const y of [0, 1]) if((plan[x] ^ plan[2 + y]) === (x & y)) k++; return k/4; }
+    const [a0, a1, b0, b1] = ang();
+    return (c2(a0 - b0) + c2(a0 - b1) + c2(a1 - b0) + 1 - c2(a1 - b1))/4;
+  }
+  function round(){
+    const x = coin(), y = coin(); let a, b;
+    if(!photons()){ a = plan[x]; b = plan[2 + y]; }
+    else { const A = ang(); a = coin(); b = Math.random() < c2(A[x] - A[2 + y]) ? a : 1 - a; }   // the cheat: this line sees both settings at once
+    const win = (a ^ b) === (x & y), k = 2*x + y;
+    n++; tally[k][1]++; if(win){ wins++; tally[k][0]++; }
+    return {x, y, a, b, win};
+  }
+  function clear(){ wins = 0; n = 0; tally = [[0, 0], [0, 0], [0, 0], [0, 0]]; last = null; }
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.98 : 0.5); }
+  function draw(){
+    const {ctx, w, h} = g, ink = C("--ink"), mute = C("--mute"), dawn = C("--dawn"), sea = C("--sea");
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const sy = h*0.27, R = Math.min(32, w*0.08), S = {x: w/2, y: sy}, u = clamp((now - t0)/0.45, 0, 1), L = last;
+    const st = [{x: w*0.17, y: sy, name: "Alice"}, {x: w*0.83, y: sy, name: "Bob"}];
+    ctx.font = "11px JetBrains Mono, monospace"; ctx.textAlign = "center";
+    if(photons()){   // the source, and a pair in flight
+      ctx.fillStyle = sea; ctx.globalAlpha = 0.8; ctx.beginPath(); ctx.arc(S.x, S.y, 4, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+      ctx.fillStyle = mute; ctx.fillText("source", S.x, S.y + 20);
+      if(L && u < 1){ ctx.fillStyle = sea; st.forEach(P => { ctx.beginPath(); ctx.arc(S.x + (P.x - S.x)*u, S.y, 3, 0, 7); ctx.fill(); }); }
+    }
+    st.forEach((P, side) => {
+      ctx.strokeStyle = ink; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.arc(P.x, P.y, R, 0, 7); ctx.stroke(); ctx.globalAlpha = 1;
+      ctx.fillStyle = mute; ctx.font = "11px JetBrains Mono, monospace"; ctx.fillText(P.name, P.x, P.y + R + 16);
+      const q = L ? (side ? L.y : L.x) : null;
+      if(L){ ctx.fillStyle = ink; ctx.fillText(`asked ${q}`, P.x, P.y - R - 9); }
+      if(photons()){
+        const th = ang()[2*side + (q ?? 0)]*Math.PI/180;
+        ctx.strokeStyle = sea; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(P.x - R*0.8*Math.cos(th), P.y + R*0.8*Math.sin(th)); ctx.lineTo(P.x + R*0.8*Math.cos(th), P.y - R*0.8*Math.sin(th)); ctx.stroke(); ctx.lineWidth = 1;
+      } else {
+        ctx.fillStyle = ink; ctx.font = "10px JetBrains Mono, monospace";
+        ctx.fillText(`0 → ${plan[2*side]}`, P.x, P.y - 2); ctx.fillText(`1 → ${plan[2*side + 1]}`, P.x, P.y + 11);
+      }
+      if(L && u >= 1){
+        const ans = side ? L.b : L.a;
+        ctx.fillStyle = ans ? dawn : sea; ctx.beginPath(); ctx.arc(P.x, P.y + R + 32, 8, 0, 7); ctx.fill();
+        ctx.fillStyle = C("--night"); ctx.font = "500 10px JetBrains Mono, monospace"; ctx.fillText(ans, P.x, P.y + R + 35.5);
+      }
+    });
+    if(L && u >= 1){ ctx.font = "italic 20px Bodoni Moda, Georgia, serif"; ctx.fillStyle = L.win ? dawn : C("--ember"); ctx.fillText(L.win ? "win" : "loss", S.x, sy + R + 40); }
+    // how often they win, for each pair of questions
+    ctx.font = "10px JetBrains Mono, monospace";
+    const gx = 14, gw = (w - 28)/4, gy = h*0.66, gh = Math.min(48, h*0.13);
+    tally.forEach(([k, m], i) => {
+      const x = gx + i*gw + 3, rate = m ? k/m : null;
+      ctx.fillStyle = C("--deep"); ctx.fillRect(x, gy, gw - 6, gh);
+      if(rate !== null){ ctx.fillStyle = dawn; ctx.globalAlpha = 0.25; ctx.fillRect(x, gy + gh*(1 - rate), gw - 6, gh*rate); ctx.globalAlpha = 1; }
+      ctx.fillStyle = mute; ctx.fillText(`${i >> 1},${i & 1} ${NEED[i]}`, x + (gw - 6)/2, gy - 6);
+      ctx.fillStyle = ink; ctx.font = "12px JetBrains Mono, monospace"; ctx.fillText(rate === null ? "–" : pct(rate), x + (gw - 6)/2, gy + gh/2 + 4); ctx.font = "10px JetBrains Mono, monospace";
+    });
+    // the overall rate, against the two ceilings
+    const bx0 = 20, bx1 = w - 20, byy = h - 26, B = v => bx0 + (bx1 - bx0)*v;
+    ctx.fillStyle = C("--deep"); ctx.fillRect(bx0, byy - 5, bx1 - bx0, 10);
+    if(n){ ctx.fillStyle = ink; ctx.fillRect(bx0, byy - 5, (bx1 - bx0)*wins/n, 10); }
+    ctx.fillStyle = mute; ctx.fillRect(B(0.75) - 1, byy - 10, 2, 20); ctx.fillText("75%", B(0.75), byy - 14);
+    ctx.fillStyle = dawn; ctx.fillRect(B(0.8536) - 1, byy - 10, 2, 20); ctx.fillText("85.4%", B(0.8536), byy + 21);
+    ctx.textAlign = "left"; ctx.fillStyle = mute; ctx.fillText("won", bx0, byy - 14);
+  }
+  function readouts(){
+    $("bellWon").textContent = n ? `${pct(wins/n, 1)} of ${n.toLocaleString("en-US")}` : "–";
+    $("bellOdds").textContent = pct(odds(), 1);
+    $("bellBestK").textContent = photons() ? "85.4%" : "75%";
+    $("bellTiltOut").textContent = `${(+tiltS.value).toFixed(1).replace(".0", "").replace("-", "−")}°`;
+    document.querySelectorAll("#bellPlan button, #bellPlanB button").forEach(btn => { const k = +btn.dataset.k; btn.textContent = `asked ${k % 2}, says ${plan[k]}`; });
+  }
+  function setup(){
+    const ph = photons();
+    $("bellPlan").hidden = ph; $("bellPlanB").hidden = ph; $("bellPhotons").hidden = !ph; $("bellAll").hidden = ph;
+    clear(); readouts(); draw();
+  }
+  document.querySelectorAll("#bellPlan button, #bellPlanB button").forEach(btn => btn.addEventListener("click", () => {
+    const k = +btn.dataset.k; plan[k] ^= 1; clear(); readouts(); draw();
+    tell(`New plan. Its exact odds: ${pct(odds())}.`);
+  }));
+  mode.addEventListener("change", () => {
+    setup();
+    tell(photons() ? "Each player now holds one photon of an entangled pair. Find the tilt that wins most often." : "Tap a plan button to change an answer, then play.");
+  });
+  tiltS.addEventListener("input", () => { clear(); readouts(); draw(); });
+  $("bellBest").addEventListener("click", () => { tiltS.value = 22.5; clear(); readouts(); draw(); tell("Bob's tilt is 22.5°, the best there is. Play a thousand rounds."); });
+  $("bellRound").addEventListener("click", () => {
+    last = round(); t0 = now; readouts(); if(reduce) t0 = now - 1; draw();
+    tell(`Alice was asked ${last.x} and said ${last.a}. Bob was asked ${last.y} and said ${last.b}. They needed ${last.x & last.y ? "different" : "matching"} answers, so that's a ${last.win ? "win" : "loss"}.`);
+  });
+  $("bellMany").addEventListener("click", () => {
+    for(let k=0;k<1000;k++) last = round();
+    t0 = now - 1; readouts(); draw();
+    tell(`After ${n.toLocaleString("en-US")} rounds they've won ${pct(wins/n, 1)}. This setup's exact odds are ${pct(odds(), 1)}.`);
+  });
+  $("bellAll").addEventListener("click", () => {
+    const counts = [0, 0, 0, 0, 0];
+    for(let p=0;p<16;p++){ let k = 0; for(const x of [0, 1]) for(const y of [0, 1]) if((((p >> x) & 1) ^ ((p >> (2 + y)) & 1)) === (x & y)) k++; counts[k]++; }
+    tell(`Of the 16 possible plans, ${counts[3]} win three rounds in four and ${counts[1]} win one in four. None does better.`);
+  });
+  layout(); setup();
+  addEventListener("resize", () => { layout(); draw(); });
+  document.fonts && document.fonts.ready.then(draw);
+  if(!reduce) animate(dt => { now += dt; draw(); }, onScreen(cv));
+})();
+</script>
+</body>
+</html>

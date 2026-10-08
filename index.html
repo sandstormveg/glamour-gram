@@ -120,7 +120,11 @@ const PAGES = [
   {n:"IX", slug:"every-path.html", title:"Every Path at Once", hue:"--dawn", gene:"ray",
    hook:"Light, a corgi and a column of ants all find the fastest way across a border. None of them can see it.",
    effect:"Light crosses the organism and bends in every cell, as if each were a drop of water.",
-   sections:[["lifeguard","The lifeguard"],["fermat","How does light know?"],["every-path","Every path"],["ants","Ants that refract"],["elvis","Elvis"],["right-way","A right way"]]}
+   sections:[["lifeguard","The lifeguard"],["fermat","How does light know?"],["every-path","Every path"],["ants","Ants that refract"],["elvis","Elvis"],["right-way","A right way"]]},
+  {n:"X", slug:"everyone-like-you.html", title:"Everyone Like You", hue:"--sea", gene:"twin",
+   hook:"No message, no second meeting, no way to check. Copies can still cooperate, and genes found out first.",
+   effect:"Cells pair off across the organism and light up in the same instant, though nothing passes between them.",
+   sections:[["twin","Your twin"],["evolution","Selection"],["omega","Two boxes"],["forecast","A forecast you hear"],["ceiling","Nature's ceiling"],["everywhere","Everywhere"],["nearest","The nearest copy"]]}
 ];
 
 const css = getComputedStyle(document.documentElement);
@@ -327,6 +331,16 @@ const motif = {
     }
     ctx.fillStyle = C("--dawn"); ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(ax, ay, Math.max(1.2, R*0.05), 0, 7); ctx.fill();
   },
+  twin(x,y,R,t){   // two rooms and a wall: the same choice lights both at once, and neither light reaches the wall in time
+    const k = Math.floor(t/1.8), u = t/1.8 - k, col = C(k % 2 ? "--dawn" : "--sea");
+    ctx.strokeStyle = C("--ink"); ctx.globalAlpha = 0.35; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, y - R*0.45); ctx.lineTo(x, y + R*0.45); ctx.stroke();
+    [-1, 1].forEach(d=>{
+      const px = x + d*R*0.38;
+      ctx.strokeStyle = col; ctx.globalAlpha = 0.5*(1 - u); ctx.beginPath(); ctx.arc(px, y, R*(0.08 + 0.3*u), 0, 7); ctx.stroke();
+      ctx.globalAlpha = 1; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(px, y, Math.max(1.5, R*0.07), 0, 7); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  },
   glow(x,y,R,t){ ctx.fillStyle = C("--dawn"); ctx.globalAlpha = 0.5 + 0.3*Math.sin(t); ctx.beginPath(); ctx.arc(x,y,R*0.15,0,7); ctx.fill(); ctx.globalAlpha = 1; }
 };
 
@@ -469,6 +483,9 @@ function render(t, dt){
     ctx.textAlign = "left";
   });
 
+  // twin gene: two far-apart cells light up in the same instant, with no link between them
+  if(has("twin")) twins(t);
+
   // ray gene: light crosses the organism and bends in every cell
   if(has("ray")) rays(t, dt);
 
@@ -569,6 +586,24 @@ function rays(t, dt){
   }
 }
 
+/* ---------- twin gene: cells pair off across the organism and light up together; the ring from each fades before it could reach the other ---------- */
+const pairs = (()=>{   // each cell in turn takes the farthest cell still unpaired
+  const left = cells.map((_, i)=>i), out = [], dist = (i, j)=>Math.hypot(cells[i].x - cells[j].x, cells[i].y - cells[j].y);
+  while(left.length > 1){ const i = left.shift(); let k = 0; left.forEach((j, m)=>{ if(dist(i, j) > dist(i, left[k])) k = m; }); out.push([i, left.splice(k, 1)[0]]); }
+  return out;
+})();
+function twins(t){
+  const fade = Math.max(0, Math.min(1, (220 - cells[0].r*cam.s)/120));
+  if(fade <= 0 || !pairs.length) return;
+  const P = 2.2, k = Math.floor(Math.max(0, t)/P), u = Math.max(0, t)/P - k, col = C(k % 2 ? "--dawn" : "--sea"), glow = reduce ? 0.8 : Math.max(0, 1 - u/0.45);
+  pairs[k % pairs.length].forEach(i=>{
+    const cl = cells[i], [x, y] = toScreen(...cellXY(cl)), R = cl.r*cam.s;
+    ctx.strokeStyle = col; ctx.lineWidth = 2.2; ctx.globalAlpha = 0.9*glow*fade; ctx.beginPath(); ctx.arc(x, y, R + 3, 0, 7); ctx.stroke();
+    if(!reduce){ ctx.lineWidth = 1; ctx.globalAlpha = 0.3*(1 - u)*fade; ctx.beginPath(); ctx.arc(x, y, R + 3 + u*0.35*cam.s, 0, 7); ctx.stroke(); }
+  });
+  ctx.globalAlpha = 1; ctx.lineWidth = 1;
+}
+
 /* ---------- run ---------- */
 addEventListener("resize", resize);
 resize();
@@ -576,7 +611,7 @@ document.fonts && document.fonts.ready.then(()=>{ if(!to) resize(); });   // re-
 if(reduce){ render(2); }
 else {
   let last = performance.now(), t = 0;
-  (function loop(now){ const dt = Math.min(0.05, (now-last)/1000); last = now; const k = daydream(dt); t += dt*k; render(t, dt*k); requestAnimationFrame(loop); })(last);
+  (function loop(now){ const dt = Math.max(0, Math.min(0.05, (now-last)/1000)); last = now; const k = daydream(dt); t += dt*k; render(t, dt*k); requestAnimationFrame(loop); })(last);   // a frame's timestamp can come in just before the last one
 }
 
 /* ---------- keep it: install as an app, where the browser allows ---------- */

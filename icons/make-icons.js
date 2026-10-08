@@ -2,7 +2,7 @@
 // Run with Node from this folder (`node make-icons.js`) after adding pages, to grow the icon too. No dependencies.
 const fs = require("fs"), path = require("path"), zlib = require("zlib");
 
-const HUES = ["dawn", "sea", "dawn", "sea", "ember", "dawn", "sea", "ember", "dawn"];   // the pages' hues, in order
+const HUES = ["dawn", "sea", "dawn", "sea", "ember", "dawn", "sea", "ember", "dawn", "sea"];   // the pages' hues, in order
 const RGB = {night:[11,16,22], deep:[18,26,35], dawn:[240,168,90], sea:[111,194,184], ember:[227,115,90]};
 const HEX = {night:"#0b1016", deep:"#121a23", dawn:"#f0a85a", sea:"#6fc2b8", ember:"#e3735a"};
 const GA = Math.PI*(3 - Math.sqrt(5));
