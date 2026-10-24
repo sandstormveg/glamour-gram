@@ -14,6 +14,7 @@ The home page is a living organism. Each page is a cell you can zoom into, then 
 - **VIII · The View from Elsewhere**: you can't see the state you're in. Wear a lens until it fades, forecast your own mood, heat a landscape of mind-states, and write a letter to a later you.
 - **IX · Every Path at Once**: light, a corgi and a column of ants all find the fastest way across a border, and none of them can see it. Race a lifeguard, scrape a mirror into a grating, grow an ant trail, and play fetch with Elvis.
 - **X · Everyone Like You**: copies cooperate with no message and no second meeting, and genes found out first. Play your twin and Newcomb's boxes, watch Hamilton's rule decide a dish, bend a forecast its subject can hear, and play the game physics caps at 85%.
+- **XI · The Missing Rungs**: the ladder from human to posthuman — superintelligence, superhappiness, superhealth — zoomed in rung by rung, each marked built, shown, drawn or missing. Climb the three ladders, run the arithmetic of escape velocity, measure your own bandwidth, ride the treadmill inside, and find how big one mind can be.
 
 Plain HTML, no build step. Pages III onward share `glam.css`. Served with GitHub Pages from the `main` branch.
 

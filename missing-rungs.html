@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1016">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="GlamGram">
+<script>if("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
+<title>The Missing Rungs · Glamour Gram</title>
+<meta name="description" content="Superintelligence, superhappiness, superhealth. The ladder from human to posthuman, zoomed in rung by rung: what's built, what's drawn but not yet built, and what nobody knows how to make. Run the arithmetic of escape velocity, measure your own bandwidth, ride the treadmill inside, and find how big one mind can be.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
+<style>
+/* Layout: the title is three ladders, for mind, mood and body, meeting at a vanishing point; each climber waits at its lowest missing rung. Then the three supers defined, the ladders zoomed in rung by rung, and one instrument for each super: the arithmetic of escape velocity, your own bandwidth, the treadmill inside. Then the physics that caps how big one posthuman mind can be, and the turn: you climb only as high as the lowest gap. */
+[hidden]{display:none!important}
+.hero canvas{cursor:pointer}
+.controls label{min-width:0;max-width:100%}
+.controls select{min-width:0}
+@media (max-width:420px){.controls select{font-size:12px;padding:6px 4px}}
+blockquote{margin:24px 0;padding:4px 0 4px 18px;border-left:2px solid var(--dawn);font-family:var(--display);font-style:italic;font-size:clamp(20px,3vw,24px);line-height:1.4;max-width:58ch}
+blockquote cite{display:block;margin-top:8px;font-family:var(--mono);font-style:normal;font-size:12px;letter-spacing:.06em;color:var(--mute)}
+.say{font-size:17px;margin:14px 0 0;min-height:1.6em;max-width:none}
+.facts .tag{margin:8px 0 6px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--mute)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.legend i.bar{border-radius:0;height:2px;width:16px;vertical-align:3px}
+.legend i.dash{border-radius:0;height:0;width:16px;border-top:2px dashed var(--mute);vertical-align:3px}
+.legend i.rung{border-radius:0;height:0;width:22px;border-top:3px solid var(--ink);vertical-align:3px}
+.legend i.rung.shown{border-top-width:1.5px}
+.legend i.rung.drawn{border-top:2px dashed var(--ink)}
+.legend i.rung.missing{border-top:2px dotted var(--mute)}
+.callout ul{margin:0;padding-left:20px}
+.callout li{margin-bottom:8px;max-width:62ch}
+.note a{color:var(--sea)}
+h3{margin-top:40px}
+sup{line-height:0;font-size:.7em}
+#ladCanvas:focus-visible,#hCanvas:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+/* the status of a rung or a step: filled, outlined, dashed, dotted, so it reads without colour */
+.tag{display:inline-block;font-style:normal;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;padding:2px 8px;line-height:1.4;white-space:nowrap;vertical-align:2px}
+.tag.built{background:var(--ink);color:var(--night);border:1px solid var(--ink)}
+.tag.shown{color:var(--ink);border:1px solid var(--ink)}
+.tag.drawn{color:var(--ink);border:1px dashed var(--mute)}
+.tag.missing{color:var(--mute);border:1px dotted var(--mute)}
+.detail{margin-top:18px;border-top:1px solid var(--line);padding-top:16px}
+.detail h3{margin:6px 0 8px;font-size:clamp(24px,4vw,30px)}
+.detail .eyebrow{margin-bottom:4px}
+.detail > p{font-size:17px}
+ol.steps{list-style:none;margin:14px 0 0;padding:0}
+ol.steps li{padding:12px 10px 12px 12px;border-left:2px solid var(--line);margin-bottom:6px;font-size:16px;line-height:1.55}
+ol.steps li.on{border-left-color:var(--dawn);background:rgba(240,168,90,.06)}
+ol.steps b{font-family:var(--display);font-weight:400;font-size:20px;display:block;margin:4px 0 2px;line-height:1.2}
+.moves{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.all{margin-top:18px}
+.all h4{font-family:var(--mono);font-weight:400;font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin:26px 0 6px}
+.all h5{font-family:var(--display);font-weight:400;font-size:22px;margin:18px 0 4px}
+.all h5 .tag{margin-left:6px}
+.all ol.steps li{padding:8px 10px}
+.typing{margin-top:6px}
+.target{font-family:var(--mono);font-size:clamp(14px,2.2vw,16px);line-height:1.7;color:var(--mute);margin:4px 0 10px;max-width:none;overflow-wrap:anywhere}
+.target .ok{color:var(--dawn)}
+.target .bad{color:var(--night);background:var(--ember);border-radius:2px}
+.target cite{display:block;font-style:normal;font-size:11px;letter-spacing:.06em;margin-top:2px}
+#tInput{width:100%;font-family:var(--mono);font-size:16px;background:var(--night);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:10px 12px}
+#tInput:focus{border-color:var(--sea);outline:none}
+</style>
+</head>
+<body>
+<header class="hero" aria-label="Three ladders, for mind, mood and body, rising toward one vanishing point. Solid rungs are built, dashed rungs are drawn but not built, and some rungs are missing. A small light climbs each ladder and waits at its lowest missing rung.">
+  <canvas id="heroCanvas"></canvas>
+  <a class="home corner" href="./">Glamour Gram</a>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">Glamour Gram · XI</div>
+    <h1>The Missing Rungs</h1>
+    <p class="lede">Superintelligence, superhappiness, superhealth. The ladder from human to posthuman, zoomed in rung by rung: what's built, what's drawn but not yet built, and what nobody knows how to make.</p>
+  </div></div>
+</header>
+
+<main>
+<section id="three"><div class="wrap">
+  <div class="eyebrow">Three supers</div>
+  <h2>Three ways <em>to be more</em></h2>
+  <p>In 1957 the biologist Julian Huxley needed a word for an old hope, that people might use science to improve not only their circumstances but themselves.</p>
+  <blockquote>"The human species can, if it wishes, transcend itself … We need a name for this new belief. Perhaps transhumanism will serve: man remaining man, but transcending himself, by realizing new possibilities of and for his human nature."<cite>Julian Huxley, "Transhumanism," <i>New Bottles for New Wine</i> (1957)</cite></blockquote>
+  <p>The philosopher Nick Bostrom gave the far end a working definition (2008). A posthuman is a being with at least one general capacity that greatly exceeds the most any human could reach without new technology. He named three such capacities: healthspan, cognition and emotion. The philosopher David Pearce calls the same three the three supers: superlongevity, superintelligence and superhappiness (<i>The Hedonistic Imperative</i>, 1995). The futurist FM-2030 used "transhuman" for the stretch in between: a transitional human, on the way (1989).</p>
+  <p>This page treats the three supers as engineering problems. Each gets a ladder, from today at the bottom to posthuman at the top, and every rung, and every step inside a rung, is sorted into one of four kinds.</p>
+  <div class="facts">
+    <div><b>Built</b><i class="tag built">built</i><span>In use, in people.</span></div>
+    <div><b>Shown</b><i class="tag shown">shown</i><span>It works in animals, in a lab, or in a handful of people.</span></div>
+    <div><b>Drawn</b><i class="tag drawn">drawn</i><span>Worked out on paper, or shown possible in principle. Nobody has built it.</span></div>
+    <div><b>Missing</b><i class="tag missing">missing</i><span>Nobody knows how yet.</span></div>
+  </div>
+  <p class="note">Where a rung sits is a judgement from the published evidence as of October 2026, and some rungs will have moved by the time you read this. Claims from single labs, single patients and company press releases are marked as such.</p>
+</div></section>
+
+<section id="ladder"><div class="wrap wide">
+  <div class="eyebrow">Instrument · the ladder</div>
+  <h2>The ladder, <em>zoomed in</em></h2>
+  <p>Three ladders, one for each super. Tap a rung to zoom into it and see the steps inside, each sorted the same way. On a keyboard, use the arrow keys and Enter.</p>
+  <div class="instrument">
+    <canvas id="ladCanvas" tabindex="0" aria-label="Three ladders: mind, mood and body. Each rung is drawn solid if built, thin if shown, dashed if drawn and dotted if missing. The panel below the ladders describes the rung you choose."></canvas>
+    <div class="legend"><span><i class="rung"></i>built</span><span><i class="rung shown"></i>shown</span><span><i class="rung drawn"></i>drawn</span><span><i class="rung missing"></i>missing</span></div>
+    <div class="controls">
+      <button type="button" id="ladOut" disabled>Zoom out</button>
+      <button type="button" id="ladList" aria-expanded="false">List every rung</button>
+    </div>
+    <div class="detail" id="ladDetail" aria-live="polite"></div>
+    <div class="all" id="ladAll" hidden></div>
+  </div>
+</div></section>
+
+<section id="health"><div class="wrap">
+  <div class="eyebrow">Instrument · superhealth</div>
+  <h2>The arithmetic <em>of escape</em></h2>
+  <p>In 1825 the actuary Benjamin Gompertz noticed a regularity in the tables insurers used. After early adulthood, a person's chance of dying in the coming year grows by the same proportion every year. Today it doubles about every eight years. In a rich country a 40-year-old has roughly a 0.15% chance of dying this year, and an 80-year-old about 4%.</p>
+  <p>That doubling is why curing diseases one at a time buys so little. Cut everyone's risk of death by a quarter, at every age, and you've made them about three and a half years younger, because that's how long the doubling takes to win the quarter back. In 1990 Jay Olshansky and colleagues estimated that ending every cancer would add about three years to life expectancy at birth. The model below agrees.</p>
+  <div class="instrument">
+    <canvas id="hCanvas" aria-label="Two charts. Top: the share of people still alive at each age, today and in your scenario. Bottom: biological age against calendar age."></canvas>
+    <div class="controls">
+      <label>How fast you age <input type="range" id="hRate" min="0" max="100" value="100"> <output id="hRateOut">100%</output></label>
+    </div>
+    <div class="controls">
+      <label>Repair begins at age <input type="range" id="hStart" min="20" max="100" value="60"> <output id="hStartOut">60</output></label>
+      <label>Years repaired per decade <input type="range" id="hRev" min="0" max="20" step="0.5" value="0"> <output id="hRevOut">0</output></label>
+    </div>
+    <div class="controls">
+      <label>Danger from outside
+        <select id="hExt">
+          <option value="0.002">Ten times today's</option>
+          <option value="0.0002" selected>Today's, in a rich country</option>
+          <option value="0.0001">Half of today's</option>
+          <option value="0.00002">A tenth of today's</option>
+        </select>
+      </label>
+    </div>
+    <div class="controls">
+      <button type="button" class="primary" id="hToday">Today</button>
+      <button type="button" id="hCure" aria-pressed="false">Cure all cancer</button>
+      <button type="button" id="hSlow">Slow aging by a fifth</button>
+      <button type="button" id="hStop">Stop aging at 60</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Life expectancy</div><div class="v" id="hE">–</div></div>
+      <div><div class="k">Half are gone by</div><div class="v" id="hMed">–</div></div>
+      <div><div class="k">Reach 100</div><div class="v" id="h100">–</div></div>
+      <div><div class="k">Reach 1,000</div><div class="v" id="h1000">–</div></div>
+    </div>
+    <p class="say" id="hSay" aria-live="polite">Today: life expectancy 81 years.</p>
+    <div class="legend"><span><i class="dash"></i>today</span><span><i class="bar" style="background:var(--ember)"></i>your scenario</span></div>
+    <p class="caption">A Gompertz–Makeham model (Gompertz 1825; Makeham 1860). Each year's risk of death is a constant risk from outside, plus an aging term that doubles every eight years of biological age, set so that life expectancy at birth is 81, as in a rich country now. Cancer causes roughly a quarter of deaths in rich countries, so curing it cuts the aging term by a quarter. Repair turns biological age back, but never below 20. Real death rates climb more slowly past about 100, babies face extra risk, and no therapy today repairs anything like a year a decade. A toy, to show the arithmetic.</p>
+  </div>
+  <p>Press <i>Cure all cancer</i>, then <i>Slow aging by a fifth</i>. Ending the biggest killer adds about three years. Slowing the clock that drives it by a fifth adds about seventeen. That's the case for treating aging itself.</p>
+  <h3>What slows the clock <em>now</em></h3>
+  <p>In mice, several things. Since 2004 the US National Institute on Aging's Interventions Testing Program has run candidate drugs through identical trials at three sites. Rapamycin, started at 20 months, roughly 60 in human terms, extended life by 9% in males and 14% in females (Harrison et al. 2009). Acarbose, 17-α-estradiol and canagliflozin also work, mostly in males. The program also shows how fragile results are. Astaxanthin and meclizine extended male lifespan by 12% and 8% in one round (2024), and showed no benefit when retested at other doses and later starting ages.</p>
+  <p>In people, little has been measured. In the CALERIE trial, adults asked to eat 25% less managed about 12% less for two years, and one measure of the pace of aging, DunedinPACE, slowed by 2–3% (Waziry et al. 2023). Two other epigenetic clocks didn't move. Set <i>How fast you age</i> to 97% to see what that would buy if it lasted a lifetime: about two years. Dogs may get there first. Loyal's drug LOY-002, for dogs over ten, has had two of the three parts of an application for conditional FDA approval accepted (January 2026), and a large trial is testing whether it extends their lives.</p>
+  <h3>Repair, <em>not only delay</em></h3>
+  <p>Slowing aging stretches the curve. To escape it, damage has to be repaired faster than it builds up. In 2002 Aubrey de Grey and colleagues sorted the damage of aging into kinds, each with a proposed fix, and de Grey later named the goal longevity escape velocity: therapies that add more than a year of remaining life for every year that passes (2004).</p>
+  <p>Two kinds of repair have worked in old mice. Drugs that kill senescent cells, which have stopped dividing and inflame the tissue around them, raised old mice's survival after treatment by 36% (Xu et al. 2018). Partial reprogramming uses brief doses of three of the four factors Shinya Yamanaka found could turn adult cells back into stem cells (2006). It restored sight in old mice (Lu et al. 2020), and in one study it more than doubled the median remaining life of male mice treated at 124 weeks, about 77 in human terms (Macip et al. 2024). That result comes from one lab, at the company developing the therapy, and hasn't been independently repeated.</p>
+  <p>The first person was dosed with a partial reprogramming therapy in June 2026. Life Biosciences' ER-100 is injected into the eye, for damage to the optic nerve, and switched on by an antibiotic. By October, three people with glaucoma had received the lowest dose. None had a serious adverse event by day 56, and two improved on a test of their field of vision. That's three people, with no control group, and the company's own report. It's also twenty years after Yamanaka's paper.</p>
+  <p>Now press <i>Stop aging at 60</i>. Repair undoes ten years every decade, so biological age stops. Half of these people are still alive at about 140, and a few reach 1,000. Move <i>Repair begins at age</i> down to 30 and half live past 900. What finally kills them is the world: accidents, violence, infection. Set <i>Danger from outside</i> to a tenth and see how much of a very long life becomes a question of safety rather than medicine.</p>
+  <p>Olshansky and colleagues argued in 2024 that radical life extension this century is implausible: survival to 100 is unlikely to pass 15% for women and 5% for men, unless aging itself can be slowed. Optimists and skeptics agree on that condition. They disagree about whether it will be met.</p>
+</div></section>
+
+<section id="mind"><div class="wrap">
+  <div class="eyebrow">Instrument · superintelligence</div>
+  <h2>Ten bits <em>a second</em></h2>
+  <p>The first rung of the mind's ladder is the one we stand on. Writing, numbers, computers and now AI extend what one person can think, and the philosophers Andy Clark and David Chalmers argue that a notebook you rely on is part of your mind (1998). The effects of AI on human work have now been measured, and they're real but jagged. Customer-support agents with an AI assistant resolved 14% more problems an hour, and novices 34% more (Brynjolfsson, Li &amp; Raymond 2025). Consultants given GPT-4 did more and better work on tasks inside its abilities, and were 19 percentage points less likely to get one just outside them right (Dell'Acqua et al. 2023). Experienced programmers working on their own large projects took 19% longer with early-2025 AI tools, while believing they'd been 20% faster (METR 2025).</p>
+  <p>The usual plan for going further is to plug the brain in, and the argument is about bandwidth: we talk to our machines through our thumbs. Measure yours.</p>
+  <div class="instrument">
+    <div class="typing">
+      <p class="target" id="tTarget"></p>
+      <input type="text" id="tInput" aria-label="Type the line above" placeholder="Type the line above" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div class="controls">
+      <button type="button" id="tAgain">Try again</button>
+      <button type="button" id="tNext">Another line</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Your speed</div><div class="v" id="tWpm">–</div></div>
+      <div><div class="k">Your output</div><div class="v" id="tBits">–</div></div>
+      <div><div class="k">Accuracy</div><div class="v" id="tAcc">–</div></div>
+    </div>
+    <p class="say" id="tSay" aria-live="polite">The clock starts at your first keystroke.</p>
+    <canvas id="bwCanvas" aria-label="Bars on a scale of a thousand per step, from one bit a second to a hundred trillion: you typing, a fast typist, speech, a speech implant, one retina, all the senses, a gigabit internet line and an AI chip's memory."></canvas>
+    <p class="caption">English carries about one bit of information per letter, once you allow for how predictable it is (Shannon 1951), so one bit a character is used throughout, as Zheng and Meister do. Mistyped characters don't count. Each step on the scale is a thousand times the last.</p>
+  </div>
+  <p>In 2024 Jieyu Zheng and Markus Meister added up the information rate of the things people do: typing, speaking, playing fast video games, memorizing cards, solving a Rubik's cube blindfolded. Each comes to about 10 bits a second. Measured another way, speech carries about 39 bits a second, and all 17 languages in one study land near that rate, because the denser ones are spoken more slowly (Coupé et al. 2019). Meanwhile each retina sends the brain something like 10 million bits a second (Koch et al. 2006), and the senses together about a billion.</p>
+  <p>Brain–computer interfaces have given output back to people who'd lost it. A man with ALS, with 256 electrodes in his speech cortex, talked at about 32 words a minute with 97.5% accuracy over eight months (Card et al. 2024). Another system reached 62 words a minute (Willett et al. 2023). For the people using them, that's a voice returned. But Zheng and Meister's point is that the slow part seems to be central. The senses and muscles run fast, the inner process that decides what to do runs at about 10 bits a second, and nobody knows why. If thinking is the bottleneck, a wider cable won't make anyone think faster. The rung for that, an interface to cognition rather than to the muscles, is missing.</p>
+  <h3>Reading <em>every neuron</em></h3>
+  <p>The number of neurons scientists can record at once has doubled about every seven years since the 1950s (Stevenson &amp; Kording 2011). Microscopes can now follow the activity of about a million neurons across a mouse's cortex, through a window in its skull (Demas et al. 2021). Human implants listen through hundreds to about a thousand electrodes. Neuralink's has 1,024, and 21 people had one by January 2026. A human brain has about 86 billion neurons (Azevedo et al. 2009). At seven years a doubling, getting from a million to 86 billion takes more than a century.</p>
+  <h3>Better hardware, <em>and a copy</em></h3>
+  <p>In twin studies, genes account for about half the differences in adult intelligence (Plomin &amp; Deary 2015), and polygenic scores built from DNA now let IVF clinics rank embryos. Choosing the top-scoring of ten embryos is expected to raise IQ by about 2.5 points, with wide error (Karavani et al. 2019). Carl Shulman and Nick Bostrom worked out a much stronger version on paper (2014): make eggs and sperm from stem cells, select, and repeat in the dish, running many generations of selection in months. Mouse eggs have been made from stem cells since 2016 (Hikabe et al.). In 2025 a team in Oregon made human eggs from skin cells by nuclear transfer, and most of the embryos had abnormal chromosomes. Editing many genetic variants directly might become feasible within about thirty years, Peter Visscher and colleagues estimated (2025). Every one of these steps raises questions about consent, inequality and the history of eugenics, which those authors raise themselves.</p>
+  <p>The top rung of the mind's ladder is a copy: scan a brain finely enough and run it on a computer. Anders Sandberg and Nick Bostrom wrote the roadmap in 2008, and each step now works for a tiny volume. The whole brain of a fruit fly, about 140,000 neurons and 50 million synapses, was mapped in 2024 (Dorkenwald et al.), and a simulation built from that map predicted which neurons start the fly feeding (Shiu et al. 2024), though it left out the electrical synapses and most chemical modulation. One cubic millimetre of human cortex, removed in surgery, holds 57,000 cells and 150 million synapses and filled 1.4 petabytes (Shapson-Coe et al. 2024). At that resolution a whole human brain would come to about 1.7 zettabytes. Even for the worm <i>C. elegans</i>, whose 302 neurons were mapped in 1986, the map alone doesn't predict what it does. Models also need the strength and sign of each connection and the chemicals that modulate them.</p>
+  <p>Then there's the route to superintelligence that doesn't go through a human brain at all. In a 2023 survey of 2,778 AI researchers, the combined forecast gave a 50% chance that machines would outperform humans at every task by 2047, thirteen years sooner than the same survey a year earlier (Grace et al. 2024). The length of task that AI agents can complete doubled about every seven months from 2019 to 2025 (Kwa et al. 2025). The rung nobody has built is a reliable way to check that a system far more capable than its makers pursues what they meant. If the climb toward augmented human minds is slow and the machine ladder is fast, the order in which the rungs get built may matter more than any one of them.</p>
+</div></section>
+
+<section id="mood"><div class="wrap">
+  <div class="eyebrow">Instrument · superhappiness</div>
+  <h2>The treadmill <em>inside</em></h2>
+  <p>The lowest rungs of the mood ladder may be the most important ever built. On 16 October 1846, at Massachusetts General Hospital, William Morton put a patient to sleep with ether, and the surgeon John Collins Warren removed a tumour from his neck. In January 2025 the FDA approved suzetrigine, which blocks Na<sub>v</sub>1.8, a sodium channel found mostly in pain-sensing nerves: the first new class of pain drug in about two decades. All 21 antidepressants compared in a 2018 analysis of 522 trials beat placebo, modestly (Cipriani et al.). In a 2025 phase 3 trial, one dose of psilocybin beat placebo by 3.6 points on a 60-point depression scale. Real, and smaller than the headlines.</p>
+  <p>Above those rungs, the ladder is about raising the good, not only removing the bad, and here nature has run some experiments. Jo Cameron, a woman in Scotland, felt little pain in childbirth or surgery, heals unusually fast, and scored zero on a standard anxiety questionnaire. She carries a deletion in a gene the researchers named <i>FAAH-OUT</i>, which turns down an enzyme that breaks down anandamide, one of the body's own cannabinoids (Habib et al. 2019; Mikaeili et al. 2023). People born without a working Na<sub>v</sub>1.7 channel feel no pain at all, and it's a curse: they burn and break themselves without noticing (Cox et al. 2006). Pain is information. David Pearce's proposal keeps the information and moves the floor: "information-sensitive gradients of bliss," in which tomorrow's lows would feel better than today's highs.</p>
+  <p>Where would the dial be? In 1954 James Olds and Peter Milner found that rats would press a lever again and again, thousands of times an hour, to stimulate parts of their own brains, and the press called them pleasure centres. Kent Berridge and colleagues have since argued that most of these sites drove wanting, not liking (Berridge &amp; Kringelbach 2015). Wanting runs largely on dopamine and can turn compulsive. Liking seems to depend on small hotspots, one about a cubic millimetre in a rat's nucleus accumbens, where opioid stimulation doubles or triples the facial signs of pleasure at a taste of sugar (Peciña &amp; Berridge 2005). In twin studies, well-being is about 36% heritable (Bartels 2015), spread across many genetic variants, each with a tiny effect (Okbay et al. 2016). Nobody yet knows a target that durably raises the baseline mood of a healthy person without blunting, addiction or loss of drive.</p>
+  <p>Whatever the dial does has to survive the treadmill. In the 1980s and 1990s Wolfram Schultz recorded dopamine neurons in monkeys. An unexpected drop of juice made them fire. Once a light reliably predicted the juice, they fired at the light, and the juice itself did nothing (Schultz, Dayan &amp; Montague 1997). Robb Rutledge and colleagues found the same shape in people. Moment to moment, happiness tracked recent expectations and surprises, not how much people had won, in the lab and in 18,420 players of a smartphone game (2014).</p>
+  <div class="instrument">
+    <canvas id="mCanvas" aria-label="Two charts over the last forty seconds. Top: what you get and what you expect. Bottom: how you feel, against where you started."></canvas>
+    <div class="controls">
+      <button type="button" class="primary" id="mRaise">A raise</button>
+      <button type="button" id="mLoss">A loss</button>
+      <button type="button" id="mWire" aria-pressed="false">Wire the reward signal</button>
+      <button type="button" id="mLearn" aria-pressed="false">Keep learning new things</button>
+    </div>
+    <div class="controls">
+      <label>Set point <input type="range" id="mSet" min="0" max="40" value="0"> <output id="mSetOut">+0.0</output></label>
+      <button type="button" id="mReset">Start over</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Feeling now</div><div class="v" id="mNow">–</div></div>
+      <div><div class="k">Average, last 40 s</div><div class="v" id="mAvg">–</div></div>
+      <div><div class="k">What you get</div><div class="v" id="mGet">–</div></div>
+    </div>
+    <p class="say" id="mSay" aria-live="polite">Nothing much is happening, so you feel the way you usually do. Try a raise.</p>
+    <div class="legend"><span><i class="bar" style="background:var(--mute)"></i>what you get</span><span><i class="bar" style="background:var(--sea)"></i>what you expect</span><span><i class="bar" style="background:var(--dawn)"></i>how you feel</span><span><i class="dash"></i>where you started</span></div>
+    <p class="caption">A toy in the spirit of Rutledge et al. (2014). Each moment brings a reward, with a little luck either way, and your expectation learns from each one. How you feel follows recent surprises, the gaps between what you got and what you expected, with losses weighing twice as much as gains (Kahneman &amp; Tversky 1979). Fitted models also give some weight to expectations themselves, which makes the treadmill weaker than it is here. The set point lifts the baseline without touching the reward signal. Nobody knows how to do that in a brain.</p>
+  </div>
+  <p>Get a raise and the joy fades as you come to expect it. Wire the reward signal and the same thing happens, faster: the boost fades, and when the wire is switched off, the expectation it left behind turns into a crash. That's the shape of tolerance and withdrawal, though this toy is far simpler than real addiction. Raising the set point works in the model because it moves the baseline instead of the signal. Feelings still rise and fall with what happens, so they still carry information. Whether anything in a real brain works like that dial is a missing rung.</p>
+  <p>The treadmill in people is real, but it's partial. Swedish lottery players who won large prizes were more satisfied with their lives for more than a decade afterwards (Lindqvist, Östling &amp; Cesarini 2020).</p>
+  <h3>Learning as <em>the engine</em></h3>
+  <p>Press <i>Keep learning new things</i>. Each new skill pays a little more as you master it, and while you're improving, the rewards keep beating your expectations. Your mood stays up as long as there's something left to learn. That's a toy version of an idea with serious backers. In active inference, Karl Friston's account of the brain as a prediction machine, feeling good has been proposed to track how fast prediction error is falling rather than how large it is (Joffily &amp; Coricelli 2013; Van de Cruys 2017; Kiverstein, Miller &amp; Rietveld 2019). Jürgen Schmidhuber proposed that curiosity, fun, art and humour all reward one thing, compression progress: finding a shorter description of what you've seen (2010). Pierre-Yves Oudeyer's robots, rewarded only for progress in learning, taught themselves in stages, the easier things first (Oudeyer, Kaplan &amp; Hafner 2007). Matthew Hurley, Daniel Dennett and Reginald Adams argue that a joke pays you for catching a wrong guess your own mind had slipped in (2011). And curiosity helps memory. People curious about a trivia answer remembered it better, and remembered faces they'd seen while waiting for it (Gruber, Gelman &amp; Ranganath 2014).</p>
+  <div class="callout">
+    <div class="eyebrow">Speculation, flagged</div>
+    <ul>
+      <li>If good feeling comes from error being reduced, the three supers collide. A mind that predicts everything has nothing left to learn, so superintelligence could undercut superhappiness unless the world, or the mind's own projects, stays open-ended.</li>
+      <li>Active inference has an answer to the opposite worry, the dark-room problem: why doesn't a prediction machine sit in a dark, predictable room? Because organisms expect, and so seek, the states that keep them alive, and they value information for its own sake (Friston, Thornton &amp; Clark 2012).</li>
+      <li>That leaves two bets for superhappiness. Pearce's raises the floor. The learning bet keeps the frontier open. They don't exclude each other, and neither has been tested in a person.</li>
+      <li>These are frameworks, argued seriously. None is a finding.</li>
+    </ul>
+  </div>
+  <p>In 1974 Robert Nozick asked whether you'd plug into a machine that gave you any experiences you chose, for the rest of your life. Most people say no. Whatever superhappiness turns out to be, most of us seem to want it attached to the world.</p>
+</div></section>
+
+<section id="after"><div class="wrap">
+  <div class="eyebrow">Instrument · the posthuman</div>
+  <h2>How big can <em>one mind</em> be?</h2>
+  <p>The tops of the ladders vanish into one point. Vernor Vinge argued in 1993 that once there are minds greater than ours, the future past that point can't be foreseen from here. L. A. Paul's argument about transformative experience, on <a href="view-from-elsewhere.html#forecast">page VIII</a>, applies too: you can't know in advance what you'd value as a posthuman.</p>
+  <p>Physics still applies at the top. Seth Lloyd worked out in 2000 that a kilogram of matter could in principle perform about 5 × 10<sup>50</sup> operations a second, far beyond any brain. But the speed of light caps something else: how big one mind can be and still be one mind, because signals take time to cross it. In your brain, an average fibre linking the two temporal lobes is estimated to take more than 25 milliseconds one way (Ringo et al. 1994). Light crosses the Earth in 42.</p>
+  <p>Suppose a mind stays a single mind only if a signal can cross it within one of its own moments, and take your 25 milliseconds as a moment. That's an assumption, not a law. Choose how much faster than you it thinks, and how its signals travel.</p>
+  <div class="instrument">
+    <canvas id="aCanvas" aria-label="A scale of sizes from a millimetre to the solar system, marked with a brain, a person, a house, a city, the Earth, the Moon's orbit, the Earth's orbit and Neptune's. A bar shows the largest single mind for your settings."></canvas>
+    <div class="controls">
+      <label>Thinks faster than you by <input type="range" id="aSpeed" min="0" max="9" step="0.1" value="0"> <output id="aSpeedOut">1×</output></label>
+    </div>
+    <div class="controls">
+      <label>Its signals travel
+        <select id="aSig">
+          <option value="10">along nerves, 10 m/s</option>
+          <option value="2e8">as light in glass fibre</option>
+          <option value="299792458" selected>as light in a vacuum</option>
+        </select>
+      </label>
+    </div>
+    <div class="readout">
+      <div><div class="k">Largest single mind</div><div class="v" id="aMax">–</div></div>
+      <div><div class="k">One crossing of Earth</div><div class="v" id="aEarth">–</div></div>
+      <div><div class="k">An Earth-sized mind runs at</div><div class="v" id="aRel">–</div></div>
+    </div>
+    <p class="say" id="aSay" aria-live="polite"></p>
+    <p class="caption">Largest size = signal speed × 25 milliseconds ÷ speed-up. The 25 milliseconds is a rough one-way time for signals between your temporal lobes (Ringo et al. 1994). Nerve fibres conduct at anything from under 1 to about 100 metres a second, and light in glass travels at about two thirds of its speed in a vacuum. An Earth-sized mind's pace depends only on its signals, not on how fast its parts are.</p>
+  </div>
+  <p>A mind that thinks a million times faster than you, wired with light, can be about seven and a half metres across: one large room. A mind the size of the Earth, wired with light, can think at most about 0.6 times as fast as you. A mind spread across the solar system would take hours over a single thought. At nerve speed, the largest mind that keeps your sense of now is about 25 centimetres across, a little bigger than your brain.</p>
+  <p>So a posthuman civilisation probably isn't one vast mind. It's more likely many fast, small ones, sending each other messages that take ages by their own clocks. That is to say, a society. Anders Sandberg made a version of this argument in 1999, for what he called Jupiter brains.</p>
+  <p>Whether a posthuman would still be you is a separate question. Hans Moravec imagined a brain replaced neuron by neuron with artificial parts while its owner stays awake (1988). David Chalmers argued that if experience survives each small step, it should survive the whole replacement (2010). Derek Parfit thought that what matters isn't identity at all, but continuity of memory and character, which comes in degrees (1984).</p>
+</div></section>
+
+<section id="rungs"><div class="wrap">
+  <div class="eyebrow">The turn</div>
+  <h2>The lowest <em>missing rung</em></h2>
+  <p>In 1828 the botanist Carl Sprengel saw that a plant's growth is limited not by the total of its nutrients but by the scarcest one, and Justus von Liebig made the idea famous. Ladders work the same way. You climb only as high as the lowest gap, and a rung built above it is a step nobody can stand on yet. In the title, each climber waits at its lowest missing rung, whatever has been built above it. Tap a ladder there to build it.</p>
+  <p>Zoom out over all three ladders and the gaps turn out to be the same few, in different clothes:</p>
+  <div class="facts">
+    <div><b>Delivery</b><span>Getting a gene, a factor or a drug into every cell of an adult body, or an electrode to every neuron.</span></div>
+    <div><b>Measurement</b><span>A biomarker that predicts healthy years. A measure of feeling that isn't a self-report. A test of whether a copy of a mind is a mind.</span></div>
+    <div><b>Control</b><span>Rejuvenating cells without causing cancer. Pleasure without compulsion. Capability that stays aligned with its makers.</span></div>
+    <div><b>The code</b><span>How a brain represents a fact, a memory or a feeling. Writing to a mind, and copying one, wait on it.</span></div>
+  </div>
+  <p>Some rungs have been drawn in detail and wait on engineering. Robert Freitas designed the respirocyte in 1998: a one-micron diamond tank that could carry 236 times as much oxygen as a red blood cell, volume for volume. Eric Drexler worked out machines that build with atomic precision in <i>Nanosystems</i> (1992). Sandberg and Bostrom's emulation roadmap, Shulman and Bostrom's iterated selection and Pearce's gradients of bliss are on paper too. And drawn rungs do get built. CRISPR editing was described in 2012 and became an approved medicine, Casgevy, eleven years later. Yamanaka's factors took twenty years to reach a human eye. A brain implant first moved a cursor in 2006 (Hochberg et al.), and by 2023 implants were turning attempted speech into text at 62 words a minute.</p>
+  <div class="callout">
+    <div class="eyebrow">Try this week</div>
+    <ul>
+      <li>Find your age in your country's life table and read off the chance of dying this year. Then look eight years further down. It will be about twice as high.</li>
+      <li>Type the line in the bandwidth test again tomorrow, and the day after. Practice will make you faster. Notice whether it makes you think faster.</li>
+      <li>The next time you laugh, ask what you'd been expecting a moment before.</li>
+      <li>Pick a missing rung from the ladder and find the newest paper on it. Is it still missing?</li>
+    </ul>
+  </div>
+  <p class="closer">Nobody can see the top of the ladder from here. Everyone can see the lowest missing rung.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Sources: Julian Huxley, "Transhumanism," in <i>New Bottles for New Wine</i> (1957). Nick Bostrom, "Why I want to be a posthuman when I grow up," in <i>Medical Enhancement and Posthumanity</i> (2008). David Pearce, <i>The Hedonistic Imperative</i> (1995). FM-2030, <i>Are You a Transhuman?</i> (1989). Benjamin Gompertz, <i>Philosophical Transactions of the Royal Society</i> 115 (1825). William Makeham, <i>Journal of the Institute of Actuaries</i> 8 (1860). Olshansky, Carnes &amp; Cassel, "In search of Methuselah," <i>Science</i> 250 (1990). Harrison et al., "Rapamycin fed late in life extends lifespan in genetically heterogeneous mice," <i>Nature</i> 460 (2009). Harrison et al., astaxanthin and meclizine, <i>GeroScience</i> 46 (2024), and the Interventions Testing Program's later round (2026). Waziry et al., "Effect of long-term caloric restriction on DNA methylation measures of biological aging in healthy adults from the CALERIE trial," <i>Nature Aging</i> 3 (2023). Loyal, announcement of FDA acceptance of the target animal safety section for LOY-002 (13 January 2026). de Grey et al., "Time to talk SENS," <i>Annals of the New York Academy of Sciences</i> 959 (2002). Aubrey de Grey, "Escape velocity," <i>PLOS Biology</i> 2 (2004). Xu et al., "Senolytics improve physical function and increase lifespan in old age," <i>Nature Medicine</i> 24 (2018). Takahashi &amp; Yamanaka, <i>Cell</i> 126 (2006). Lu et al., "Reprogramming to recover youthful epigenetic information and restore vision," <i>Nature</i> 588 (2020). Macip et al., "Gene therapy-mediated partial reprogramming extends lifespan and reverses age-related changes in aged mice," <i>Cellular Reprogramming</i> 26 (2024). Life Biosciences, first-in-human data from the phase 1 trial of ER-100, NCT07290244 (8 October 2026). Olshansky et al., "Implausibility of radical life extension in humans in the twenty-first century," <i>Nature Aging</i> 4 (2024). Andy Clark &amp; David Chalmers, "The extended mind," <i>Analysis</i> 58 (1998). Brynjolfsson, Li &amp; Raymond, "Generative AI at work," <i>Quarterly Journal of Economics</i> 140 (2025). Dell'Acqua et al., "Navigating the jagged technological frontier," Harvard Business School working paper 24-013 (2023). Becker, Rush, Barnes &amp; Rein (METR), "Measuring the impact of early-2025 AI on experienced open-source developer productivity" (2025). Jieyu Zheng &amp; Markus Meister, "The unbearable slowness of being: why do we live at 10 bits/s?" <i>Neuron</i> 113 (2025). Coupé, Oh, Dediu &amp; Pellegrino, "Different languages, similar encoding efficiency," <i>Science Advances</i> 5 (2019). Koch et al., "How much the eye tells the brain," <i>Current Biology</i> 16 (2006). Claude Shannon, "Prediction and entropy of printed English," <i>Bell System Technical Journal</i> 30 (1951). Card et al., "An accurate and rapidly calibrating speech neuroprosthesis," <i>New England Journal of Medicine</i> 391 (2024). Willett et al., "A high-performance speech neuroprosthesis," <i>Nature</i> 620 (2023). Ian Stevenson &amp; Konrad Kording, "How advances in neural recording affect data analysis," <i>Nature Neuroscience</i> 14 (2011). Demas et al., "High-speed, cortex-wide volumetric recording of neuroactivity at cellular resolution using light beads microscopy," <i>Nature Methods</i> 18 (2021). Reuters on Neuralink's trial participants (January 2026). Azevedo et al., "Equal numbers of neuronal and nonneuronal cells make the human brain an isometrically scaled-up primate brain," <i>Journal of Comparative Neurology</i> 513 (2009). Robert Plomin &amp; Ian Deary, "Genetics and intelligence differences: five special findings," <i>Molecular Psychiatry</i> 20 (2015). Karavani et al., "Screening human embryos for polygenic traits has limited utility," <i>Cell</i> 179 (2019). Carl Shulman &amp; Nick Bostrom, "Embryo selection for cognitive enhancement: curiosity or game-changer?" <i>Global Policy</i> 5 (2014). Hikabe et al., "Reconstitution in vitro of the entire cycle of the mouse female germ line," <i>Nature</i> 539 (2016). Shoukhrat Mitalipov and colleagues, human eggs made from skin cells by nuclear transfer and "mitomeiosis," <i>Nature Communications</i> (2025). Visscher, Gyngell, Yengo &amp; Savulescu, "Heritable polygenic editing: the next frontier in genomic medicine?" <i>Nature</i> 637 (2025). Anders Sandberg &amp; Nick Bostrom, <i>Whole Brain Emulation: A Roadmap</i> (2008). Dorkenwald et al., "Neuronal wiring diagram of an adult brain," <i>Nature</i> 634 (2024). Shiu et al., "A <i>Drosophila</i> computational brain model reveals sensorimotor processing," <i>Nature</i> 634 (2024). Shapson-Coe et al., "A petavoxel fragment of human cerebral cortex reconstructed at nanoscale resolution," <i>Science</i> 384 (2024). White, Southgate, Thomson &amp; Brenner, "The structure of the nervous system of the nematode <i>Caenorhabditis elegans</i>," <i>Philosophical Transactions of the Royal Society B</i> 314 (1986). Grace et al., "Thousands of AI authors on the future of AI," arXiv 2401.02843 (2024). Kwa et al. (METR), "Measuring AI ability to complete long tasks" (2025). Cipriani et al., "Comparative efficacy and acceptability of 21 antidepressant drugs," <i>The Lancet</i> 391 (2018). Compass Pathways, results of the COMP005 phase 3 trial (23 June 2025). Habib et al., "Microdeletion in a FAAH pseudogene identified in a patient with high anandamide concentrations and pain insensitivity," <i>British Journal of Anaesthesia</i> 123 (2019). Mikaeili et al., "Molecular basis of FAAH-OUT-associated human pain insensitivity," <i>Brain</i> 146 (2023). Cox et al., "An <i>SCN9A</i> channelopathy causes congenital inability to experience pain," <i>Nature</i> 444 (2006). James Olds &amp; Peter Milner, <i>Journal of Comparative and Physiological Psychology</i> 47 (1954). Kent Berridge &amp; Morten Kringelbach, "Pleasure systems in the brain," <i>Neuron</i> 86 (2015). Susana Peciña &amp; Kent Berridge, "Hedonic hot spot in nucleus accumbens shell," <i>Journal of Neuroscience</i> 25 (2005). Meike Bartels, "Genetics of wellbeing and its components," <i>Behavior Genetics</i> 45 (2015). Okbay et al., "Genetic variants associated with subjective well-being, depressive symptoms, and neuroticism," <i>Nature Genetics</i> 48 (2016). Schultz, Dayan &amp; Montague, "A neural substrate of prediction and reward," <i>Science</i> 275 (1997). Rutledge, Skandali, Dayan &amp; Dolan, "A computational and neural model of momentary subjective well-being," <i>PNAS</i> 111 (2014). Kahneman &amp; Tversky, "Prospect theory," <i>Econometrica</i> 47 (1979). Lindqvist, Östling &amp; Cesarini, "Long-run effects of lottery wealth on psychological well-being," <i>Review of Economic Studies</i> 87 (2020). Mateus Joffily &amp; Giorgio Coricelli, "Emotional valence and the free-energy principle," <i>PLOS Computational Biology</i> 9 (2013). Sander Van de Cruys, "Affective value in the predictive mind," in <i>Philosophy and Predictive Processing</i> (2017). Kiverstein, Miller &amp; Rietveld, "The feeling of grip: novelty, error dynamics, and the predictive brain," <i>Synthese</i> 196 (2019). Jürgen Schmidhuber, "Formal theory of creativity, fun, and intrinsic motivation (1990–2010)," <i>IEEE Transactions on Autonomous Mental Development</i> 2 (2010). Oudeyer, Kaplan &amp; Hafner, "Intrinsic motivation systems for autonomous mental development," <i>IEEE Transactions on Evolutionary Computation</i> 11 (2007). Hurley, Dennett &amp; Adams, <i>Inside Jokes</i> (2011). Gruber, Gelman &amp; Ranganath, "States of curiosity modulate hippocampus-dependent learning via the dopaminergic circuit," <i>Neuron</i> 84 (2014). Friston, Thornton &amp; Clark, "Free-energy minimization and the dark-room problem," <i>Frontiers in Psychology</i> 3 (2012). Robert Nozick, <i>Anarchy, State, and Utopia</i> (1974). Vernor Vinge, "The coming technological singularity" (1993). L. A. Paul, <i>Transformative Experience</i> (2014). Seth Lloyd, "Ultimate physical limits to computation," <i>Nature</i> 406 (2000). Ringo, Doty, Demeter &amp; Simard, "Time is of the essence: a conjecture that hemispheric specialization arises from interhemispheric conduction delay," <i>Cerebral Cortex</i> 4 (1994). Anders Sandberg, "The physics of information processing superobjects: daily life among the Jupiter brains," <i>Journal of Evolution and Technology</i> 5 (1999). Hans Moravec, <i>Mind Children</i> (1988). David Chalmers, "The singularity: a philosophical analysis," <i>Journal of Consciousness Studies</i> 17 (2010). Derek Parfit, <i>Reasons and Persons</i> (1984). Carl Sprengel (1828) and Justus von Liebig (1840) on the law of the minimum. Robert Freitas, "Exploratory design in medical nanotechnology: a mechanical artificial red cell," <i>Artificial Cells, Blood Substitutes, and Immobilization Biotechnology</i> 26 (1998). K. Eric Drexler, <i>Nanosystems</i> (1992). Jinek et al., <i>Science</i> 337 (2012). Hochberg et al., "Neuronal ensemble control of prosthetic devices by a human with tetraplegia," <i>Nature</i> 442 (2006). The ladder's further sources are given with each step.</p>
+  <div class="next"><a href="everyone-like-you.html">← X · Everyone Like You</a><a href="./">Back to Glamour Gram</a></div>
+</div></footer>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+function fit(cv, aspect){
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = aspect ? Math.round(w*aspect) : cv.clientHeight;
+  if(aspect) cv.style.height = h + "px";
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const smooth = (a, b, x) => { const u = clamp((x - a)/(b - a), 0, 1); return u*u*(3 - 2*u); };
+function onScreen(el){
+  const s = {v:true};
+  if("IntersectionObserver" in window) new IntersectionObserver(es => { s.v = es[es.length - 1].isIntersecting; }).observe(el);
+  return s;
+}
+function animate(frame, vis){
+  let last = performance.now();
+  (function loop(now){ const dt = clamp((now - last)/1000, 0, 0.05); last = now; if(!vis || vis.v) frame(dt); requestAnimationFrame(loop); })(last);
+}
+function local(cv, e){ const r = cv.getBoundingClientRect(); return {x: e.clientX - r.left, y: e.clientY - r.top}; }
+function rgba(v, a){ const n = parseInt(C(v).slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; }
+function wrap(ctx, text, maxW, maxLines){   // split text into lines that fit, ending with an ellipsis if it runs over
+  const words = text.split(" "), lines = []; let line = "";
+  words.forEach(wd => { const test = line ? line + " " + wd : wd; if(ctx.measureText(test).width > maxW && line){ lines.push(line); line = wd; } else line = test; });
+  lines.push(line);
+  if(lines.length > maxLines){ lines.length = maxLines; lines[maxLines - 1] += "…"; }
+  return lines;
+}
+const tell = (el, m) => { if(el.textContent !== m) el.textContent = m; };
+
+/* ---------- hero: three ladders meet at a vanishing point; each climber waits at its lowest missing rung ---------- */
+(function(){
+  const cv = $("heroCanvas"), copy = document.querySelector(".hero-copy .wrap"), home = document.querySelector(".home.corner");
+  const RHO = 0.9, AHEAD = 4;
+  // each rung has a difficulty: it's built once the ladder's frontier passes it, and drawn while the frontier is close
+  const lads = [["mind", "--sea", 0.42], ["mood", "--dawn", 0.3], ["body", "--ember", 0.34]].map(([name, col, rate], j) => ({name, col, rate, diff: [], F: 5 + j, climb: 0, cam: -2.5, flash: null}));
+  const stars = Array.from({length: 80}, () => ({x: Math.random(), y: Math.pow(Math.random(), 1.7), r: Math.random()*1.1 + 0.2, a: Math.random()*0.5 + 0.15}));
+  let g = fit(cv), boxes = [], geo, t = 0;
+  function diff(L, k){
+    while(L.diff.length <= k){ const i = L.diff.length; L.diff.push(i + (i > 2 && Math.random() < 0.22 ? 2 + Math.random()*3 : Math.random()*1.5 - 0.75)); }
+    return L.diff[k];
+  }
+  const state = (L, k) => { const d = diff(L, k); return d < L.F ? 0 : d < L.F + AHEAD ? 1 : 2; };   // 0 built, 1 drawn, 2 missing
+  function top(L){ let k = Math.max(0, Math.floor(L.climb) - 1); while(state(L, k) === 0) k++; return k - 1; }   // the highest rung reachable with no gap below it
+  function text(){   // a box around each line of the title text, and the home link, in canvas pixels
+    const c = cv.getBoundingClientRect(), r = document.createRange(), walk = document.createTreeWalker(copy, NodeFilter.SHOW_TEXT), out = [];
+    const add = b => { if(b.width) out.push({l: b.left - c.left, r: b.right - c.left, t: b.top - c.top, b: b.bottom - c.top}); };
+    for(let n = walk.nextNode(); n; n = walk.nextNode()) if(n.textContent.trim()){ r.selectNodeContents(n); Array.from(r.getClientRects()).forEach(add); }
+    add(home.getBoundingClientRect());
+    return out;
+  }
+  function layout(){
+    const {w, h} = g, wide = w >= 700;
+    boxes = text();
+    geo = {V: {x: wide ? w*0.75 : w*0.5, y: h*0.05}, by: h + 12, hw: wide ? 34 : 22, bx: (wide ? [0.57, 0.75, 0.93] : [0.17, 0.5, 0.83]).map(f => f*w)};
+  }
+  function at(j, p, s){   // a point on ladder j, a fraction p of the way to the vanishing point; s = -1 left rail, 0 middle, 1 right rail
+    const {V, by, hw, bx} = geo, x0 = bx[j] + s*hw;
+    return [x0 + (V.x - x0)*p, by + (V.y - by)*p];
+  }
+  function update(dt){
+    t += dt;
+    lads.forEach(L => {
+      L.F += L.rate*dt;
+      const k = top(L);
+      L.climb += (k - L.climb)*Math.min(1, dt*2.2);
+      L.cam += (L.climb - 2.5 - L.cam)*Math.min(1, dt*0.7);
+    });
+  }
+  function draw(){
+    const {ctx, w, h} = g, {V} = geo;
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    stars.forEach(s => { ctx.globalAlpha = s.a; ctx.fillStyle = C("--ink"); ctx.beginPath(); ctx.arc(s.x*w, s.y*h*0.8, s.r, 0, 7); ctx.fill(); });
+    ctx.globalAlpha = 1;
+    const glow = ctx.createRadialGradient(V.x, V.y, 0, V.x, V.y, h*0.22);   // where the three meet, nothing can be made out
+    glow.addColorStop(0, "rgba(240,168,90,0.22)"); glow.addColorStop(0.5, "rgba(227,115,90,0.06)"); glow.addColorStop(1, "rgba(11,16,22,0)");
+    ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(V.x, V.y, h*0.22, 0, 7); ctx.fill();
+    lads.forEach((L, j) => {
+      [-1, 1].forEach(s => {   // rails, fading as they rise
+        const [x0, y0] = at(j, -0.05, s), gr = ctx.createLinearGradient(x0, y0, V.x, V.y);
+        gr.addColorStop(0, rgba(L.col, 0.6)); gr.addColorStop(1, rgba(L.col, 0));
+        ctx.strokeStyle = gr; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(V.x, V.y); ctx.stroke();
+      });
+      for(let k = Math.max(0, Math.floor(L.cam) - 1); k < L.cam + 60; k++){
+        const p = 1 - Math.pow(RHO, k - L.cam);
+        if(p > 0.97) break;
+        if(p < -0.05) continue;
+        const st = state(L, k), [x1, y1] = at(j, p, -1), [x2, y2] = at(j, p, 1), a = clamp(1 - p*1.05, 0, 1), sc = 1 - p;
+        ctx.strokeStyle = C(L.col);
+        if(st === 0){ ctx.globalAlpha = a; ctx.lineWidth = 0.6 + 2*sc; ctx.setLineDash([]); }
+        else if(st === 1){ ctx.globalAlpha = 0.8*a; ctx.lineWidth = 0.6 + 0.8*sc; ctx.setLineDash([1 + 5*sc, 1 + 4*sc]); }
+        else { ctx.globalAlpha = 0.28*a; ctx.lineWidth = 0.6 + 0.6*sc; ctx.setLineDash([1, 2 + 4*sc]); }
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]);
+        if(L.flash && L.flash.k === k && t - L.flash.at < 1.2){   // a rung you just built
+          const u = (t - L.flash.at)/1.2; ctx.globalAlpha = 0.9*(1 - u); ctx.lineWidth = 4*sc + 1; ctx.strokeStyle = C("--ink");
+          ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        }
+      }
+      // the climber stands on the highest rung it can reach; it pulses while the rung above is missing
+      const p = 1 - Math.pow(RHO, L.climb - L.cam), [cx, cy0] = at(j, p, 0), cy = cy0 - 7*(1 - p) - 2, waiting = state(L, top(L) + 1) === 2;
+      const pulse = waiting && !reduce ? 0.5 + 0.5*Math.sin(t*4) : 0.6, r = 2 + 3*(1 - p);
+      const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, r*5);
+      halo.addColorStop(0, rgba(L.col, 0.35 + 0.3*pulse)); halo.addColorStop(1, rgba(L.col, 0));
+      ctx.globalAlpha = 1; ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(cx, cy, r*5, 0, 7); ctx.fill();
+      ctx.fillStyle = C(L.col); ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fill();
+      ctx.font = "11px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "center";
+      const [lx, ly] = at(j, 0.08, 0); ctx.fillText(L.name, lx, Math.min(ly, h - 30));
+    });
+    ctx.globalAlpha = 1; ctx.textAlign = "left";
+    ctx.fillStyle = C("--night");   // keep the words clear
+    boxes.forEach(b => ctx.fillRect(b.l - 6, b.t - 4, b.r - b.l + 12, b.b - b.t + 8));
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "right";
+    ctx.fillText(w < 900 ? "solid built · dashed drawn · faint missing · tap a ladder" : "solid rungs are built, dashed are drawn, faint ones missing · each climber waits at its lowest gap · tap a ladder to build it", w - 14, h - 10);
+    ctx.textAlign = "left";
+  }
+  function build(e){   // tap: the nearest ladder builds the rung its climber is stuck below
+    const {x, y} = local(cv, e);
+    let best = 0, d = Infinity;
+    lads.forEach((L, j) => { const p = clamp((geo.by - y)/(geo.by - geo.V.y), 0, 1), [cx] = at(j, p, 0); if(Math.abs(x - cx) < d){ d = Math.abs(x - cx); best = j; } });
+    const L = lads[best], k = top(L) + 1;
+    diff(L, k); L.diff[k] = -1; L.flash = {k, at: t};
+    if(reduce){ for(let i = 0; i < 60; i++) update(0.05); draw(); }
+  }
+  function reset(){ g = fit(cv); layout(); if(reduce){ draw(); } }
+  if(reduce) for(let i = 0; i < 300; i++) update(0.05);
+  reset();
+  addEventListener("resize", () => { const w0 = g.w, h0 = g.h; g = fit(cv); if(g.w !== w0 || g.h !== h0) layout(); if(reduce) draw(); });
+  document.fonts && document.fonts.ready.then(reset);
+  cv.addEventListener("pointerdown", build);
+  if(!reduce) animate(dt => { update(dt); draw(); }, onScreen(cv));
+})();
+
+/* ---------- the ladders: every rung, bottom to top, and the steps inside it ---------- */
+/* status per rung/step: built (in use in people), shown (works in a lab, animals, or a few people),
+   drawn (worked out on paper or shown possible in principle), missing (nobody knows how yet). */
+const LADDERS = [
+  {id: "mind", name: "Mind", sup: "superintelligence", col: "--sea", rungs: [
+    {t: "Tools outside the head", s: "built", sum: "Writing, numbers, computers and AI already extend what one person can think. The open part is knowing when to trust them.", steps: [
+      ["built", "Writing and notation", "Writing, about 5,200 years old, and place-value numbers let thought outlast memory. Andy Clark and David Chalmers argue that a notebook you lean on is part of your mind (1998)."],
+      ["built", "Computers and search", "Most of what has been written is seconds away on a phone, and arithmetic that once took a room of people takes microseconds."],
+      ["built", "AI assistants", "Measured effects are real and uneven: 14% more problems solved an hour in customer support, 34% for novices (Brynjolfsson, Li & Raymond 2025); 19% slower for experienced programmers in their own large codebases (METR 2025)."],
+      ["missing", "Knowing where the edge is", "Consultants with GPT-4 did better inside its abilities and worse on a task just outside them, and could not tell which was which (Dell'Acqua et al. 2023). No reliable way to see that edge in advance has been built."]]},
+    {t: "Tune the brain you have", s: "built", sum: "Schooling, nutrition and health move measured ability a lot. Drugs move it a little.", steps: [
+      ["built", "Schooling", "Each extra year of education is associated with 1 to 5 more IQ points (Ritchie & Tucker-Drob 2018). Scores rose about 3 points a decade for much of the twentieth century, the Flynn effect (1987)."],
+      ["built", "Iodine", "After the US iodised salt in 1924, test scores rose by about a standard deviation among the quarter of people whose diets had been most short of iodine (Feyrer, Politi & Weil 2017). Deficiency is still common in parts of the world."],
+      ["shown", "Stimulant drugs", "Modafinil helps rested people a little on hard tasks (Battleday & Brem 2015); stimulants help attention, mostly in those who struggle with it. None is known to raise general ability much."],
+      ["missing", "A real enhancer", "No drug, device or training is known to raise general cognitive ability in healthy adults by more than a few points, and to keep it there."]]},
+    {t: "Read the brain", s: "shown", sum: "Implants turn the firing of a few hundred neurons into text, speech and cursor movement for people who are paralysed.", steps: [
+      ["shown", "Cursor and keyboard", "A man with tetraplegia moved a cursor by thought in 2006 (Hochberg et al.). Neuralink's implant has 1,024 electrodes on 64 threads, and 21 people had one by January 2026."],
+      ["shown", "Speech", "Attempted speech decoded at 62 words a minute (Willett et al. 2023), and at about 32 words a minute with 97.5% accuracy over eight months for a man with ALS (Card et al. 2024)."],
+      ["shown", "Scale", "The count of neurons recorded at once has doubled about every seven years (Stevenson & Kording 2011); imaging now follows about a million at once in a mouse's cortex (Demas et al. 2021). A human brain has 86 billion."],
+      ["missing", "Every neuron, for life, safely", "Electrodes scar the tissue and their signals fade over years. No method reads more than a sliver of a human brain, and none at all reaches single neurons without surgery."]]},
+    {t: "Write to the brain", s: "shown", sum: "Sound and coarse vision can be written in. Facts, skills and concepts cannot.", steps: [
+      ["built", "Hearing", "Cochlear implants write sound straight onto the auditory nerve; more than a million have been fitted."],
+      ["built", "Deep brain stimulation", "Approved for tremor in 1997 and later for Parkinson's. It shifts how circuits fire rather than writing information into them."],
+      ["shown", "Sight", "A 96-electrode array in the visual cortex let a blind woman make out letters as patterns of dots (Fernández et al. 2021); gene therapy plus goggles partly restored one blind man's sight (Sahel et al. 2021)."],
+      ["shown", "Memory", "A hippocampal implant that replayed patients' own memory-coding patterns raised recall by up to about 37% in a small epilepsy study (Hampson et al. 2018)."],
+      ["missing", "Writing knowledge", "Nobody knows how to write a fact, a skill or an idea into a brain. We cannot yet read the code it would be written in."]]},
+    {t: "Change the hardware", s: "drawn", sum: "Selecting or editing genes, or adding cells, could change the brain itself. Most of this is on paper, and all of it is contested on ethical grounds its own authors raise.", steps: [
+      ["shown", "Embryo selection", "Offered with IVF: ranking embryos by genetic scores. Picking the top of ten is estimated to shift height or cognitive-test scores only slightly, with wide error (Karavani et al. 2019). It raises questions of consent and inequality, and echoes the history of eugenics."],
+      ["drawn", "Iterated selection", "In principle, making eggs and sperm from stem cells would allow many rounds of selection in months (Shulman & Bostrom 2014). Shown for mouse eggs (Hikabe et al. 2016); human eggs made from skin cells in 2025 mostly carried the wrong number of chromosomes."],
+      ["drawn", "Polygenic editing", "Editing many sites at once might, in theory, shift disease risk and become feasible within about three decades (Visscher et al. 2025). It cannot be done safely today, and heritable editing is prohibited in much of the world."],
+      ["shown", "Support cells", "Mice given human glial progenitor cells, which matured into human-type support cells, learned some tasks faster (Han et al. 2013)."]]},
+    {t: "Merge", s: "missing", sum: "A loop between brain and machine as fast as thought. The bottleneck may be thought itself.", steps: [
+      ["drawn", "A wide link", "Implants with thousands of channels are being built, with bandwidth out of the brain as the stated aim."],
+      ["missing", "Faster thinking", "Everything people do runs at about 10 bits a second, and the limit looks central, not in the muscles (Zheng & Meister 2025). Nobody knows why, or whether a link could change it."],
+      ["missing", "A shared code", "To add to a thought rather than to its output, a machine would have to work in the brain's own representations, which are not yet read."]]},
+    {t: "Copy", s: "drawn", sum: "Scan a brain finely enough and run it as a program. Each step works on a tiny volume.", steps: [
+      ["drawn", "The roadmap", "Scan, translate, simulate: Anders Sandberg and Nick Bostrom set out the steps and their costs in 2008."],
+      ["shown", "Map", "A whole fly brain, about 140,000 neurons (Dorkenwald et al. 2024). One cubic millimetre of human cortex: 57,000 cells, 150 million synapses, 1.4 petabytes (Shapson-Coe et al. 2024). A whole brain at that detail would be about 1.7 zettabytes."],
+      ["shown", "Simulate", "A model built from the fly's wiring predicted which neurons start it feeding (Shiu et al. 2024). It left out the electrical synapses and most chemical modulation."],
+      ["missing", "Know what matters", "Which details a copy needs, and whether experience comes with them, is unknown. That is the open problem on <a href=\"price-of-a-mind.html#problem\">page VII</a>."]]},
+    {t: "Beyond", s: "missing", sum: "Minds far past human, built or grown. Physics sets the outer limits; no method keeps them on our side.", steps: [
+      ["drawn", "Machine superintelligence", "Surveyed AI researchers gave a 50% chance that machines beat people at every task by 2047 (Grace et al. 2024). The length of task AI agents finish doubled about every seven months from 2019 to 2025 (Kwa et al. 2025)."],
+      ["missing", "Alignment", "No reliable method yet checks that a system far more capable than its makers pursues what they intended."],
+      ["drawn", "Physical limits", "A kilogram of matter could in principle do about 5 × 10<sup>50</sup> operations a second (Lloyd 2000). The speed of light caps how large one mind can be (see below)."]]}
+  ]},
+  {id: "mood", name: "Mood", sup: "superhappiness", col: "--dawn", rungs: [
+    {t: "Stop the worst pain", s: "built", sum: "Anaesthesia and painkillers remove the sharpest suffering. Most chronic pain remains.", steps: [
+      ["built", "Anaesthesia", "16 October 1846: ether at Massachusetts General Hospital, and surgery without agony."],
+      ["built", "Painkillers", "Opioids work and addict. Suzetrigine (January 2025) blocks Na<sub>v</sub>1.8 in pain-sensing nerves, the first new class of pain drug in about two decades."],
+      ["missing", "Chronic pain", "About one adult in five in the US lives with chronic pain, and most of it has no treatment that works well."]]},
+    {t: "Treat depression", s: "built", sum: "Many treatments work, modestly, for many people. Few work for everyone or for good.", steps: [
+      ["built", "Drugs and talk", "All 21 antidepressants in a review of 522 trials beat placebo, modestly (Cipriani et al. 2018). Psychotherapy does about as well."],
+      ["built", "Fast treatments", "Esketamine (approved 2019) can lift depression within days for some. Electroconvulsive therapy is still among the most effective treatments for severe cases."],
+      ["built", "Magnetic stimulation", "An accelerated, targeted TMS protocol was cleared in 2022; in a small trial most people given the real treatment were in remission at four weeks (Cole et al. 2022)."],
+      ["shown", "Psilocybin", "In a 2025 phase 3 trial one 25 mg dose beat placebo by 3.6 points on a 60-point scale at six weeks; a second phase 3 trial also met its goal (2026)."]]},
+    {t: "Steer the circuits", s: "shown", sum: "Electrodes and sound can shift mood circuits. Doing it precisely, per person, for years, is not solved.", steps: [
+      ["shown", "Deep brain stimulation", "Two large depression trials failed (Dougherty et al. 2015; Holtzheimer et al. 2017). A device that switched on only when one woman's own brain signature of depression appeared worked for her (Scangos et al. 2021)."],
+      ["shown", "Focused ultrasound", "Ultrasound can reach deep targets through the skull without surgery. Trials for mood are early and small."],
+      ["missing", "Precise and lasting", "No method yet tunes a mood circuit precisely, in a healthy person, for years."]]},
+    {t: "Find the dial", s: "shown", sum: "Pleasure has parts, and some are mapped. A safe, lasting lift of baseline mood is not known.", steps: [
+      ["shown", "Wanting is not liking", "Rats pressed a lever thousands of times an hour to stimulate their own brains (Olds & Milner 1954). Most such sites drive wanting, which runs on dopamine and can turn compulsive, not liking (Berridge & Kringelbach 2015)."],
+      ["shown", "Liking hotspots", "Opioid stimulation of a spot about a cubic millimetre across in a rat's nucleus accumbens doubles or triples the facial signs of pleasure at a taste of sugar (Peciña & Berridge 2005)."],
+      ["shown", "Natural outliers", "Jo Cameron, who carries a deletion near the gene FAAH, feels little pain, heals fast and scores near zero for anxiety (Habib et al. 2019; Mikaeili et al. 2023)."],
+      ["missing", "Raise the baseline", "Well-being is about 36% heritable, spread over many tiny genetic effects (Bartels 2015; Okbay et al. 2016). No target is known that durably lifts a healthy person's mood without blunting, addiction or loss of drive."]]},
+    {t: "Beat the treadmill", s: "shown", sum: "Feeling tracks surprises, not totals, so gains fade. Some things resist the fade; a dial for it does not exist.", steps: [
+      ["shown", "The treadmill is real", "Dopamine neurons fire for surprises, not for the reward once it is expected (Schultz, Dayan & Montague 1997). Moment to moment, happiness tracks recent surprises, not winnings, in the lab and in 18,420 players of a game (Rutledge et al. 2014)."],
+      ["shown", "It is only partial", "People who won large lottery prizes were more satisfied with their lives for over a decade afterwards (Lindqvist, Östling & Cesarini 2020)."],
+      ["drawn", "Learning as the engine", "If good feeling tracks error falling rather than its level (Joffily & Coricelli 2013; Van de Cruys 2017), then open-ended learning keeps mood up. Schmidhuber ties curiosity, art and humour to one reward, compression progress (2010)."],
+      ["missing", "Move the set point", "Nothing is known that resets the baseline a brain returns to, while leaving feelings free to rise and fall with what happens."]]},
+    {t: "Redesign the floor", s: "missing", sum: "Keep the information pain and pleasure carry, but move the whole range up. A proposal, not a method.", steps: [
+      ["shown", "Pain is information", "People born without a working Na<sub>v</sub>1.7 channel feel no pain and keep injuring themselves unawares (Cox et al. 2006). A floor that is simply numb is dangerous."],
+      ["drawn", "Gradients of bliss", "David Pearce's proposal keeps the signalling but raises the range, so tomorrow's lows would feel better than today's highs (1995). It is a goal, not a recipe."],
+      ["missing", "Do it in a brain", "No one knows how to lift the whole range of mood, durably and safely, while keeping its signals working."]]}
+  ]},
+  {id: "body", name: "Body", sup: "superhealth and longevity", col: "--ember", rungs: [
+    {t: "Replace worn parts", s: "built", sum: "Broken parts can be swapped. Supply, rejection and the brain set the limits.", steps: [
+      ["built", "Transplants and devices", "Kidneys, hearts, hips, lenses, pacemakers. Routine, and limited by donors and by a lifetime on immune-suppressing drugs."],
+      ["shown", "Animal organs", "A gene-edited pig kidney kept one man off dialysis for a record 271 days before it was removed in 2025. US trials in several people began in 2025."],
+      ["shown", "Organs from cells", "Transplanted lab-grown dopamine neurons survived and eased Parkinson's symptoms in a 12-person trial (Tabar et al. 2025). Whole lab-grown organs are not yet made."],
+      ["drawn", "Banking organs", "Vitrified rat kidneys were stored up to 100 days, rewarmed with magnetically heated nanoparticles, and transplanted with function restored (Han et al. 2023). Not yet shown in humans."]]},
+    {t: "Catch disease early", s: "built", sum: "Finding trouble sooner saves years. The tests are getting cheaper and broader.", steps: [
+      ["built", "Screening and vaccines", "Blood pressure, cholesterol, cancer screening and vaccination are much of the reason life expectancy doubled since 1900."],
+      ["shown", "Multi-cancer blood tests", "Tests that look for many cancers in one blood draw are in large trials; how much they help, and how often they mislead, is still being measured."],
+      ["shown", "Molecular profiles", "Wearables and repeated 'omics have caught disease early in individuals (Snyder's lab). Whether population-wide profiling extends life is unproven."]]},
+    {t: "Slow the clock", s: "shown", sum: "In mice, several things slow aging. In people, almost nothing has been measured, and the first human results are tiny.", steps: [
+      ["shown", "Drugs in mice", "The NIA Interventions Testing Program has extended mouse life with rapamycin (9% in males, 14% in females), acarbose, 17-α-estradiol and canagliflozin, mostly in males (Harrison et al. 2009 onward)."],
+      ["shown", "Results are fragile", "Astaxanthin and meclizine added 12% and 8% to male mouse lifespan in one round (2024), then showed no benefit when retested at other doses and later ages."],
+      ["shown", "A little in people", "In the CALERIE trial, eating about 12% less for two years slowed one pace-of-aging measure by 2–3% (Waziry et al. 2023); two other clocks did not move."],
+      ["shown", "Dogs next", "Loyal's LOY-002, for dogs over ten, has had two of three parts of a conditional-approval application accepted (January 2026), with a large lifespan trial under way."]]},
+    {t: "Repair the damage", s: "shown", sum: "To beat aging, damage must be mended faster than it builds. Two kinds of repair work in old mice; human trials have just begun.", steps: [
+      ["drawn", "A list of the damage", "Aubrey de Grey and colleagues sorted aging into kinds of damage, each with a proposed fix, and named the goal escape velocity: more than a year of life added per year that passes (2002, 2004)."],
+      ["shown", "Clear senescent cells", "Drugs that kill cells which have stopped dividing and inflame their surroundings raised old mice's post-treatment survival by 36% (Xu et al. 2018)."],
+      ["shown", "Reprogram cells", "Brief doses of three of Yamanaka's four factors restored sight in old mice (Lu et al. 2020) and, in one company's unreplicated study, more than doubled the remaining life of very old mice (Macip et al. 2024)."],
+      ["shown", "First in people", "Life Biosciences' ER-100, a reprogramming therapy injected into the eye, was first dosed in June 2026. By October, three people with glaucoma had no serious adverse event by day 56, and two improved on a vision test. Three people, no control group, the company's own report."]]},
+    {t: "Rebuild the body", s: "drawn", sum: "Machines that work at the scale of molecules could repair cells directly. Designed on paper; not built.", steps: [
+      ["drawn", "Artificial cells", "Robert Freitas designed the respirocyte in 1998: a one-micron diamond tank that would carry 236 times as much oxygen as a red blood cell, volume for volume. A design, not a device."],
+      ["drawn", "Molecular machines", "Eric Drexler worked out machines that build with atomic precision in Nanosystems (1992). Ribosomes and DNA copying show nature does this; we cannot design such machines to order."],
+      ["missing", "Cell repair", "Freitas sketched cell-repair machines that would mend damage one molecule at a time. Nothing like them can be built today."]]},
+    {t: "Outlast the body", s: "drawn", sum: "If the body can't be kept, perhaps what it carries can. All speculative.", steps: [
+      ["shown", "Cold storage", "Freezing with cryoprotectants to glass is routine for embryos and tissue, and reversible for small organs in animals. For a person it is a one-way bet on future repair, with no evidence it can be reversed."],
+      ["drawn", "Scan and run", "The mind-copying rung on the Mind ladder is also a route past the body. It waits on the same unsolved question of which details matter."],
+      ["missing", "Continuity", "Whether any of this preserves the person, rather than making a copy, is the question of <a href=\"everyone-like-you.html#nearest\">page X</a> and of Parfit (1984)."]]}
+  ]}
+];
+
+/* ---------- the ladder instrument: three ladders, zoom into a rung to see its steps ---------- */
+(function(){
+  const cv = $("ladCanvas"), out = $("ladOut"), listBtn = $("ladList"), detail = $("ladDetail"), all = $("ladAll");
+  const KIND = {built: "built", shown: "shown", drawn: "drawn", missing: "missing"};
+  const label = {built: "Built — in use, in people", shown: "Shown — in a lab, in animals, or a few people", drawn: "Drawn — worked out, not built", missing: "Missing — nobody knows how yet"};
+  let g, geo, focus = -1, pick = -1, hover = [-1, -1];   // focus: ladder index when zoomed; else -1
+  function layout(){
+    const narrow = cv.clientWidth < 620;
+    g = fit(cv, narrow ? 1.12 : 0.62);
+    const {w, h} = g, pad = 16, top = 40, bot = h - 20;
+    geo = {w, h, pad, top, bot, cols: LADDERS.map((_, j) => pad + (w - 2*pad)*(j + 0.5)/3), colW: (w - 2*pad)/3};
+  }
+  // draw one rung block; returns its hit rectangle
+  function rungRect(j, k, n){ const {top, bot, cols, colW} = geo, x = cols[j], gap = 6, bw = Math.min(colW - 14, 190); const hh = (bot - top - gap*(n - 1))/n; const y = bot - (k + 1)*hh - k*gap; return {x: x - bw/2, y, w: bw, h: hh}; }
+  function stepRect(i, n){ const {w, pad, top, bot} = geo, gap = 6, x = pad + 6, bw = w - 2*pad - 12; const hh = (bot - top - gap*(n - 1))/n; const y = top + i*(hh + gap); return {x, y, w: bw, h: hh}; }
+  function dash(ctx, s){ ctx.setLineDash(s === "built" ? [] : s === "shown" ? [] : s === "drawn" ? [6, 4] : [2, 4]); ctx.lineWidth = s === "built" ? 2.4 : s === "shown" ? 1.2 : 1.2; }
+  function cell(ctx, R, status, title, on, big){
+    ctx.save();
+    ctx.fillStyle = status === "built" ? rgba("--ink", on ? 0.14 : 0.08) : on ? "rgba(240,168,90,0.08)" : "rgba(233,228,216,0.02)";
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.fill();
+    ctx.strokeStyle = on ? C("--dawn") : status === "missing" ? C("--mute") : C("--ink");
+    ctx.globalAlpha = status === "missing" ? 0.6 : on ? 1 : 0.8; dash(ctx, status);
+    ctx.strokeRect(R.x + 0.5, R.y + 0.5, R.w - 1, R.h - 1); ctx.setLineDash([]); ctx.globalAlpha = 1;
+    ctx.fillStyle = on ? C("--dawn") : C("--ink");
+    ctx.font = `${big ? "italic " : ""}${Math.min(big ? 17 : 14, R.h*0.4)}px ${big ? "Bodoni Moda, Georgia, serif" : "JetBrains Mono, monospace"}`;
+    ctx.textAlign = "left"; ctx.textBaseline = "top";
+    const lines = wrap(ctx, title, R.w - 20, R.h > 46 ? 3 : 2);
+    lines.forEach((ln, i) => ctx.fillText(ln, R.x + 10, R.y + 8 + i*(big ? 19 : 15)));
+    ctx.font = "9px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+    ctx.fillText(KIND[status], R.x + R.w - 8, R.y + R.h - 7);
+    ctx.restore();
+  }
+  function draw(){
+    const {ctx} = g, {w, h, top, pad} = geo;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    ctx.textBaseline = "alphabetic";
+    if(focus < 0){
+      LADDERS.forEach((L, j) => {
+        const n = L.rungs.length;
+        ctx.fillStyle = C(L.col); ctx.font = "11px JetBrains Mono, monospace"; ctx.textAlign = "center";
+        ctx.fillText(L.name, geo.cols[j], 16); ctx.fillStyle = C("--mute"); ctx.font = "9px JetBrains Mono, monospace";
+        ctx.fillText(L.sup, geo.cols[j], 29);
+        // rails
+        const r0 = rungRect(j, 0, n), rT = rungRect(j, n - 1, n);
+        ctx.strokeStyle = rgba(L.col, 0.4); ctx.lineWidth = 1.2;
+        [r0.x, r0.x + r0.w].forEach(x => { ctx.beginPath(); ctx.moveTo(x, r0.y + r0.h); ctx.lineTo(x, rT.y); ctx.stroke(); });
+        L.rungs.forEach((R, k) => { const rect = rungRect(j, k, n), on = hover[0] === j && hover[1] === k; cell(ctx, rect, R.s, R.t, on, false); });
+      });
+    } else {
+      const L = LADDERS[focus], R = L.rungs[pick], n = R.steps.length;
+      ctx.fillStyle = C(L.col); ctx.font = "11px JetBrains Mono, monospace"; ctx.textAlign = "left";
+      ctx.fillText(L.name + " · " + L.sup, pad + 6, 16);
+      ctx.fillStyle = C("--ink"); ctx.font = "italic 20px Bodoni Moda, Georgia, serif";
+      ctx.fillText(R.t, pad + 6, 34);
+      R.steps.forEach((st, i) => { const rect = stepRect(i, n), on = hover[0] === focus && hover[1] === i; cell(ctx, rect, st[0], st[1], on, true); });
+    }
+    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+  }
+  function stripTags(s){ return s.replace(/<[^>]+>/g, ""); }
+  function showRung(j, k){
+    const L = LADDERS[j], R = L.rungs[k];
+    detail.innerHTML = `<div class="eyebrow" style="color:${C(L.col) ? "var(" + L.col + ")" : ""}">${L.name} · ${L.sup}</div>`
+      + `<h3>${R.t} <span class="tag ${R.s}">${KIND[R.s]}</span></h3><p>${R.sum}</p>`
+      + `<p class="note">Tap a step in the panel, or read them here. Each is sorted the same way.</p>`
+      + `<ol class="steps">` + R.steps.map(st => `<li><span class="tag ${st[0]}">${KIND[st[0]]}</span><b>${st[1]}</b>${st[2]}</li>`).join("") + `</ol>`;
+  }
+  function overview(){ focus = -1; pick = -1; out.disabled = true; layout(); draw(); detail.innerHTML = `<p class="note">Tap a rung above to zoom into it. Rungs rise from where we stand now to posthuman; each one, and each step inside it, is marked built, shown, drawn or missing.</p>`; }
+  function zoom(j, k){ focus = j; pick = k; out.disabled = false; layout(); draw(); showRung(j, k); detail.scrollIntoView({block: "nearest", behavior: reduce ? "auto" : "smooth"}); }
+  function hit(x, y){
+    if(focus < 0){ for(let j = 0; j < 3; j++) for(let k = 0; k < LADDERS[j].rungs.length; k++){ const R = rungRect(j, k, LADDERS[j].rungs.length); if(x > R.x && x < R.x + R.w && y > R.y && y < R.y + R.h) return [j, k]; } }
+    else { const n = LADDERS[focus].rungs[pick].steps.length; for(let i = 0; i < n; i++){ const R = stepRect(i, n); if(x > R.x && x < R.x + R.w && y > R.y && y < R.y + R.h) return [focus, i]; } }
+    return [-1, -1];
+  }
+  cv.addEventListener("pointermove", e => { const {x, y} = local(cv, e); const hs = hit(x, y); if(hs[0] !== hover[0] || hs[1] !== hover[1]){ hover = hs; cv.style.cursor = hs[0] >= 0 ? "pointer" : "default"; draw(); } });
+  cv.addEventListener("pointerleave", () => { hover = [-1, -1]; draw(); });
+  cv.addEventListener("click", e => { const {x, y} = local(cv, e); const [a, b] = hit(x, y); if(a < 0) return; if(focus < 0) zoom(a, b); else highlightStep(b); });
+  function highlightStep(i){   // tapping a step scrolls its text into view
+    const li = detail.querySelectorAll("ol.steps li"); li.forEach((el, k) => el.classList.toggle("on", k === i));
+    if(li[i]) li[i].scrollIntoView({block: "nearest", behavior: reduce ? "auto" : "smooth"});
+  }
+  out.addEventListener("click", overview);
+  // keyboard: arrows move, Enter zooms, Escape/Backspace out
+  let kx = 0, ky = 0;
+  cv.addEventListener("keydown", e => {
+    if(focus < 0){
+      if(e.key === "ArrowLeft"){ kx = (kx + 2) % 3; } else if(e.key === "ArrowRight"){ kx = (kx + 1) % 3; }
+      else if(e.key === "ArrowUp"){ ky = Math.min(LADDERS[kx].rungs.length - 1, ky + 1); } else if(e.key === "ArrowDown"){ ky = Math.max(0, ky - 1); }
+      else if(e.key === "Enter" || e.key === " "){ e.preventDefault(); zoom(kx, Math.min(ky, LADDERS[kx].rungs.length - 1)); return; }
+      else return;
+      e.preventDefault(); ky = Math.min(ky, LADDERS[kx].rungs.length - 1); hover = [kx, ky]; draw();
+    } else {
+      if(e.key === "Escape" || e.key === "Backspace"){ e.preventDefault(); overview(); }
+    }
+  });
+  // the full list, for reading or printing, below the canvas
+  function buildList(){
+    all.innerHTML = LADDERS.map(L => `<h4 style="color:var(${L.col})">${L.name} · ${L.sup}</h4>` + L.rungs.map(R =>
+      `<h5>${R.t} <span class="tag ${R.s}">${KIND[R.s]}</span></h5><p class="note">${R.sum}</p>`
+      + `<ol class="steps">` + R.steps.map(st => `<li><span class="tag ${st[0]}">${KIND[st[0]]}</span><b>${st[1]}</b>${st[2]}</li>`).join("") + `</ol>`).join("")).join("");
+  }
+  listBtn.addEventListener("click", () => {
+    const open = all.hidden; all.hidden = !open; listBtn.setAttribute("aria-expanded", String(open)); listBtn.textContent = open ? "Hide the list" : "List every rung";
+    if(open && !all.dataset.built){ buildList(); all.dataset.built = "1"; }
+  });
+  layout(); overview();
+  addEventListener("resize", () => { layout(); draw(); });
+  document.fonts && document.fonts.ready.then(draw);
+})();
+
+/* ---------- superhealth: a Gompertz-Makeham life model, and what each intervention buys ---------- */
+(function(){
+  const cv = $("hCanvas"), rate = $("hRate"), start = $("hStart"), rev = $("hRev"), ext = $("hExt"), say = $("hSay");
+  const G = Math.log(2)/8, B = 0.000041478;   // aging term doubles every 8 years; B set so life expectancy is 81
+  let g, geo, cur = null, base = null;
+  const params = () => ({A: +ext.value, mult: rate.value/100, start: +start.value, rev: +rev.value});
+  function run(p){   // integrate survival; return curve, life expectancy, median, and reach-ages
+    const dt = 0.25, maxA = 1000, pts = [], A = p.A, mult = p.mult === undefined ? 1 : p.mult;
+    let S = 1, e = 0, bio = 0, med = null, p100 = 0, p1000 = 0;
+    for(let t = 0; t <= maxA; t += dt){
+      const mu = A + mult*B*Math.exp(G*bio), S1 = S*Math.exp(-mu*dt);
+      e += (S + S1)/2*dt;
+      if(med === null && S1 < 0.5) med = t + dt;
+      if(Math.abs(t - 100) < dt/2) p100 = S;
+      if(Math.abs(t - 1000) < dt/2) p1000 = S;
+      if(t % 1 < dt) pts.push([t, S]);
+      S = S1;
+      let d = dt; if(p.rev && t >= p.start) d -= p.rev/10*dt;   // repair turns the clock back, never below 20
+      bio = Math.max(20, bio + d);
+      if(S < 1e-7){ for(let u = t + dt; u <= maxA; u += 1) pts.push([u, 0]); break; }
+    }
+    return {pts, e, med: med || maxA, p100, p1000};
+  }
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 1.0 : 0.62); const {w, h} = g; geo = {w, h, x0: 46, x1: w - 14, yA0: 24, yA1: h*0.5 - 18, yB0: h*0.5 + 20, yB1: h - 28, maxAge: 160}; }
+  function draw(){
+    const {ctx} = g, {w, h, x0, x1, yA0, yA1, yB0, yB1, maxAge} = geo, mute = C("--mute"), ink = C("--ink"), ember = C("--ember");
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const X = a => x0 + (x1 - x0)*Math.min(a, maxAge)/maxAge;
+    // top: survival curves
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.strokeStyle = C("--line"); ctx.lineWidth = 1;
+    [0, 0.5, 1].forEach(v => { const y = yA1 - (yA1 - yA0)*v; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke(); ctx.fillStyle = mute; ctx.textAlign = "right"; ctx.fillText(Math.round(v*100) + "%", x0 - 6, y + 3); });
+    ctx.textAlign = "left"; ctx.fillText("still alive", x0, yA0 - 8);
+    [0, 40, 80, 120, 160].forEach(a => { ctx.fillStyle = mute; ctx.textAlign = "center"; ctx.fillText(a, X(a), yA1 + 14); });
+    const plot = (r, col, dashed) => {
+      ctx.strokeStyle = col; ctx.lineWidth = dashed ? 1.3 : 2; ctx.setLineDash(dashed ? [4, 4] : []);
+      ctx.beginPath(); r.pts.forEach(([a, s], i) => { if(a > maxAge) return; const x = X(a), y = yA1 - (yA1 - yA0)*s; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke(); ctx.setLineDash([]);
+    };
+    if(base) plot(base, mute, true);
+    if(cur) plot(cur, ember, false);
+    // bottom: biological vs calendar age
+    ctx.strokeStyle = C("--line"); ctx.beginPath(); ctx.moveTo(x0, yB1); ctx.lineTo(x1, yB1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0, yB0); ctx.lineTo(x0, yB1); ctx.stroke();
+    ctx.fillStyle = mute; ctx.textAlign = "left"; ctx.fillText("biological age", x0, yB0 - 8);
+    ctx.strokeStyle = ink; ctx.globalAlpha = 0.4; ctx.setLineDash([3, 4]); ctx.beginPath();   // the no-aging diagonal
+    ctx.moveTo(X(0), yB1); ctx.lineTo(X(maxAge), yB1 - (yB1 - yB0)); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+    const p = params(); let bio = 0; ctx.strokeStyle = ember; ctx.lineWidth = 2; ctx.beginPath();
+    for(let t = 0; t <= maxAge; t += 1){ const x = X(t), y = yB1 - (yB1 - yB0)*Math.min(bio, maxAge)/maxAge; t ? ctx.lineTo(x, y) : ctx.moveTo(x, y); let d = 1; if(p.rev && t >= p.start) d -= p.rev/10; bio = Math.max(20, bio + d); }
+    ctx.stroke(); ctx.lineWidth = 1;
+    ctx.fillStyle = mute; ctx.textAlign = "right"; ctx.fillText("calendar age", x1, yB1 + 16);
+    ctx.textAlign = "left";
+  }
+  const fmtAge = a => a >= 999 ? "1,000+" : Math.round(a) + " yr";
+  const fmtPct = v => v < 0.001 ? "under 0.1%" : v > 0.5 ? Math.round(v*100) + "%" : (v*100).toFixed(v < 0.1 ? 1 : 0) + "%";
+  function recompute(){
+    base = run({A: 0.0002, mult: 1}); cur = run(params());
+    $("hRateOut").textContent = rate.value + "%"; $("hStartOut").textContent = start.value; $("hRevOut").textContent = (+rev.value).toString();
+    start.disabled = rev.value === "0"; start.parentElement.style.opacity = rev.value === "0" ? 0.45 : 1;
+    $("hE").textContent = fmtAge(cur.e); $("hMed").textContent = fmtAge(cur.med);
+    $("h100").textContent = fmtPct(cur.p100); $("h1000").textContent = cur.p1000 < 1e-4 ? "~0" : fmtPct(cur.p1000);
+    draw();
+  }
+  [rate, start, rev, ext].forEach(el => el.addEventListener("input", recompute));
+  $("hToday").addEventListener("click", () => { rate.value = 100; rev.value = 0; ext.value = "0.0002"; recompute(); tell(say, "Today: life expectancy about 81 years, as in a rich country now."); });
+  $("hCure").addEventListener("click", () => { rate.value = 75; rev.value = 0; recompute(); tell(say, `Cutting the aging term by a quarter, the share cancer causes, adds about ${Math.round(run(params()).e - 81)} years. Curing one disease buys little, because risk still doubles every eight years.`); });
+  $("hSlow").addEventListener("click", () => { rate.value = 80; rev.value = 0; recompute(); tell(say, `Slowing aging by a fifth adds about ${Math.round(run(params()).e - 81)} years: far more than curing any one disease.`); });
+  $("hStop").addEventListener("click", () => { rate.value = 100; start.value = 60; rev.value = 10; recompute(); tell(say, `Stop the clock at 60 and half live past ${Math.round(run(params()).med)}. What kills them now is the world, not the body. Lower the danger from outside to see it.`); });
+  layout(); recompute(); tell(say, "Today: life expectancy about 81 years, as in a rich country now.");
+  addEventListener("resize", () => { layout(); draw(); });
+  document.fonts && document.fonts.ready.then(draw);
+})();
+
+/* ---------- superintelligence: measure your own bandwidth, against the senses and the machines ---------- */
+(function(){
+  const target = $("tTarget"), input = $("tInput"), wpmEl = $("tWpm"), bitsEl = $("tBits"), accEl = $("tAcc"), say = $("tSay");
+  const LINES = [
+    "the information rate of a human being is about ten bits a second",
+    "each retina sends the brain roughly ten million bits every second",
+    "everything you do runs through the same narrow gate, one thought at a time",
+    "the senses pour in a billion bits a second and almost all of it is dropped",
+    "a wider cable will not make you think faster if thinking is the bottleneck"];
+  let line, started = 0, done = false, idx = Math.floor(Math.random()*LINES.length);
+  function render(){
+    const typed = input.value, html = [];
+    for(let i = 0; i < line.length; i++){
+      const c = line[i] === " " ? "&nbsp;" : line[i].replace("<", "&lt;");
+      if(i < typed.length) html.push(`<span class="${typed[i] === line[i] ? "ok" : "bad"}">${c}</span>`);
+      else html.push(`<span>${c}</span>`);
+    }
+    target.innerHTML = html.join("");
+  }
+  function setLine(){ line = LINES[idx % LINES.length]; input.value = ""; started = 0; done = false; render(); input.disabled = false; tell(say, "The clock starts at your first keystroke."); wpmEl.textContent = bitsEl.textContent = accEl.textContent = "–"; drawScale(null); }
+  input.addEventListener("input", () => {
+    if(!started && input.value.length){ started = performance.now(); }
+    render();
+    if(!done && input.value.length >= line.length){ finish(); }
+  });
+  function finish(){
+    done = true; input.disabled = true;
+    const secs = (performance.now() - started)/1000, typed = input.value.slice(0, line.length);
+    let right = 0; for(let i = 0; i < line.length; i++) if(typed[i] === line[i]) right++;
+    const acc = right/line.length, chars = right, bits = chars/secs, wpm = (chars/5)/ (secs/60);
+    wpmEl.textContent = Math.round(wpm) + " wpm"; bitsEl.textContent = bits.toFixed(1) + " bit/s"; accEl.textContent = Math.round(acc*100) + "%";
+    tell(say, `About ${bits.toFixed(1)} bits a second. Zheng and Meister find most tasks land near 10, however they are measured. Your retinas are running a million times faster as you read this.`);
+    drawScale(bits);
+  }
+  $("tAgain").addEventListener("click", setLine);
+  $("tNext").addEventListener("click", () => { idx++; setLine(); });
+  // the scale: a logarithmic ladder from 1 bit/s to 100 Tbit/s
+  const cv = $("bwCanvas"); let g, geo, lastYou = null;
+  const MARKS = [
+    [10, "you, typing", "--dawn"], [50, "a fast typist (~120 wpm)", "--ink"], [39, "speech", "--ink"],
+    [1e6, "a speech implant decodes thought at tens of words a minute, but the brain's own output is ~10 bit/s", null],
+    [1e7, "one retina to the brain", "--sea"], [1e9, "all the senses, pouring in", "--sea"],
+    [1e9, "a gigabit internet line", "--ink"], [1e14, "an AI chip's memory", "--mute"]];
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.5 : 0.34); geo = {w: g.w, h: g.h, x0: 20, x1: g.w - 20, y: g.h*0.42, lo: 0, hi: 14}; }
+  function drawScale(you){
+    lastYou = you;
+    const {ctx} = g, {w, h, x0, x1, y, lo, hi} = geo, mute = C("--mute"), ink = C("--ink");
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const X = bits => x0 + (x1 - x0)*(Math.log10(Math.max(1, bits)) - lo)/(hi - lo);
+    ctx.strokeStyle = C("--line"); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+    ctx.font = "9px JetBrains Mono, monospace"; ctx.fillStyle = mute; ctx.textAlign = "center";
+    const names = {0: "1", 3: "1 K", 6: "1 M", 9: "1 G", 12: "1 T", 14: "100 T"};
+    for(let e = 0; e <= 14; e++){ const x = X(Math.pow(10, e)); ctx.strokeStyle = C("--line"); ctx.globalAlpha = e % 3 ? 0.4 : 1; ctx.beginPath(); ctx.moveTo(x, y - 4); ctx.lineTo(x, y + 4); ctx.stroke(); ctx.globalAlpha = 1; if(names[e]){ ctx.fillStyle = mute; ctx.fillText(names[e] + " bit/s", x, y + 17); } }
+    const used = [];
+    MARKS.filter(m => m[2]).forEach((m, i) => {
+      const x = X(m[0]); let yy = y - 16 - (used.filter(u => Math.abs(u - x) < 70).length)*13; used.push(x);
+      ctx.strokeStyle = C(m[2]); ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, yy + 4); ctx.stroke(); ctx.globalAlpha = 1;
+      ctx.fillStyle = C(m[2]); ctx.beginPath(); ctx.arc(x, y, 3, 0, 7); ctx.fill();
+      ctx.textAlign = x > w - 90 ? "right" : x < 90 ? "left" : "center"; ctx.fillText(m[1], clamp(x, 40, w - 40), yy);
+    });
+    if(you){ const x = X(you); ctx.strokeStyle = C("--dawn"); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y - 24); ctx.lineTo(x, y + 24); ctx.stroke(); ctx.lineWidth = 1;
+      ctx.fillStyle = C("--dawn"); ctx.textAlign = "center"; ctx.fillText("you: " + you.toFixed(1), x, y + 36); }
+    // the note about the implant, below
+    ctx.fillStyle = mute; ctx.textAlign = "left"; ctx.font = "9px JetBrains Mono, monospace";
+    ctx.textAlign = "left";
+  }
+  layout(); setLine();
+  addEventListener("resize", () => { layout(); drawScale(lastYou); });
+  document.fonts && document.fonts.ready.then(() => drawScale(lastYou));
+})();
+
+/* ---------- superhappiness: feeling tracks surprises, not totals; the set point is the missing dial ---------- */
+(function(){
+  const cv = $("mCanvas"), set = $("mSet"), say = $("mSay");
+  const wire = $("mWire"), learn = $("mLearn");
+  let g, geo, hist = [], t = 0, reward = 2, expect = 2, feel = 0, getNow = 2, event = null, wired = false, learning = false, skill = 0;
+  const SPAN = 40, dtModel = 0.1;   // seconds shown
+  function reset(){ hist = []; t = 0; reward = 2; expect = 2; feel = 0; getNow = 2; event = null; wired = false; learning = false; skill = 0; set.value = 0; wire.setAttribute("aria-pressed", "false"); learn.setAttribute("aria-pressed", "false"); $("mSetOut").textContent = "+0.0"; tell(say, "Nothing much is happening, so you feel the way you usually do. Try a raise."); }
+  function step(){
+    // baseline reward drifts around 2; an event shifts it; wiring pins expectation low so every moment is a nice surprise, then tolerance climbs
+    let baseR = 2 + (event ? event.amt : 0);
+    if(learning){ skill += 0.12*dtModel; baseR = 2 + 1.6*(1 - Math.exp(-skill)) + 0.5*Math.sin(skill*3); }   // each new thing pays while you improve
+    reward = baseR + (Math.random() - 0.5)*0.5;
+    const setPt = +set.value/10;
+    if(wired){ reward += 2.2; }
+    const err = reward - expect;                       // prediction error
+    const w = err < 0 ? 2 : 1;                          // losses weigh double (Kahneman & Tversky 1979)
+    feel = setPt + 2.4*w*err + 0.15*(err);             // feeling follows the surprise, plus a little of expectation
+    expect += (reward - expect)*(wired ? 0.12 : 0.06); // expectation learns toward what you get; faster when wired
+    if(learning) expect += (reward - expect)*0.04;
+    getNow = reward;
+    hist.push({t, feel, reward, expect, set: setPt}); if(hist.length > SPAN/dtModel) hist.shift();
+    if(event){ event.left -= dtModel; if(event.left <= 0) event = null; }
+    t += dtModel;
+  }
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.95 : 0.6); const {w, h} = g; geo = {w, h, x0: 40, x1: w - 14, yA0: 22, yA1: h*0.46, yB0: h*0.54, yB1: h - 24}; }
+  function draw(){
+    const {ctx} = g, {w, h, x0, x1, yA0, yA1, yB0, yB1} = geo, mute = C("--mute"), sea = C("--sea"), dawn = C("--dawn");
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const X = tt => x1 - (x1 - x0)*(t - tt)/SPAN;
+    const Yr = v => yA1 - (yA1 - yA0)*clamp(v, 0, 6)/6, Yf = v => (yB0 + yB1)/2 - ((yB1 - yB0)/2)*clamp(v/6, -1, 1);
+    ctx.font = "10px JetBrains Mono, monospace";
+    // top: reward and expectation
+    ctx.strokeStyle = C("--line"); ctx.lineWidth = 1; [0, 3, 6].forEach(v => { const y = Yr(v); ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke(); });
+    ctx.fillStyle = mute; ctx.textAlign = "left"; ctx.fillText("reward", x0, yA0 - 8);
+    const linePlot = (key, col, Y, dashed) => { ctx.strokeStyle = col; ctx.lineWidth = dashed ? 1.3 : 2; ctx.setLineDash(dashed ? [4, 4] : []); ctx.beginPath(); hist.forEach((p, i) => { const x = X(p.t), y = Y(p[key]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke(); ctx.setLineDash([]); };
+    linePlot("expect", sea, Yr, false); linePlot("reward", mute, Yr, false);
+    // bottom: feeling, with baseline and set point
+    const mid = (yB0 + yB1)/2; ctx.strokeStyle = C("--line"); ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(x0, mid); ctx.lineTo(x1, mid); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = mute; ctx.fillText("how you feel", x0, yB0 - 8); ctx.textAlign = "right"; ctx.fillText("better", x1, yB0 + 2); ctx.fillText("worse", x1, yB1 - 2); ctx.textAlign = "left";
+    linePlot("set", C("--ink"), Yf, true);
+    ctx.strokeStyle = dawn; ctx.lineWidth = 2; ctx.beginPath(); hist.forEach((p, i) => { const x = X(p.t), y = Yf(p.feel); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke(); ctx.lineWidth = 1;
+  }
+  function readouts(){
+    const recent = hist.slice(-Math.round(SPAN/dtModel)); const avg = recent.length ? recent.reduce((s, p) => s + p.feel, 0)/recent.length : 0;
+    $("mNow").textContent = (feel >= 0 ? "+" : "") + feel.toFixed(1);
+    $("mAvg").textContent = (avg >= 0 ? "+" : "") + avg.toFixed(1);
+    $("mGet").textContent = getNow.toFixed(1);
+  }
+  $("mRaise").addEventListener("click", () => { event = {amt: 2.5, left: 1e9}; tell(say, "A raise. Joy spikes, then fades as you come to expect the new normal. The surprise is gone, even though the money stays."); });
+  $("mLoss").addEventListener("click", () => { event = {amt: -2, left: 1e9}; tell(say, "A loss. It stings more than the raise pleased, because losses weigh about double, and then you adapt to this too."); });
+  wire.addEventListener("click", () => { wired = !wired; wire.setAttribute("aria-pressed", String(wired)); tell(say, wired ? "Wired straight to the reward signal. The lift is big, then fades fast as expectation races up. Switch it off to feel the withdrawal." : "Off. Expectation is still high, so for a while every moment feels like a loss. That dip is the shape of withdrawal."); });
+  learn.addEventListener("click", () => { learning = !learning; learn.setAttribute("aria-pressed", String(learning)); if(learning){ skill = 0; } tell(say, learning ? "Learning something new. While you keep improving, the rewards keep beating expectation, and mood stays up. Run out of things to learn and it flattens." : "Stopped learning. With nothing new, surprises fade to zero and feeling settles back to baseline."); });
+  set.addEventListener("input", () => { $("mSetOut").textContent = "+" + (set.value/10).toFixed(1); tell(say, "The set point lifts the baseline without touching the reward signal, so feelings still rise and fall and still carry information. No one knows how to move it in a brain."); });
+  $("mReset").addEventListener("click", () => { reset(); });
+  layout(); reset();
+  addEventListener("resize", () => { layout(); draw(); });
+  document.fonts && document.fonts.ready.then(draw);
+  if(reduce){ for(let i = 0; i < 80; i++) step(); readouts(); draw(); set.addEventListener("input", () => { for(let i = 0; i < 80; i++) step(); readouts(); draw(); }); [$("mRaise"), $("mLoss"), wire, learn].forEach(b => b.addEventListener("click", () => { for(let i = 0; i < 120; i++) step(); readouts(); draw(); })); }
+  else animate(() => { step(); readouts(); draw(); }, onScreen(cv));
+})();
+
+/* ---------- the posthuman: how large one mind can be and still think as one ---------- */
+(function(){
+  const cv = $("aCanvas"), speed = $("aSpeed"), sig = $("aSig"), say = $("aSay");
+  const MOMENT = 0.025;   // 25 ms, a rough interhemispheric crossing time (Ringo et al. 1994)
+  const SCALE = [   // log-metre marks
+    [-3, "a grain"], [-1, "a brain", 0.12], [0, "a person", 1.7], [1, "a house", 10], [3.7, "a city", 5e3],
+    [6.4, "Earth", 1.27e7], [8.6, "Moon's orbit", 3.8e8], [11.2, "Earth's orbit", 1.5e11], [12.65, "Neptune", 4.5e12]];
+  let g, geo;
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.42 : 0.3); geo = {w: g.w, h: g.h, x0: 18, x1: g.w - 18, y: g.h*0.5, lo: -3, hi: 13}; }
+  function compute(){
+    const mult = Math.pow(10, +speed.value), v = +sig.value;        // speed-up and signal speed
+    const size = v*MOMENT/mult;                                      // largest diameter still one mind
+    const earth = 1.27e7/v;                                          // time to cross Earth once
+    const rel = v*MOMENT/1.27e7;                                     // how fast an Earth-sized mind can run vs you
+    return {mult, v, size, earth, rel};
+  }
+  const fmtLen = m => m >= 9.46e15 ? (m/9.46e15).toPrecision(2) + " ly" : m >= 1.5e11 ? (m/1.5e11).toPrecision(2) + " AU" : m >= 1e3 ? (m/1e3).toPrecision(3) + " km" : m >= 1 ? m.toPrecision(3) + " m" : m >= 1e-3 ? (m*1e3).toPrecision(3) + " mm" : (m*1e6).toPrecision(2) + " µm";
+  const fmtTime = s => s < 1e-3 ? (s*1e6).toPrecision(2) + " µs" : s < 1 ? (s*1e3).toPrecision(2) + " ms" : s < 60 ? s.toPrecision(2) + " s" : s < 3600 ? (s/60).toPrecision(2) + " min" : (s/3600).toPrecision(2) + " h";
+  function draw(){
+    const {ctx} = g, {w, h, x0, x1, y, lo, hi} = geo, mute = C("--mute"), ink = C("--ink"), ember = C("--ember");
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const X = m => x0 + (x1 - x0)*(Math.log10(m) - lo)/(hi - lo);
+    ctx.strokeStyle = C("--line"); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+    ctx.font = "9.5px JetBrains Mono, monospace";
+    SCALE.forEach(([e, name], i) => { const x = x0 + (x1 - x0)*(e - lo)/(hi - lo); ctx.strokeStyle = C("--line"); ctx.beginPath(); ctx.moveTo(x, y - 4); ctx.lineTo(x, y + 4); ctx.stroke(); ctx.fillStyle = mute; ctx.save(); ctx.translate(x, y + 8); ctx.rotate(-Math.PI/4); ctx.textAlign = "right"; ctx.fillText(name, 0, 0); ctx.restore(); });
+    const c = compute(), sz = clamp(c.size, 1e-3, 1e13), x = X(sz);
+    ctx.fillStyle = ember; ctx.globalAlpha = 0.15; ctx.fillRect(x0, y - 20, x - x0, 40); ctx.globalAlpha = 1;
+    ctx.strokeStyle = ember; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y - 22); ctx.lineTo(x, y + 22); ctx.stroke(); ctx.lineWidth = 1;
+    ctx.fillStyle = ember; ctx.textAlign = x > w - 80 ? "right" : "center"; ctx.font = "11px JetBrains Mono, monospace";
+    ctx.fillText(fmtLen(c.size), clamp(x, 40, w - 40), y - 28);
+  }
+  function update(){
+    const c = compute();
+    $("aSpeedOut").textContent = c.mult >= 1e4 ? c.mult.toExponential(0).replace("e+", "×10^") + "×" : Math.round(c.mult).toLocaleString() + "×";
+    $("aMax").textContent = fmtLen(c.size); $("aEarth").textContent = fmtTime(c.earth);
+    $("aRel").textContent = c.rel >= 1 ? c.rel.toPrecision(2) + "× your speed" : c.rel.toPrecision(2) + "× (slower)";
+    tell(say, c.size > 1e4 ? "A mind this size takes many of its own moments for a signal to cross it, so it is really a society, not one mind." : c.size > 1 ? "About the size of a room: one fast mind." : "Smaller than your head. Thinking fast and staying one mind pulls hard against being large.");
+    draw();
+  }
+  [speed, sig].forEach(el => el.addEventListener("input", update));
+  layout(); update();
+  addEventListener("resize", () => { layout(); draw(); });
+  document.fonts && document.fonts.ready.then(draw);
+})();
+</script>
+</body>
+</html>
