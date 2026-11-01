@@ -1,6 +1,6 @@
 ---
 name: glamour-gram
-description: The charter and recipe for making a new Glamour Gram page and its gene, true to the site's founding intent. Use whenever choosing a topic for, writing, wiring in, testing or reviewing a Glamour Gram page, including the weekly scheduled run.
+description: The charter and recipe for making a new Glamour Gram page and its gene, true to the site's founding intent. Use whenever pitching a topic for, writing, wiring in, testing or reviewing a Glamour Gram page, including the weekly scheduled run, which pitches three ideas and builds only the one the owner picks.
 ---
 
 # Glamour Gram
@@ -57,7 +57,27 @@ These are drift. Don't make them:
 4. Is the wonder coming from accuracy rather than from hype?
 5. Would the author of page I recognise it as the same site?
 
-If any answer is no, choose again. Put the pitch and the answers in the pull request.
+If any answer is no, choose again.
+
+### Pitch first, build after a pick
+
+Never start building before the owner has picked a topic.
+
+1. Come up with **three** ideas that pass the pitch test and differ from each other in subject and kind of instrument.
+2. For each one, do enough research to confirm its core claim is true. Don't pitch anything you couldn't put on the page.
+3. Present all three together. For each, give:
+   - a working title;
+   - the surprising true thing;
+   - what the reader will do with their hands (two or three instrument ideas);
+   - the turn;
+   - which of Zoom, Record, Lessen, Ride, Join it serves;
+   - the proposed gene and its effect on the organism;
+   - its riskiest claim, and what you've checked so far;
+   - how it differs from the pages in the table.
+4. Then stop and wait for the owner's reply.
+5. Build only what the owner picks, including any changes they ask for. If they turn all three down, pitch three new ones using what they said.
+
+Put the chosen pitch and its five answers in the pull request.
 
 ### Pages so far
 
@@ -147,6 +167,6 @@ All of these are required:
 
 - Work on a new branch from the latest `main`.
 - One commit, titled like `Add page XI, The Missing Rungs, and the rung gene`, with a body in the style of the earlier commits: what the reader can do, what is flagged, the gene, and the service-worker and icon changes.
-- Open a pull request containing the pitch, the five pitch-test answers, the instruments, the accuracy notes (what was verified, what was corrected, what is flagged) and the test results. **Do not merge it.** The owner reviews and merges.
+- Open a pull request containing the chosen pitch, the five pitch-test answers, the instruments, the accuracy notes (what was verified, what was corrected, what is flagged) and the test results. **Do not merge it.** The owner reviews and merges.
 - If the Artifact tool is available, publish a private preview of the page with `glam.css` as a supporting file, and put the link in the pull request and your summary.
 - If you are cut short by usage or time, push what is finished to the branch and say exactly where you stopped.
