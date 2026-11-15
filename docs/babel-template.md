@@ -27,7 +27,13 @@ The organism stays curated. Genes are the site's spell, one per numbered page. I
 - are not in `PAGES` in `index.html`, not in the README list, and add no gene;
 - link to the numbered page their turn echoes (§4.6), which is how they join the site.
 
-**Promotion.** A climb page has a small *Suggest as a Glamour Gram* control. It copies a pitch seed: the summit Luminary, the longest bridge, the discoveries and the climb id. The owner can paste it into the Thursday pitch session, where it competes as one of the candidates under the skill's pitch test. Only that path, with a human in it, turns a climb into a numbered page.
+**Promotion.** A good climb can become a numbered Glamour Gram, but only with a human in the loop:
+
+1. At the end of the climb page's turn (§4.1, `#turn`), below *Try this week*, there's a quiet button: **Suggest as a Glamour Gram**.
+2. It copies a short plain-text **climb seed**: the title, the summit Luminary and their masterwork, the floor themes, the longest bridge, any discoveries, and the climb's own link. If the clipboard is refused, it shows the seed in a text box to copy by hand.
+3. The owner pastes the seed as a reply in a Thursday pitch session. That session pitches it in the usual format, and it has to pass the same pitch test as any other idea. If the owner picks it, the session builds it like any numbered page: every claim is verified again from primary sources, and the climb supplies only the topic.
+
+Nothing is sent anywhere automatically. The seed is just text the owner chooses to paste. The skill's "Pitch first, build after a pick" section says how a session treats one.
 
 ## 2. Where it lives and how a climb gets there
 
@@ -48,6 +54,7 @@ https://sandstormveg.github.io/glamour-gram/climb.html#v1.<base64url(deflate-raw
 - **Why the fragment:** browsers never send it to a server, so the climb stays private until you share the link. It's also shareable and works offline.
 - **Size budget.** Aim for 12 KB encoded or less, which survives most chat apps. The hard cap is 32 KB. Over the cap, Babel offers **Download climb (.json)**, and `climb.html` has **Open a climb file**. Both go through the same validation.
 - **At the summit, Babel shows:** *Read your climb* (opens the link in a new tab), *Copy link* and *Download climb*.
+- **Which climbs unlock a page.** An Epic summit always unlocks one. A classic (3-floor) summit unlocks one only if the player turns on **Classic climbs make a page** in Babel's ⚙ Settings. It's off by default and stored as `classicPage: false` in `infodex.babel.settings.v1`, beside `carry`. The template renders either mode, because `source.mode` says which.
 - **Link previews** (chat apps, social sites) only see the generic template, because the fragment isn't sent. That's expected.
 
 ## 3. The data contract: `glamgram.climb/1`
@@ -284,7 +291,7 @@ New entries go through a pull request with their selection rule and a fixture th
 
 ## 5. Gene question, settled
 
-A climb adds **no gene** and no cell to the shared organism. A later, optional feature could show *your* climbs on *your* copy of the home page as small personal spores, read from glamour-gram's own `localStorage` (§2) and never written to the repository. That would make the organism personal without touching its spell. It isn't part of v1.
+A climb adds **no gene** and no cell to the shared organism. A backlog idea (§11) could show *your* climbs on *your* copy of the home page as small personal spores, read from glamour-gram's own `localStorage` (§2) and never written to the repository. That would make the organism personal without touching its spell. It isn't part of v1.
 
 ## 6. Code
 
@@ -326,10 +333,20 @@ The script loads each fixture both through the fragment and through *Open a clim
 1. **Babel:** `toClimbRecord(run)` per §3, `encodeClimb()`, and the three summit buttons. Commit a sample record from a real Epic climb to `tests/climbs/` here, in this repository, as the first fixture.
 2. **GlamGram:** `climb.html`, the fixtures and the test script, the turn bank as reviewed copy, and `sw.js` (`climb.html` added to `FILES`, `VERSION` bumped).
 3. **End to end:** a real Epic summit opens the deployed template with the right page.
-4. **Later:** personal spores on the organism, the promotion seed, and images with licences.
+4. **Promotion** ships with v1: the *Suggest as a Glamour Gram* button (§1) in `climb.html`, and the matching line in the skill.
 
-## 10. Open questions for Silica
+Everything else is in the backlog (§11).
 
-- Should 3-floor (classic) climbs also unlock a page, or only Epic? The contract handles 1–5 floors either way.
-- Should *Suggest as a Glamour Gram* exist at all, or should promotion stay entirely manual?
-- Should climb pages ever show who climbed? v1 says no names, so links are safe to share.
+## 10. Decisions (Silica, 2026-11-15)
+
+- **Classic climbs:** a Babel setting, *Classic climbs make a page*, off by default. Epic summits always make one (§2).
+- **Promotion:** yes. A climb can be suggested as a numbered Glamour Gram, through the Thursday pitch session (§1).
+- **Showing who climbed:** not in v1. It's in the backlog.
+
+## 11. Backlog
+
+Ideas that are agreed in spirit but not scheduled. Each one needs its own design note before it's built.
+
+- **Who climbed.** An optional name on a climb page. If built, it should be off by default and typed fresh for each climb, never taken from the Infodex account. The page should warn that a link with a name in it is personal data once shared.
+- **Personal spores.** Your climbs shown on your own copy of the home organism, read from glamour-gram's `localStorage` and never committed (§5).
+- **Images.** Portraits and specimen photos from Wikimedia Commons, shown only when the record carries the file, licence and artist (§3.3).
