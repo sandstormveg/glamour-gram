@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="theme-color" content="#0b1016">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="GlamGram">
+<script>if("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
+<title>A Climb · Glamour Gram</title>
+<meta name="description" content="A page built in your browser from a Babel climb: the tower you climbed, the links you made and the kinds they crossed, the Luminaries who taught you, and what you kept.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
+<style>
+/* Layout: a climb page, built in the reader's browser from a Babel climb record carried in the link's fragment (design: docs/babel-template.md).
+   The title is the climb as a tower, one band per floor, the things met as stars and the links made as lines. Then the ascent floor by floor,
+   the links, the kinds they crossed, the Luminaries, what was kept, and a turn. No number and no gene: a climb page is personal, not part of the genome.
+   Every sentence is computed from the record, quoted from it with its source, or taken from the hand-written turn bank below. Record text is only
+   ever set with textContent, and every link is built here from a checked Q-id. */
+[hidden]{display:none!important}
+.hero canvas{cursor:pointer}
+.say{font-size:17px;margin:14px 0 0;min-height:1.6em;max-width:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--mute)}
+.legend i{display:inline-block;height:0;width:22px;margin-right:7px;vertical-align:3px;border-top:2px solid var(--ink)}
+.legend i.faint{border-top-color:rgba(233,228,216,.35)}
+.legend i.dot{border-top:2px dotted var(--ink)}
+.legend i.dash{border-top:2px dashed var(--dawn)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.chips a,.chips span{font-family:var(--mono);font-size:12px;color:var(--ink);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 10px;max-width:100%;overflow-wrap:anywhere}
+.chips a:hover{border-color:var(--dawn);color:var(--dawn)}
+.chips .mentor{border-color:var(--dawn)}
+ol.floors{list-style:none;padding:0;margin:18px 0 0;border-top:1px solid var(--line)}
+ol.floors li{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+ol.floors li > *{min-width:0}
+ol.floors .n{font-family:var(--mono);font-size:13px;color:var(--mute);padding-top:4px}
+ol.floors b{font-family:var(--display);font-weight:400;font-size:21px;display:block;line-height:1.25}
+ol.floors b a{color:inherit;text-decoration:none}
+ol.floors b a:hover{color:var(--dawn)}
+ol.floors span{color:var(--mute);font-size:16px;display:block}
+ul.whys{list-style:none;padding:0;margin:10px 0 0;font-size:16px}
+ul.whys li{padding:7px 0;border-bottom:1px dashed var(--line);overflow-wrap:anywhere}
+ul.whys small{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--mute);margin-left:6px;white-space:nowrap}
+.note-page{padding-block:72px}
+#fileIn{font-family:var(--mono);font-size:13px;color:var(--mute);max-width:100%;margin-top:6px}
+.suggest{display:inline-block;margin-top:6px;font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 14px;text-decoration:none}
+.suggest:hover{border-color:var(--dawn);color:var(--dawn)}
+</style>
+</head>
+<body>
+<header class="hero" id="hero" aria-label="A tower with one band for each floor of the climb. The things met on each floor are stars in its band, the Luminary of each floor sits at its top, and the links made are drawn between them.">
+  <canvas id="heroCanvas"></canvas>
+  <a class="home corner" href="./">Glamour Gram</a>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">Glamour Gram · A climb</div>
+    <h1 id="title">A climb</h1>
+    <p class="lede" id="lede">Reading the climb…</p>
+  </div></div>
+</header>
+
+<main id="page" hidden>
+<section id="climb"><div class="wrap">
+  <div class="eyebrow">The ascent</div>
+  <h2 id="climbH"></h2>
+  <p id="climbP"></p>
+  <div class="instrument">
+    <canvas id="floorCv" aria-label="The tower again, one band for each floor. Tap a band, or move the slider, to read that floor below."></canvas>
+    <div class="controls"><label>Floor <input type="range" id="floorR" min="1" max="5" value="1"> <output id="floorOut">I</output></label></div>
+    <div class="readout">
+      <div><div class="k">Floor</div><div class="v" id="flName">–</div></div>
+      <div><div class="k">Luminary</div><div class="v" id="flLum">–</div></div>
+      <div><div class="k">Things met</div><div class="v" id="flMet">–</div></div>
+      <div><div class="k">Links first made</div><div class="v" id="flLinks">–</div></div>
+    </div>
+    <div class="chips" id="flChips"></div>
+    <p class="caption" id="floorCap">The things you fought on the floor, in the order you met them. Each links to its Wikidata page.</p>
+  </div>
+</div></section>
+
+<section id="joined"><div class="wrap">
+  <div class="eyebrow">What you joined</div>
+  <h2>The links <em>you made</em></h2>
+  <p id="joinedP"></p>
+  <p id="joinedTop"></p>
+  <div class="instrument" id="webBox">
+    <canvas id="webCv" aria-label="A web of the cards you linked in your chains. Each line is one pair; its style says what the link rests on. Tap a card to list its links below."></canvas>
+    <div class="readout">
+      <div><div class="k">Pairs joined</div><div class="v" id="wTotal">–</div></div>
+      <div><div class="k">Wikidata says so</div><div class="v" id="wWd">–</div></div>
+      <div><div class="k">Names that match</div><div class="v" id="wName">–</div></div>
+      <div><div class="k">Your own</div><div class="v" id="wMine">–</div></div>
+    </div>
+    <p class="say" id="webSay" aria-live="polite">Tap a card to read its links. Drag one to move it.</p>
+    <ul class="whys" id="webWhys"></ul>
+    <div class="legend"><span><i></i>Wikidata records it</span><span><i class="faint"></i>they share a kind or a relation</span><span><i class="dot"></i>the names match</span><span><i class="dash"></i>your own link</span></div>
+    <p class="caption">Each line is a pair of cards you played one after the other in a chain, with the reason Babel gave at the time. Wikidata is a public database that anyone can edit, so its links are as good as its editors. A name match is matching words, not a statement about the world. Your own links are claims nobody has checked yet.</p>
+  </div>
+</div></section>
+
+<section id="kinds"><div class="wrap">
+  <div class="eyebrow">Across kinds</div>
+  <h2>Where <em>kinds met</em></h2>
+  <p id="kindsP"></p>
+  <div class="instrument" id="kindBox">
+    <canvas id="kindCv" aria-label="Babel's kinds of card around a circle, sized by how many of your cards were of that kind, with a curve for each link between two different kinds. Tap a kind to list its links."></canvas>
+    <div class="readout">
+      <div><div class="k">Links across kinds</div><div class="v" id="kAcross">–</div></div>
+      <div><div class="k">Most crossed</div><div class="v" id="kTop">–</div></div>
+      <div><div class="k">Kinds in your deck</div><div class="v" id="kKinds">–</div></div>
+    </div>
+    <p class="say" id="kindSay" aria-live="polite">Tap a kind to read where it met the others.</p>
+    <ul class="whys" id="kindWhys"></ul>
+    <p class="caption">Kinds are Babel's card types, such as Life, Matter or Culture. In the game, a link between two different kinds is a cross-domain insight: it draws a card and grows the chain's multiplier.</p>
+  </div>
+</div></section>
+
+<section id="people"><div class="wrap">
+  <div class="eyebrow">Who taught you</div>
+  <h2>The <em>Luminaries</em></h2>
+  <p id="peopleP"></p>
+  <ol class="floors" id="peopleList"></ol>
+</div></section>
+
+<section id="kept"><div class="wrap">
+  <div class="eyebrow">What you kept</div>
+  <h2>Into <em>your Dex</em></h2>
+  <p id="keptP"></p>
+  <div class="chips" id="keptChips"></div>
+</div></section>
+
+<section id="turn"><div class="wrap">
+  <div class="eyebrow">The turn</div>
+  <h2 id="turnH"></h2>
+  <p id="turnP"></p>
+  <p class="closer" id="closer"></p>
+  <div class="callout"><div class="eyebrow">Try this week</div><p id="tryP"></p></div>
+  <p class="note" id="echoP"></p>
+  <p class="note">Was this a climb worth a whole Glamour Gram? <a class="suggest" id="suggestA" target="_blank" rel="noopener">Suggest it as a Glamour Gram</a><br>That opens a GitHub issue, already filled in. Submit it, and the next Thursday pitch session will consider the climb as one of its ideas. Issues are public, and this one carries the climb's link.</p>
+</div></section>
+</main>
+
+<main id="empty" hidden>
+<section class="note-page"><div class="wrap">
+  <div class="eyebrow">Climbs</div>
+  <h2 id="emptyH">No climb <em>here yet</em></h2>
+  <p id="emptyP">A climb page is built in your browser from a Babel climb. Reach the top of an Epic climb and tap <b>Open your GlamGram</b>.</p>
+  <div id="pastBox" hidden><p class="note">Climbs you've opened on this device:</p><ul class="whys" id="pastList"></ul></div>
+  <p class="note">Have a saved climb file?<br><input type="file" id="fileIn" accept=".json,application/json"></p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p id="sources">Climb pages are made from Babel climbs. Their cards are Wikidata items.</p>
+  <div class="next"><a href="./">Back to Glamour Gram</a><a id="nextA" href="missing-rungs.html">XI · The Missing Rungs →</a></div>
+</div></footer>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+function fit(cv, aspect){
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = aspect ? Math.round(w*aspect) : cv.clientHeight;
+  if(aspect) cv.style.height = h + "px";
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function onScreen(el){
+  const s = {v:true};
+  if("IntersectionObserver" in window) new IntersectionObserver(es => { s.v = es[es.length - 1].isIntersecting; }).observe(el);
+  return s;
+}
+function animate(frame, vis){
+  let last = performance.now();
+  (function loop(now){ const dt = clamp((now - last)/1000, 0, 0.05); last = now; if(!vis || vis.v) frame(dt); requestAnimationFrame(loop); })(last);
+}
+function local(cv, e){ const r = cv.getBoundingClientRect(); return {x: e.clientX - r.left, y: e.clientY - r.top}; }
+function rgba(v, a){ const n = parseInt(C(v).slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; }
+function el(tag, text, attrs){ const n = document.createElement(tag); if(text != null) n.textContent = text; if(attrs) for(const k in attrs) n.setAttribute(k, attrs[k]); return n; }
+function hashStr(s){ let h = 2166136261; for(let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rng(seed){ let a = seed || 1; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0)/4294967296; }; }
+const ROMAN = ["", "I", "II", "III", "IV", "V"];
+const WORDS = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+const num = n => n <= 10 ? WORDS[n] : n.toLocaleString("en");
+const Cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+const plural = (n, one, many) => n === 1 ? one : many || one + "s";
+const wdURL = q => "https://www.wikidata.org/wiki/" + q;   // q is always a checked Q-id here
+
+/* ---------- reading a climb: the link's fragment (or a saved file), strictly checked ---------- */
+// The fragment is v1.<base64url of the record's JSON, compressed with deflate-raw>, or v1u.<base64url of plain JSON>.
+// Anyone can hand someone a crafted link, and Wikidata labels are editable by anyone, so nothing in the record is trusted.
+const TYPES = {FORCE: "Force", COSMOS: "Cosmos", LIFE: "Life", MATTER: "Matter", CRAFT: "Craft", MIND: "Mind", MYTH: "Myth", FIGURE: "Figure", REALM: "Realm", EVENT: "Event", CULTURE: "Culture", WILD: "Wild"};
+const BASES = {player: "your own link", relation: "a Wikidata relation", ancestry: "Wikidata's classification", shared: "a shared kind", "shared-rel": "a shared relation", name: "matching names"};
+const WIKIDATA_BASES = {relation: 1, ancestry: 1};
+const MAX_FRAG = 32768, MAX_JSON = 262144;
+const isQ = q => typeof q === "string" && /^Q[1-9][0-9]{0,9}$/.test(q);
+const str = (v, n) => typeof v === "string" ? (v.length > n ? v.slice(0, n - 1) + "…" : v) : "";
+const int = (v, a, b) => Number.isInteger(v) && v >= a && v <= b ? v : null;
+const arr = (v, n) => Array.isArray(v) ? v.slice(0, n) : [];
+function b64uDecode(s){
+  const b = atob(s.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - s.length % 4) % 4));
+  const u = new Uint8Array(b.length); for(let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
+  return u;
+}
+function b64uEncode(bytes){ let s = ""; for(let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+async function inflate(bytes){
+  if(!("DecompressionStream" in window)) throw new Error("old");
+  const rd = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")).getReader(), parts = [];
+  let n = 0;
+  for(;;){
+    const {done, value} = await rd.read(); if(done) break;
+    n += value.length; if(n > MAX_JSON){ rd.cancel(); throw new Error("big"); }
+    parts.push(value);
+  }
+  const out = new Uint8Array(n); let o = 0; parts.forEach(p => { out.set(p, o); o += p.length; });
+  return new TextDecoder().decode(out);
+}
+async function decodeFrag(h){
+  if(h.length > MAX_FRAG) throw new Error("big");
+  const m = /^v1(u?)\.([A-Za-z0-9_-]+)$/.exec(h); if(!m) throw new Error("bad");
+  const bytes = b64uDecode(m[2]);
+  const text = m[1] ? new TextDecoder().decode(bytes) : await inflate(bytes);
+  if(text.length > MAX_JSON) throw new Error("big");
+  return JSON.parse(text);
+}
+async function encodeFrag(rec){   // the same packing Babel uses, for a climb opened from a file
+  const raw = new TextEncoder().encode(JSON.stringify(rec));
+  if("CompressionStream" in window){
+    try { const buf = await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream("deflate-raw"))).arrayBuffer(); return "v1." + b64uEncode(new Uint8Array(buf)); } catch(e){}
+  }
+  return "v1u." + b64uEncode(raw);
+}
+// Babel's record, babel.climb/1 or /2, into the page's model. Bad entries are dropped; a record whose core is wrong is refused.
+function normalize(R){
+  if(!R || typeof R !== "object" || Array.isArray(R)) throw new Error("bad");
+  const sm = /^babel\.climb\/(\d+)$/.exec(R.schema || "");
+  if(!sm) throw new Error("bad");
+  if(+sm[1] > 2) throw new Error("newer");
+  const time = v => typeof v === "string" && v.length <= 40 && !isNaN(Date.parse(v)) ? v : null;
+  const M = {v: +sm[1], win: R.win === true, mode: R.mode === "epic" ? "epic" : "classic", theme: str(R.theme, 60) || null,
+    made: time(R.made), started: time(R.started), galleries: int(R.galleries, 0, 9999)};
+  M.floors = arr(R.floors, 5).map(f => ({n: int(f && f.n, 1, 5), name: str(f && f.name, 60)})).filter(f => f.n && f.name);
+  M.luminaries = arr(R.luminaries, 5).filter(o => o && isQ(o.q)).map(o => ({q: o.q, l: str(o.l, 80) || o.q, work: str(o.work, 120) || null, floor: int(o.floor, 1, 5)}));
+  M.mentors = arr(R.mentors, 10).filter(o => o && isQ(o.q)).map(o => ({q: o.q, l: str(o.l, 80) || o.q}));
+  M.deck = arr(R.deck, 120).filter(o => o && isQ(o.q)).map(o => ({q: o.q, l: str(o.l, 80) || o.q, type: TYPES[o.type] ? o.type : null}));
+  M.met = arr(R.met, 200).filter(o => o && isQ(o.q)).map((o, i) => ({q: o.q, l: str(o.l, 80) || o.q, f: int(o.f, 1, 5), i}));
+  M.links = M.v >= 2 ? arr(R.links, 60).filter(o => o && isQ(o.a) && isQ(o.b) && o.a !== o.b && BASES[o.basis]).map(o => ({a: o.a, b: o.b, al: str(o.al, 80) || o.a, bl: str(o.bl, 80) || o.b,
+    why: str(o.why, 200), basis: o.basis, lens: str(o.lens, 20) || null, floor: int(o.floor, 1, 5), times: int(o.times, 1, 99999) || 1})) : [];
+  M.discoveries = arr(R.discoveries, 30).map(d => str(d, 160)).filter(Boolean);
+  M.proposed = arr(R.proposed, 30).filter(p => Array.isArray(p) && isQ(p[0]) && isQ(p[1]));
+  M.caught = arr(R.caught, 60).filter(o => o && isQ(o.q)).map(o => ({q: o.q, l: str(o.l, 80) || o.q, fresh: o.n === true}));
+  const bc = R.bestChain; M.best = bc && int(bc.n, 1, 99999) ? {n: bc.n, why: str(bc.why, 200)} : null;
+  if(!M.floors.length || !M.made) throw new Error("bad");
+  M.floors.sort((a, b) => a.n - b.n);
+  return M;
+}
+
+/* ---------- climbs opened on this device, so you never have to keep a link ---------- */
+const PAST_KEY = "glamgram.climbs.v1";
+function pastClimbs(){ try { const v = JSON.parse(localStorage.getItem(PAST_KEY) || "[]"); return Array.isArray(v) ? v.filter(x => x && typeof x.f === "string" && x.f.length <= MAX_FRAG) : []; } catch(e){ return []; } }
+function remember(frag, M){
+  try {
+    const list = pastClimbs().filter(x => x.d !== M.made);
+    list.unshift({f: frag, t: titleOf(M), d: M.made});
+    localStorage.setItem(PAST_KEY, JSON.stringify(list.slice(0, 20)));
+  } catch(e){}
+}
+
+/* ---------- what the record says, computed once ---------- */
+const typeOf = M => { const T = {}; M.deck.forEach(d => { if(d.type) T[d.q] = d.type; }); return T; };
+function summitOf(M){ return M.luminaries.slice().sort((a, b) => (b.floor || 0) - (a.floor || 0))[0] || null; }
+function titleOf(M){
+  const top = summitOf(M), anchor = M.deck[0];
+  if(top && anchor) return "From " + Cap(anchor.l) + " to " + Cap(top.l);
+  if(top) return Cap(num(M.floors.length)) + " Floors to " + Cap(top.l);
+  return M.theme ? M.theme : "A Babel Climb";
+}
+const isMentor = (M, q) => M.mentors.some(m => m.q === q);
+function crossOf(M){
+  const T = typeOf(M);
+  return M.links.filter(L => T[L.a] && T[L.b] && T[L.a] !== T[L.b]).map(L => Object.assign({ta: T[L.a], tb: T[L.b]}, L));
+}
+function floorOf(M){   // which floor each thing was met on: the record says so from Babel's 2026-11-15 export; older records are spread in order
+  const nF = M.floors.length, F = {};
+  M.met.forEach((m, i) => { F[m.q] = m.f || Math.min(nF, 1 + Math.floor(i*nF/Math.max(1, M.met.length))); });
+  return F;
+}
+
+/* ---------- the hero: the climb as a tower ---------- */
+// One band per floor, narrowing upward. Stars: things met on that floor; the starting cards at the foot; the Luminary at each band's crown.
+function towerGeom(w, h, wide, nF, top, bw){
+  const baseW = bw || (wide ? Math.min(w*0.4, 480) : w*0.9), cx = wide ? w - 24 - baseW/2 : w*0.5, topW = baseW*0.34, y0 = h - 30, y1 = Math.max(54, h*0.1, top || 0);
+  const at = y => baseW + (topW - baseW)*(y0 - y)/(y0 - y1);
+  const band = k => ({yb: y0 - (y0 - y1)*k/nF, yt: y0 - (y0 - y1)*(k + 1)/nF});
+  return {cx, y0, y1, at, band, nF};
+}
+function starsOf(M){
+  const R = rng(hashStr(M.made)), S = new Map(), F = floorOf(M), nF = M.floors.length;
+  const add = (q, l, f, kind) => { if(!S.has(q)) S.set(q, {q, l, f: clamp(f, 1, nF), kind, u: R()*0.84 - 0.42, v: 0.18 + R()*0.56}); };
+  M.luminaries.forEach(L => S.set(L.q, {q: L.q, l: L.l, f: clamp(L.floor || nF, 1, nF), kind: "lum", u: 0, v: 0.86}));
+  M.met.forEach(m => add(m.q, m.l, F[m.q], "met"));
+  M.deck.forEach(d => add(d.q, d.l, 1, "deck"));
+  return S;
+}
+function pos(G, s){ const B = G.band(s.f - 1), y = B.yb + (B.yt - B.yb)*s.v; return [G.cx + s.u*G.at(y), y]; }
+function edgeStyle(ctx, basis, a){
+  ctx.setLineDash(basis === "player" ? [6, 4] : basis === "name" ? [1.5, 4] : []);
+  ctx.strokeStyle = basis === "player" ? C("--dawn") : C("--ink");
+  ctx.globalAlpha = a*(basis === "shared" || basis === "shared-rel" ? 0.3 : basis === "player" ? 0.9 : 0.6);
+  ctx.lineWidth = basis === "shared" || basis === "shared-rel" ? 1 : 1.4;
+}
+function drawTower(ctx, G, M, S, lit, hiFloor){
+  const hues = ["--sea", "--dawn", "--ember"];
+  for(let k = 0; k < G.nF; k++){   // bands
+    const B = G.band(k), a = clamp(lit - k, 0, 1), on = hiFloor === k + 1;
+    const wb = G.at(B.yb)/2, wt = G.at(B.yt)/2;
+    ctx.beginPath(); ctx.moveTo(G.cx - wb, B.yb); ctx.lineTo(G.cx - wt, B.yt); ctx.lineTo(G.cx + wt, B.yt); ctx.lineTo(G.cx + wb, B.yb); ctx.closePath();
+    ctx.fillStyle = rgba(hues[k % 3], on ? 0.16 : 0.04*a); ctx.fill();
+    ctx.strokeStyle = C(hues[k % 3]); ctx.globalAlpha = on ? 1 : 0.25 + 0.4*a; ctx.lineWidth = on ? 1.8 : 1; ctx.setLineDash([]); ctx.stroke(); ctx.globalAlpha = 1;
+  }
+  if(!M) return;
+  M.links.forEach(L => {   // links between stars that are lit
+    const A = S.get(L.a), B = S.get(L.b); if(!A || !B) return;
+    const a = Math.min(clamp(lit - A.f + 1, 0, 1), clamp(lit - B.f + 1, 0, 1)); if(a <= 0) return;
+    const [x1, y1] = pos(G, A), [x2, y2] = pos(G, B);
+    edgeStyle(ctx, L.basis, a*(hiFloor && hiFloor !== L.floor ? 0.35 : 1)); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  });
+  ctx.setLineDash([]); ctx.globalAlpha = 1;
+  S.forEach(s => {
+    const a = clamp(lit - s.f + 1, 0, 1); if(a <= 0) return;
+    const [x, y] = pos(G, s), dim = hiFloor && hiFloor !== s.f ? 0.3 : 1;
+    if(s.kind === "lum"){
+      const g = ctx.createRadialGradient(x, y, 0, x, y, 14); g.addColorStop(0, rgba("--dawn", 0.55*a*dim)); g.addColorStop(1, rgba("--dawn", 0));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 14, 0, 7); ctx.fill();
+      ctx.fillStyle = C("--dawn"); ctx.globalAlpha = a*dim; ctx.beginPath(); ctx.arc(x, y, 3.6, 0, 7); ctx.fill();
+    } else { ctx.fillStyle = s.kind === "deck" ? C("--sea") : C("--ink"); ctx.globalAlpha = 0.85*a*dim; ctx.beginPath(); ctx.arc(x, y, s.kind === "deck" ? 2.4 : 1.9, 0, 7); ctx.fill(); }
+  });
+  ctx.globalAlpha = 1;
+}
+function hero(M){
+  const cv = $("heroCanvas"), hero = $("hero"), copy = document.querySelector(".hero-copy .wrap"), home = document.querySelector(".home.corner");
+  const S = M ? starsOf(M) : null, nF = M ? M.floors.length : 5, bg = Array.from({length: 70}, () => ({x: Math.random(), y: Math.pow(Math.random(), 1.6), r: Math.random()*1.1 + 0.2, a: Math.random()*0.45 + 0.1}));
+  let g = fit(cv), G, boxes = [], lit = reduce ? nF + 1 : 0;
+  function text(){
+    const c = cv.getBoundingClientRect(), r = document.createRange(), walk = document.createTreeWalker(copy, NodeFilter.SHOW_TEXT), out = [];
+    const add = b => { if(b.width) out.push({l: b.left - c.left, r: b.right - c.left, t: b.top - c.top, b: b.bottom - c.top}); };
+    for(let n = walk.nextNode(); n; n = walk.nextNode()) if(n.textContent.trim()){ r.selectNodeContents(n); Array.from(r.getClientRects()).forEach(add); }
+    add(home.getBoundingClientRect());
+    return out;
+  }
+  function layout(){   // wide: the tower stands right of the words; narrow: below them, and the hero grows to hold it
+    const wide = cv.clientWidth >= 760;
+    hero.style.height = ""; boxes = text();
+    const below = wide ? 0 : Math.max(...boxes.filter(b => b.t > 60).map(b => b.b), 0) + 26;
+    if(!wide) hero.style.height = Math.max(400, below + 250) + "px";
+    g = fit(cv); boxes = text();
+    let bw = 0;   // wide: narrow the tower until it clears the measured words, down to a floor; any overlap left is handled by the halos
+    for(let n = 0; n < 16; n++){
+      G = towerGeom(g.w, g.h, wide, nF, below, bw);
+      if(!wide || G.at(G.y0) <= 260 || boxes.every(b => b.b < G.y1 || b.t > G.y0 || b.r + 18 <= G.cx - G.at(clamp(b.b, G.y1, G.y0))/2)) break;
+      bw = G.at(G.y0)*0.94;
+    }
+  }
+  function clear(ctx, dpr){   // soft dark halos keep the words readable wherever a star or line passes behind them
+    const off = 10000; ctx.save(); ctx.fillStyle = "#000"; ctx.shadowColor = C("--night"); ctx.shadowBlur = 14*dpr; ctx.shadowOffsetX = off*dpr;
+    for(let i = 0; i < 2; i++) boxes.forEach(b => ctx.fillRect(b.l - 10 - off, b.t - 6, b.r - b.l + 20, b.b - b.t + 12));
+    ctx.restore();
+  }
+  function draw(){
+    const {ctx, w, h} = g;
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    bg.forEach(s => { ctx.globalAlpha = s.a; ctx.fillStyle = C("--ink"); ctx.beginPath(); ctx.arc(s.x*w, s.y*h*0.7, s.r, 0, 7); ctx.fill(); });
+    ctx.globalAlpha = 1; drawTower(ctx, G, M, S, lit, 0);
+    clear(ctx, cv.width/w);
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "right";
+    ctx.fillText(M ? (w < 700 ? "one band per floor · tap to climb again" : "one band per floor, the things met as stars, the links made as lines · tap to climb again") : "a tower waits for a climb", w - 14, h - 10);
+    ctx.textAlign = "left";
+  }
+  layout(); draw();
+  addEventListener("resize", () => { layout(); draw(); });
+  document.fonts && document.fonts.ready.then(() => { layout(); draw(); });
+  cv.addEventListener("pointerdown", () => { if(!reduce){ lit = 0; } });
+  if(!reduce) animate(dt => { if(lit < nF + 1) lit += dt*1.1; draw(); }, onScreen(cv));
+}
+
+/* ---------- 1. the ascent, floor by floor ---------- */
+function ascent(M){
+  const cv = $("floorCv"), R = $("floorR"), nF = M.floors.length, S = starsOf(M), F = floorOf(M);
+  const box = $("floorCv").closest(".instrument");
+  R.max = String(nF); if(nF < 2) R.disabled = true;
+  let g, G, cur = 1;
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.62 : 0.4); G = towerGeom(g.w, g.h, false, nF); }
+  function draw(){ const {ctx, w, h} = g; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h); drawTower(ctx, G, M, S, nF + 1, cur);
+    ctx.font = "11px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute");
+    for(let k = 0; k < nF; k++){ const B = G.band(k); ctx.fillStyle = k + 1 === cur ? C("--dawn") : C("--mute"); ctx.fillText(ROMAN[k + 1], 10, (B.yb + B.yt)/2 + 4); }
+  }
+  function show(n){
+    cur = clamp(n, 1, nF); R.value = String(cur);
+    const fl = M.floors[cur - 1], L = M.luminaries.find(x => x.floor === fl.n), met = M.met.filter(m => F[m.q] === fl.n), links = M.links.filter(x => x.floor === fl.n);
+    $("floorOut").textContent = ROMAN[fl.n];
+    $("flName").textContent = fl.name; $("flLum").textContent = L ? L.l : "–";
+    $("flMet").textContent = String(met.length); $("flLinks").textContent = M.v >= 2 ? String(links.length) : "–";
+    const chips = $("flChips"); chips.textContent = "";
+    if(L){ const a = el("a", "♛ " + L.l + (L.work ? " · " + L.work : ""), {href: wdURL(L.q), class: isMentor(M, L.q) ? "mentor" : ""}); chips.append(a); }
+    met.filter(m => !L || m.q !== L.q).forEach(m => chips.append(el("a", m.l, {href: wdURL(m.q)})));
+    draw();
+  }
+  layout(); show(1);
+  R.addEventListener("input", () => show(+R.value));
+  cv.addEventListener("pointerdown", e => { const {y} = local(cv, e); for(let k = 0; k < nF; k++){ const B = G.band(k); if(y <= B.yb && y >= B.yt) return show(k + 1); } });
+  addEventListener("resize", () => { layout(); draw(); });
+  if(!M.met.some(m => m.f)) $("floorCap").textContent = "The things you fought, in the order you met them. This climb was recorded before Babel noted each thing's floor, so they are spread over the floors in order. Each links to its Wikidata page.";
+  return box;
+}
+
+/* ---------- 2. the web of links ---------- */
+function web(M){
+  const cv = $("webCv"), say = $("webSay"), whys = $("webWhys"), T = typeOf(M), N = new Map();
+  M.links.forEach(L => { [[L.a, L.al], [L.b, L.bl]].forEach(([q, l]) => { if(!N.has(q)) N.set(q, {q, l, x: 0, y: 0, vx: 0, vy: 0, deg: 0}); N.get(q).deg++; }); });
+  const nodes = Array.from(N.values()), R = rng(hashStr(M.made + "web"));
+  nodes.forEach((n, i) => { const a = i/nodes.length*6.283; n.x = Math.cos(a)*0.6 + R()*0.1; n.y = Math.sin(a)*0.6 + R()*0.1; });
+  for(let it = 0; it < 320; it++){   // a small spring layout, run once, the same every time for the same climb
+    for(let i = 0; i < nodes.length; i++) for(let j = i + 1; j < nodes.length; j++){
+      const A = nodes[i], B = nodes[j], dx = A.x - B.x, dy = A.y - B.y, d2 = Math.max(0.004, dx*dx + dy*dy), f = 0.0022/d2;
+      A.vx += dx*f; A.vy += dy*f; B.vx -= dx*f; B.vy -= dy*f;
+    }
+    M.links.forEach(L => { const A = N.get(L.a), B = N.get(L.b), dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) || 0.01, f = (d - 0.32)*0.04; A.vx += dx/d*f; A.vy += dy/d*f; B.vx -= dx/d*f; B.vy -= dy/d*f; });
+    nodes.forEach(n => { n.vx -= n.x*0.006; n.vy -= n.y*0.006; n.x += n.vx; n.y += n.vy; n.vx *= 0.6; n.vy *= 0.6; });
+  }
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  nodes.forEach(n => { minX = Math.min(minX, n.x); maxX = Math.max(maxX, n.x); minY = Math.min(minY, n.y); maxY = Math.max(maxY, n.y); });
+  let g, sel = null, drag = null;
+  const P = n => [28 + (n.x - minX)/((maxX - minX) || 1)*(g.w - 56), 22 + (n.y - minY)/((maxY - minY) || 1)*(g.h - 44)];
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 1.05 : 0.62); }
+  function draw(){
+    const {ctx, w, h} = g; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    M.links.forEach(L => { const A = N.get(L.a), B = N.get(L.b), on = sel && (sel === A || sel === B), [x1, y1] = P(A), [x2, y2] = P(B);
+      edgeStyle(ctx, L.basis, sel ? (on ? 1.4 : 0.3) : 1); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); });
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+    const showAll = nodes.length <= 14 || w >= 760;
+    nodes.forEach(n => {
+      const [x, y] = P(n), near = sel && (n === sel || M.links.some(L => (L.a === sel.q && L.b === n.q) || (L.b === sel.q && L.a === n.q)));
+      ctx.fillStyle = n === sel ? C("--dawn") : C("--sea"); ctx.globalAlpha = sel && !near ? 0.35 : 1;
+      ctx.beginPath(); ctx.arc(x, y, 3 + Math.min(4, n.deg), 0, 7); ctx.fill();
+      if(showAll || near){ ctx.font = (n === sel ? "500 " : "") + "11px JetBrains Mono, monospace"; ctx.fillStyle = n === sel ? C("--dawn") : C("--ink"); ctx.textAlign = x > w*0.66 ? "right" : "left";
+        const s = n.l.length > 26 ? n.l.slice(0, 25) + "…" : n.l; ctx.fillText(s, x + (x > w*0.66 ? -8 : 8), y - 6); ctx.textAlign = "left"; }
+    });
+    ctx.globalAlpha = 1;
+  }
+  function pick(n){
+    sel = n; whys.textContent = "";
+    if(!n){ say.textContent = "Tap a card to read its links. Drag one to move it."; return draw(); }
+    const mine = M.links.filter(L => L.a === n.q || L.b === n.q).sort((x, y) => y.times - x.times);
+    say.textContent = n.l + (T[n.q] ? " (" + TYPES[T[n.q]] + ")" : "") + ": " + mine.length + " " + plural(mine.length, "link") + ".";
+    mine.forEach(L => { const li = el("li", L.why || (L.al + " · " + L.bl)); li.append(el("small", BASES[L.basis] + (L.times > 1 ? " · ×" + L.times : ""))); whys.append(li); });
+    draw();
+  }
+  function hit(x, y){ let best = null, d = 22; nodes.forEach(n => { const [nx, ny] = P(n), dd = Math.hypot(nx - x, ny - y); if(dd < d){ d = dd; best = n; } }); return best; }
+  cv.addEventListener("pointerdown", e => { const {x, y} = local(cv, e), n = hit(x, y); if(n){ drag = n; cv.setPointerCapture(e.pointerId); } pick(n); });
+  cv.addEventListener("pointermove", e => { if(!drag) return; const {x, y} = local(cv, e);
+    drag.x = minX + clamp((x - 28)/(g.w - 56), 0, 1)*((maxX - minX) || 1); drag.y = minY + clamp((y - 22)/(g.h - 44), 0, 1)*((maxY - minY) || 1); draw(); });
+  cv.addEventListener("pointerup", () => { drag = null; });
+  layout(); draw();
+  addEventListener("resize", () => { layout(); draw(); });
+}
+
+/* ---------- 3. across kinds ---------- */
+function kinds(M){
+  const cv = $("kindCv"), say = $("kindSay"), whys = $("kindWhys"), T = typeOf(M), X = crossOf(M), count = {};
+  M.deck.forEach(d => { if(d.type) count[d.type] = (count[d.type] || 0) + 1; });
+  const ks = Object.keys(TYPES).filter(k => count[k]), pairs = {};
+  X.forEach(L => { const k = [L.ta, L.tb].sort().join("|"); pairs[k] = (pairs[k] || 0) + L.times; });
+  let g, sel = null;
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.8 : 0.56); room(); }
+  let R = 0;   // the wheel's radius, set in layout so the widest label still fits inside the canvas
+  const label = k => TYPES[k] + " " + count[k], dot = k => 4 + Math.sqrt(count[k])*2.4;
+  const at = i => { const a = -Math.PI/2 + i/ks.length*6.283; return [g.w/2 + Math.cos(a)*R, g.h/2 + Math.sin(a)*R]; };
+  function room(){
+    const ctx = g.ctx; ctx.font = "500 12px JetBrains Mono, monospace"; R = Math.min(g.w, g.h)*0.36;
+    for(let n = 0; n < 40; n++){
+      const over = ks.some((k, i) => { const [x, y] = at(i), r = dot(k), tw = ctx.measureText(label(k)).width;
+        if(x < g.w/2 - 4) return x - r - 6 - tw < 6;
+        if(x > g.w/2 + 4) return x + r + 6 + tw > g.w - 6;
+        return y - r - 20 < 4 || y + r + 18 > g.h - 4; });
+      if(!over) break; R *= 0.95;
+    }
+  }
+  function draw(){
+    const {ctx, w, h} = g; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    Object.keys(pairs).forEach(k => { const [a, b] = k.split("|"), i = ks.indexOf(a), j = ks.indexOf(b); if(i < 0 || j < 0) return;
+      const [x1, y1] = at(i), [x2, y2] = at(j), on = sel && (sel === a || sel === b);
+      ctx.strokeStyle = C("--dawn"); ctx.globalAlpha = sel ? (on ? 0.95 : 0.12) : 0.55; ctx.lineWidth = 1 + Math.min(6, pairs[k]*0.8);
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.quadraticCurveTo(w/2, h/2, x2, y2); ctx.stroke(); });
+    ctx.globalAlpha = 1;
+    ks.forEach((k, i) => { const [x, y] = at(i), r = dot(k), on = sel === k;
+      ctx.fillStyle = on ? C("--dawn") : C("--sea"); ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+      ctx.font = (on ? "500 " : "") + "12px JetBrains Mono, monospace"; ctx.fillStyle = on ? C("--dawn") : C("--ink");
+      ctx.textAlign = x < w/2 - 4 ? "right" : x > w/2 + 4 ? "left" : "center"; const dx = x < w/2 - 4 ? -r - 6 : x > w/2 + 4 ? r + 6 : 0;
+      ctx.fillText(label(k), x + dx, y + (Math.abs(dx) ? 4 : y < h/2 ? -r - 6 : r + 14)); });
+    ctx.textAlign = "left";
+  }
+  function pick(k){
+    sel = k; whys.textContent = "";
+    if(!k){ say.textContent = "Tap a kind to read where it met the others."; return draw(); }
+    const mine = X.filter(L => L.ta === k || L.tb === k).sort((x, y) => y.times - x.times);
+    say.textContent = TYPES[k] + ": " + count[k] + " " + plural(count[k], "card") + " in your deck, " + mine.length + " " + plural(mine.length, "link") + " to other kinds.";
+    mine.slice(0, 6).forEach(L => { const li = el("li", L.why || (L.al + " · " + L.bl)); li.append(el("small", TYPES[L.ta] + " ↔ " + TYPES[L.tb])); whys.append(li); });
+    draw();
+  }
+  cv.addEventListener("pointerdown", e => { const {x, y} = local(cv, e); let best = null, d = 30; ks.forEach((k, i) => { const [kx, ky] = at(i), dd = Math.hypot(kx - x, ky - y); if(dd < d){ d = dd; best = k; } }); pick(best); });
+  layout(); draw();
+  addEventListener("resize", () => { layout(); draw(); });
+  const top = Object.keys(pairs).sort((a, b) => pairs[b] - pairs[a])[0];
+  $("kAcross").textContent = String(X.length);
+  $("kTop").textContent = top ? top.split("|").map(k => TYPES[k]).join(" ↔ ") : "–";
+  $("kKinds").textContent = String(ks.length);
+  return {top, n: X.length};
+}
+
+/* ---------- the turn bank: hand-written, reviewed like a numbered page; a climb only selects ---------- */
+// The first rule that matches wins. Each turn is true for every climb that selects it.
+const ECHO = {I: ["four-days-old.html", "I · Four Days Old"], II: ["three-letter-spell.html", "II · The Three-Letter Spell"], XI: ["missing-rungs.html", "XI · The Missing Rungs"]};
+function turnOf(M){
+  const top = summitOf(M), madeof = M.links.filter(L => L.lens === "madeof").length, X = crossOf(M);
+  const own = M.links.filter(L => L.basis === "player").length + M.discoveries.length + M.proposed.length;
+  if(own) return {h: "A rung <em>drawn, not built</em>", p: "Your dashed lines are guesses nobody has written down yet. A guess becomes knowledge when someone else can check it, and Wikidata is open: anyone can add a statement, with a source.",
+    closer: "A link nobody has written down is a rung drawn, not built.", tryp: "Pick one of your own links and look for a source that would make it solid.", echo: "XI"};
+  if(top && isMentor(M, top.q)) return {h: "A mind <em>you never met</em>", p: "You answered " + top.l + "'s question at the top of the tower, and they came down with you as a card. That's how one mind joins another it never met: what one found, the other now knows.",
+    closer: "Learning is how you join a mind you never met.", tryp: "Read something " + top.l + " wrote, in their own words.", echo: "I"};
+  if(M.links.length >= 4 && madeof*2 >= M.links.length) return {h: "Three <em>letters</em>", p: "Most of what you joined, you joined by what it's made of. Follow \"made of\" far enough through anything you can hold, and it ends in the same three letters: up quarks, down quarks and electrons.",
+    closer: "Everything you held on this climb was spelled in three letters.", tryp: "Pick one thing on your desk and follow \"made of\" down as far as you can.", echo: "II"};
+  if(M.links.length >= 3 && X.length*3 >= M.links.length) return {h: "Across <em>the shelves</em>", p: "Many of your links crossed from one kind of thing to another, such as " + X[0].al + " to " + X[0].bl + ". Each crossing joined two shelves that are usually read apart.",
+    closer: "Connect in ways that leave both minds larger.", tryp: "Find two things you know from different parts of your life, and look for what joins them.", echo: "I"};
+  return {h: "Farther <em>out</em>", p: "Each floor drew its foes from farther out from the cards you started with, and you climbed past them by knowing how things relate.",
+    closer: "Wonder is renewable: every layer has another under it.", tryp: "Open your Dex, choose a card, and look one layer under it.", echo: "I"};
+}
+function setRich(node, html){   // only for the bank's own hand-written headings, never for record text
+  node.textContent = ""; html.split(/(<em>.*?<\/em>)/).forEach(part => { const m = /^<em>(.*)<\/em>$/.exec(part); node.append(m ? el("em", m[1]) : document.createTextNode(part)); });
+}
+
+/* ---------- suggest as a Glamour Gram: a pre-filled GitHub issue, so nothing is copied or pasted ---------- */
+function suggestURL(M){
+  const top = summitOf(M), pick = M.links.slice().sort((a, b) => b.times - a.times).slice(0, 5);
+  const lines = ["A climb seed from a Babel climb page. The Thursday pitch session treats it as a topic, runs the pitch test, and verifies everything from primary sources if it's picked.", "",
+    "**" + titleOf(M) + "**", ""];
+  if(M.theme) lines.push("- Theme: " + M.theme);
+  lines.push("- Floors: " + M.floors.map(f => ROMAN[f.n] + " " + f.name).join(", "));
+  if(M.luminaries.length) lines.push("- Luminaries: " + M.luminaries.map(L => L.l + (L.work ? " (" + L.work + ")" : "") + " " + L.q).join("; "));
+  if(pick.length) lines.push("- Links played most: " + pick.map(L => L.why + " [" + L.basis + "]").join("; "));
+  if(M.discoveries.length) lines.push("- The climber's own links: " + M.discoveries.join("; "));
+  if(M.caught.length) lines.push("- Catalogued: " + M.caught.map(c => c.l).join(", "));
+  lines.push("- Climbed: " + M.made.slice(0, 10) + (top ? " · summit: " + top.l : ""));
+  const base = "https://github.com/sandstormveg/glamour-gram/issues/new?title=" + encodeURIComponent("Climb seed: " + titleOf(M)) + "&body=";
+  let body = lines.join("\n"), url = base + encodeURIComponent(body + "\n\n- Climb page: " + location.href);
+  if(url.length > 7500) url = base + encodeURIComponent(body);   // keep under GitHub's URL limit; the page link is the long part
+  return url.length > 7500 ? base + encodeURIComponent(body.slice(0, 3000)) : url;
+}
+
+/* ---------- the page ---------- */
+function render(M){
+  $("page").hidden = false;   // first: canvases measure their width, and a hidden page has none
+  const top = summitOf(M), T = typeOf(M), X = crossOf(M), nF = M.floors.length, title = titleOf(M);
+  document.title = title + " · Glamour Gram";
+  $("title").textContent = title;
+  const lede = ["You climbed " + num(nF) + " " + plural(nF, "floor") + (M.theme ? " of " + M.theme : "") + (top && M.deck[0] ? ", from " + Cap(M.deck[0].l) + " to " + top.l : "") + "."];
+  if(M.luminaries.length){ const mm = M.luminaries.filter(L => isMentor(M, L.q)).length;
+    lede.push("You met " + num(M.luminaries.length) + " " + plural(M.luminaries.length, "Luminary", "Luminaries") + (mm ? ", and " + (mm === M.luminaries.length && mm > 1 ? "all " + num(mm) : num(mm)) + " became your " + plural(mm, "Mentor") : "") + "."); }
+  if(M.links.length) lede.push("You joined " + num(M.links.length) + " " + plural(M.links.length, "pair") + " of things" + (X.length ? ", " + num(X.length) + " of them across kinds" : "") + ".");
+  $("lede").textContent = lede.join(" ");
+
+  // 1. the ascent
+  const hEl = $("climbH"); hEl.textContent = Cap(num(nF)) + " " + plural(nF, "floor") + ", "; hEl.append(el("em", "farther out"));
+  $("climbP").textContent = "Each floor of Babel draws its foes from farther out from the cards you start with." + (M.theme ? " This climb's theme was " + M.theme + "." : "") +
+    (M.galleries ? " You explored " + num(M.galleries) + " " + plural(M.galleries, "gallery", "galleries") + " on the way up." : "");
+  ascent(M);
+
+  // 2. links
+  const wd = M.links.filter(L => WIKIDATA_BASES[L.basis]).length, sh = M.links.filter(L => L.basis === "shared" || L.basis === "shared-rel").length,
+    nm = M.links.filter(L => L.basis === "name").length, mine = M.links.filter(L => L.basis === "player").length;
+  $("wTotal").textContent = String(M.links.length); $("wWd").textContent = String(wd); $("wName").textContent = String(nm); $("wMine").textContent = String(mine);
+  if(M.links.length){
+    const parts = [];
+    if(wd) parts.push("Wikidata records " + num(wd) + " of those links directly");
+    if(sh) parts.push(num(sh) + " rest on a kind or a relation the two cards share");
+    if(nm) parts.push(num(nm) + " " + plural(nm, "is a match", "are matches") + " of names");
+    if(mine) parts.push(num(mine) + " " + plural(mine, "is", "are") + " your own");
+    $("joinedP").textContent = "You chained " + num(M.links.length) + " different " + plural(M.links.length, "pair") + " of cards." + (parts.length ? " " + Cap(parts.join(", ").replace(/, ([^,]*)$/, ", and $1")) + "." : "");
+    const most = M.links.slice().sort((a, b) => b.times - a.times)[0];
+    $("joinedTop").textContent = most.times > 1 ? "The pair you played together most was " + most.al + " and " + most.bl + ", " + num(most.times) + " times. Babel's reason: " + most.why + "." : "";
+    if(M.links.length >= 2) web(M); else $("webBox").hidden = true;
+  } else {
+    $("joinedP").textContent = M.v < 2 ? "This climb was recorded before Babel kept the links you made, so there are none to show." : "This climb's record has no linked pairs.";
+    $("webBox").hidden = true;
+  }
+
+  // 3. kinds
+  if(M.deck.some(d => d.type)){
+    const k = kinds(M);
+    $("kindsP").textContent = X.length ? num(X.length).replace(/^./, c => c.toUpperCase()) + " of your links joined two different kinds of card" + (k.top ? ", most often " + k.top.split("|").map(t => TYPES[t]).join(" and ") : "") + "." : "None of your recorded links crossed between kinds. Every pair joined two cards of the same kind.";
+    if(!X.length && !M.links.length) $("kindBox").hidden = true;
+  } else $("kinds").hidden = true;
+
+  // 4. Luminaries
+  if(M.luminaries.length){
+    const mm = M.luminaries.filter(L => isMentor(M, L.q)).length;
+    $("peopleP").textContent = "At the top of each floor waited a Luminary: a real person whose work runs through what you met there." + (mm ? " You answered " + (mm === M.luminaries.length && mm > 1 ? "all " + num(mm) + " of their questions" : num(mm) + " of their questions") + ", so " + plural(mm, "they", "they") + " came with you as " + plural(mm, "a Mentor", "Mentors") + "." : "");
+    const ol = $("peopleList");
+    M.luminaries.slice().sort((a, b) => (a.floor || 0) - (b.floor || 0)).forEach(L => {
+      const li = el("li"), b = el("b"); b.append(el("a", L.l, {href: wdURL(L.q)}));
+      li.append(el("div", L.floor ? ROMAN[L.floor] : "", {class: "n"}));
+      const d = el("div"); d.append(b); d.append(el("span", (L.work ? L.work : "") + (isMentor(M, L.q) ? (L.work ? " · " : "") + "♛ your Mentor" : "")));
+      li.append(d); ol.append(li);
+    });
+  } else $("people").hidden = true;
+
+  // 5. kept
+  if(M.caught.length || M.best){
+    const fresh = M.caught.filter(c => c.fresh).length;
+    $("keptP").textContent = (M.caught.length ? "You catalogued " + num(M.caught.length) + " " + plural(M.caught.length, "specimen") + " into your Dex" + (fresh && fresh < M.caught.length ? ", " + num(fresh) + " of them new to it" : fresh ? ", all new to it" : "") + ". " : "") +
+      (M.best ? "Your best chain reached " + num(M.best.n) + (M.best.why ? ", ending on: " + M.best.why : "") + "." : "");
+    M.caught.forEach(c => $("keptChips").append(el("a", (c.fresh ? "✦ " : "") + c.l, {href: wdURL(c.q)})));
+  } else $("kept").hidden = true;
+
+  // 6. the turn
+  const t = turnOf(M); setRich($("turnH"), t.h); $("turnP").textContent = t.p; $("closer").textContent = t.closer; $("tryP").textContent = t.tryp;
+  const E = ECHO[t.echo], ep = $("echoP"); ep.textContent = "This turn echoes "; ep.append(el("a", E[1], {href: E[0]})); ep.append(document.createTextNode("."));
+  $("nextA").href = E[0]; $("nextA").textContent = E[1] + " →";
+  $("suggestA").href = suggestURL(M);
+
+  // sources: every card on the page is a Wikidata item
+  const seen = new Set(), src = $("sources"); src.textContent = "Sources: every card on this page is a Wikidata item. ";
+  const items = [].concat(M.luminaries, M.deck, M.met, M.caught).filter(x => !seen.has(x.q) && seen.add(x.q));
+  items.forEach((x, i) => { src.append(el("a", x.l, {href: wdURL(x.q)})); src.append(document.createTextNode(" (" + x.q + ")" + (i < items.length - 1 ? ", " : ". "))); });
+  const day = d => new Date(d).toLocaleDateString("en-AU", {day: "numeric", month: "long", year: "numeric"});
+  src.append(document.createTextNode("Labels are Wikidata's (CC0) as they stood when the climb was recorded. Made from a Babel climb on " + day(M.made) + ". Solid links are Wikidata statements, dotted ones are matching names, and dashed ones are the climber's own."));
+
+  hero(M);
+}
+
+function showEmpty(message){
+  if(message){ $("emptyH").textContent = message[0]; $("emptyP").textContent = message[1]; }
+  $("title").textContent = "Climbs"; $("lede").textContent = "Pages built from your Babel climbs, here in your browser.";
+  const past = pastClimbs();
+  if(past.length){
+    $("pastBox").hidden = false;
+    past.forEach(x => { const li = el("li"); li.append(el("a", x.t || "A climb", {href: "#" + x.f})); if(x.d) li.append(el("small", x.d.slice(0, 10))); $("pastList").append(li); });
+  }
+  $("empty").hidden = false;
+  hero(null);
+}
+const MESSAGES = {
+  bad: ["This link doesn't <em>hold a climb</em>", "It may have been cut short when it was copied. Open the climb again from Babel's end screen or its 📖 Ex Libris."],
+  big: ["This climb is <em>too large</em>", "Climb links are limited to 32 KB. Save the climb as a file in Babel and open it below."],
+  newer: ["A newer <em>climb</em>", "This climb was recorded by a newer Babel than this page knows. Reload to get the latest page."],
+  old: ["This browser is <em>too old</em>", "It can't unpack the climb. Try a current version of Chrome, Safari or Firefox."],
+  notop: ["This climb didn't <em>reach the top</em>", "Climb pages are made from climbs that reach the summit. Climb again."]
+};
+function showMessage(k){ const m = MESSAGES[k] || MESSAGES.bad; showEmpty([m[0].replace(/<\/?em>/g, ""), m[1]]); setRich($("emptyH"), m[0]); }
+
+async function openRecord(R, frag){
+  const M = normalize(R);
+  if(!M.win) return showMessage("notop");
+  if(frag) remember(frag, M);
+  render(M);
+}
+$("fileIn").addEventListener("change", e => {
+  const f = e.target.files && e.target.files[0]; if(!f) return;
+  if(f.size > 512*1024) return showMessage("big");
+  const rd = new FileReader();
+  rd.onload = async () => { try { const R = JSON.parse(rd.result), frag = await encodeFrag(R); location.hash = frag.length <= MAX_FRAG ? frag : ""; if(frag.length > MAX_FRAG) await openRecord(R, null); } catch(err){ showMessage(err.message); } };
+  rd.readAsText(f);
+});
+addEventListener("hashchange", () => location.reload());
+(async () => {
+  const h = location.hash.slice(1);
+  if(!h) return showEmpty();
+  try { await openRecord(await decodeFrag(h), h); }
+  catch(err){ console.warn(err); showMessage(err.message); }
+})();
+</script>
+</body>
+</html>
