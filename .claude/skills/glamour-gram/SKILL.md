@@ -76,6 +76,7 @@ Never start building before the owner has picked a topic.
    - how it differs from the pages in the table.
 4. Then stop and wait for the owner's reply.
 5. Build only what the owner picks, including any changes they ask for. If they turn all three down, pitch three new ones using what they said.
+6. If the owner pastes a **climb seed** (from a Babel climb page's *Suggest as a Glamour Gram*; see `docs/babel-template.md`), treat it as a topic, not a page. Pitch it in the same format and run the pitch test on it, then wait for a pick. If it's picked, verify every claim from primary sources as for any page. The climb tells you what to write about, never what's true.
 
 Put the chosen pitch and its five answers in the pull request.
 
