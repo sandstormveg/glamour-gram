@@ -16,6 +16,8 @@ The home page is a living organism. Each page is a cell you can zoom into, then 
 - **X · Everyone Like You**: copies cooperate with no message and no second meeting, and genes found out first. Play your twin and Newcomb's boxes, watch Hamilton's rule decide a dish, bend a forecast its subject can hear, and play the game physics caps at 85%.
 - **XI · The Missing Rungs**: the ladder from human to posthuman — superintelligence, superhappiness, superhealth — zoomed in rung by rung, each marked built, shown, drawn or missing. Climb the three ladders, run the arithmetic of escape velocity, measure your own bandwidth, ride the treadmill inside, and find how big one mind can be.
 
+**Climb pages.** `climb.html` is not a numbered page. It builds a page in your browser from a climb in Babel (the deck-builder in the Infodex): at an Epic summit, Babel's *Open your GlamGram* opens `climb.html` with the climb carried in the link's fragment, which never reaches a server. Climb pages add no gene. A good one can be suggested as a numbered Glamour Gram, through the Thursday pitch. Design: `docs/babel-template.md`. Tests: `node tests/climbs/climb.test.js` (needs Playwright).
+
 Plain HTML, no build step. Pages III onward share `glam.css`. Served with GitHub Pages from the `main` branch.
 
 It's also an installable app, GlamGram, that works offline: `manifest.webmanifest` and the service worker `sw.js`. The icons are drawn by `icons/make-icons.js` (run `node make-icons.js` in `icons/`).
