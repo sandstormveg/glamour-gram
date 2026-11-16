@@ -26,6 +26,15 @@ The first version is live in both repositories. Where it differs from the design
 - **The turn bank as built** (`turnOf` in `climb.html`): T1 when the climb has any links of your own (`player`, discoveries or proposed); T2 when the summit Luminary became your Mentor, with the closer *Learning is how you join a mind you never met*, since a Luminary may be living; T4 as designed; then a new turn, *Across the shelves* (a third or more of the links cross kinds, echoing I); then T5, without the hop count, which Babel doesn't export.
 - **Not built yet:** T3 needs birth dates and the quote needs Wikiquote text. Babel exports neither.
 
+### Round two (2026-11-16)
+
+From the owner's first real climb page: "the babel glamgram was very boring. i liked the graphics." It was a record from before Babel kept links, so three of its sections said there was nothing to show. More fundamentally, a page generated from game statistics is a recap, not a Glamour Gram: it has no writer, so it can't tell a story. So:
+
+- **The graphics moved into the game.** After each Luminary, Babel shows the floor behind you: the tower drawn the same way as this page's hero, the pairs your chains joined there with their reasons, and the kinds they crossed. The summit screen draws the whole climb.
+- **This page is about the people.** `babel.climb/3` keeps what each Luminary taught (`luminaries[].teach`): a quote (Wikiquote), a line about them (Wikipedia) and what Wikidata says they discovered, wrote or made. *Who taught you* comes second and shows them, with sources. Sections with nothing to show are hidden rather than apologised for.
+- **The way to a real Glamour Gram is a brief.** *Make it a Glamour Gram* has a text box for what it should be about and angles picked from the climb: the summit's Luminary (ticked), Luminaries' discoveries, your own links, links across kinds, the last Archetype and the theme. The issue opens with the brief, then the picked angles, then the climb. The skill makes the brief the steer for the Thursday pitch, holds a seed to the full bar, and defaults to the Luminaries' discoveries when the brief is empty. The brief and picks are kept on this device (`glamgram.brief.<made>`).
+- **Legendary climbs** (`mode: "legendary"`): six floors, the sixth called the Crown, and `lastArch {q, l, won}` for the last Archetype above it. The page takes up to six floors.
+
 ## 1. Why two kinds of page
 
 The skill's charter puts accuracy first: every load-bearing claim is verified, speculation is flagged, and the owner reviews every page before it goes live. A page generated automatically from a game can't be web-verified, and nobody reviews it. There are two ways to square that:

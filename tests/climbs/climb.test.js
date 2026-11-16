@@ -45,6 +45,13 @@ hostile.deck[0].l = '<img src=x onerror="window.__pwned=1">Cell'; hostile.lumina
 hostile.links[0].why = '<b onmouseover="window.__pwned=3">x</b>'; hostile.links.push({a: 'javascript:alert(1)', b: 'Q1', basis: 'name', why: 'bad'});
 hostile.met.push({q: 'Q1"><svg onload=alert(1)>', l: 'bad'}); hostile.theme = 'x'.repeat(5000); hostile.caught.push({q: 'Q12', l: 'A'.repeat(10000)});
 const loser = JSON.parse(JSON.stringify(base)); loser.win = false;
+// babel.climb/3: a Legendary climb with each Luminary's lesson and the last Archetype
+const legend = JSON.parse(JSON.stringify(base)); legend.schema = 'babel.climb/3'; legend.mode = 'legendary';
+legend.floors.push({n: 6, name: 'The Crown'}); legend.luminaries.push({q: 'Q41688', l: 'James Watson', work: null, floor: 6, arena: 'observatory'});
+legend.met.push({q: 'Q43460', l: 'Molecule', f: 6}); legend.lastArch = {q: 'Q11369', l: 'molecular entity', won: true};
+legend.luminaries[4].teach = {quote: 'If you want to understand function, study structure.', about: 'Francis Crick was an English molecular biologist.', src: 'Francis Crick',
+  lines: [{g: 'disc', items: ['DNA double helix']}, {g: 'wrote', items: ['Life Itself: Its Origin and Nature']}, {g: 'evil', items: ['dropped']}]};
+legend.luminaries[0].teach = {quote: '<script>window.__pwned=4</script>A quote', about: null, src: 'x#y', lines: []};
 fs.writeFileSync(S + 'climb-sample.json', JSON.stringify(base, null, 2));
 
 (async () => {
@@ -97,7 +104,8 @@ fs.writeFileSync(S + 'climb-sample.json', JSON.stringify(base, null, 2));
 
   // 3. a /1 record (what Babel saved before links were kept), uncompressed packing, reduced motion
   ({p, ctx} = await open(packPlain(v1), null, 'reduce'));
-  ok('v1 record renders, explains missing links', (await p.textContent('#joinedP')).includes('recorded before Babel kept the links'), await p.textContent('#joinedP'));
+  ok('v1 record: sections with nothing to show are hidden', await p.evaluate(() => document.getElementById('joined').hidden && document.getElementById('kinds').hidden && !document.getElementById('people').hidden));
+  ok('v1 record: says lessons weren\'t kept then', (await p.textContent('#peopleP')).includes('recorded before Babel kept what each Luminary taught'), await p.textContent('#peopleP'));
   await ctx.close();
 
   // 4. hostile record: nothing injected, long strings cut, bad ids dropped
@@ -122,6 +130,34 @@ fs.writeFileSync(S + 'climb-sample.json', JSON.stringify(base, null, 2));
   await p.waitForFunction(() => location.hash.startsWith('#v1'), null, {timeout: 5000});
   await p.waitForTimeout(1200);
   ok('file open: packed into the link and rendered', (await p.textContent('#title')) === 'From Cell to Francis Crick', await p.textContent('#title'));
+  await ctx.close();
+
+  // 6. a Legendary climb with lessons, and the brief
+  ({p, ctx} = await open(pack(legend), {width: 390, height: 844}));
+  const lede = await p.textContent('#lede');
+  ok('Legendary: six floors, the last Archetype', /six floors of The Machinery of Life, a Legendary climb/.test(lede) && lede.includes('you understood the last Archetype: molecular entity'), lede);
+  ok('Legendary: the ascent goes to VI', await p.evaluate(() => document.getElementById('floorR').max) === '6');
+  ok('Luminaries come second, before the links', await p.evaluate(() => { const ids = [...document.querySelectorAll('main#page > section')].map(x => x.id); return ids.indexOf('people') === 1 && ids.indexOf('people') < ids.indexOf('joined'); }));
+  ok('a Luminary\'s words, sourced', (await p.textContent('#peopleList')).includes('If you want to understand function, study structure.') && await p.locator('#peopleList a[href="https://en.wikiquote.org/wiki/Francis_Crick"]').count() === 1 && await p.locator('#peopleList a[href="https://en.wikipedia.org/wiki/Francis_Crick"]').count() === 1);
+  ok('…and what they gave the world', (await p.textContent('#peopleList')).includes('DiscoveredDNA double helix') && !(await p.textContent('#peopleList')).includes('dropped'));
+  ok('hostile lesson: shown as text, bad source dropped', await p.evaluate(() => !window.__pwned && !document.querySelector('main script')) && (await p.textContent('#peopleList')).includes('<script>') && await p.locator('#peopleList a[href*="x%23y"], #peopleList a[href*="x#y"]').count() === 0);
+  ok('every link is Wikidata, Wikiquote, Wikipedia, GitHub or the site', await p.evaluate(() => [...document.querySelectorAll('a[href]')].every(a => /^https:\/\/www\.wikidata\.org\/wiki\/Q\d+$|^https:\/\/en\.(wikiquote|wikipedia)\.org\/wiki\/[^#?]+$|^https:\/\/github\.com\/sandstormveg\/glamour-gram\/issues\/new\?|^http:\/\/127\.0\.0\.1:8781\//.test(a.href))));
+  const angles = await p.$$eval('#angles label', ls => ls.map(l => [l.querySelector('input').checked, l.textContent]));
+  ok('angles: the summit\'s Luminary first and picked, then Luminaries\' discoveries', angles[0][0] && angles[0][1].startsWith('James Watson') && angles.filter(a => a[0]).length === 1 && angles[1][1].startsWith('Francis Crick: discovered DNA double helix'), angles.slice(0, 3));
+  ok('angles include links across kinds and the last Archetype', angles.some(a => a[1].includes('across kinds')) && angles.some(a => a[1].includes('What everything you met shares: molecular entity')), angles.map(a => a[1].slice(0, 50)));
+  await p.locator('#briefT').fill('Tell it as the race to see a shape nobody could see: let the reader rotate the X-ray pattern until the helix appears.');
+  await p.locator('#angles input').nth(1).check();
+  const body = await p.evaluate(() => decodeURIComponent(new URL(document.getElementById('suggestA').href).searchParams.get('body')));
+  ok('the brief leads the issue', body.includes('## The brief\nTell it as the race to see a shape'), body.slice(0, 300));
+  ok('picked angles listed', /## Angles the climber picked\n- .+\n- .+/.test(body), body.slice(body.indexOf('## Angles'), body.indexOf('## Angles') + 200));
+  ok('the climb follows, with the page link', body.includes('## The climb') && body.includes('a Legendary climb') && body.includes('- Climb page: http://127.0.0.1:8781/climb.html#v1.'));
+  await p.locator('#seed').scrollIntoViewIfNeeded(); await p.locator('#seed').screenshot({path: S + 'seed-phone.png'});
+  await p.locator('#people').screenshot({path: S + 'people-phone.png'});
+  await p.reload(); await p.waitForTimeout(900);
+  ok('the brief and picks are kept on this device', (await p.inputValue('#briefT')).startsWith('Tell it as the race') && await p.locator('#angles input').nth(1).isChecked());
+  await p.locator('#briefT').fill('é'.repeat(1500));
+  const long = await p.evaluate(() => document.getElementById('suggestA').href);
+  ok('a long brief still fits GitHub\'s link limit', long.length <= 7500 && decodeURIComponent(long).includes('éééé'), long.length);
   await ctx.close();
 
   console.log(res.join('\n'));
