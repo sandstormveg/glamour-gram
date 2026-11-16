@@ -96,7 +96,7 @@ Keep this table current: add a row whenever you add a page.
 | VIII | `view-from-elsewhere.html` | The View from Elsewhere | ember | daydream | Moods as lenses; forecasting yourself; brain networks; a letter to a later you |
 | IX | `every-path.html` | Every Path at Once | dawn | ray | Least time and every path: the lifeguard, Feynman's mirror, ants and a corgi that refract |
 | X | `everyone-like-you.html` | Everyone Like You | sea | twin | Correlated choices: your twin, Hamilton's rule, Newcomb, the CHSH ceiling, tomorrow's you |
-| XI | `missing-rungs.html` | The Missing Rungs | ember | rung | Human to posthuman: superintelligence, superhappiness, superhealth, rung by rung |
+| XI | `missing-rungs.html` | The Missing Rungs | ember | rung | Human to posthuman as it stands: a living timeline (keep it current: the `TIMELINE` list in its script), escape velocity, ten bits a second, the treadmill |
 | XII | `way-out.html` | The Way Out Looks Wrong | dawn | stray | Deceptive problems: Einstein's combinatory play, Maxwell's top, Dijkstra's frontier, novelty search, evolution's play, can and can't |
 
 Next page: **XIII**, hue **sea**. From V onward the hues cycle ember, dawn, sea.
@@ -157,6 +157,9 @@ All of these are required:
 8. This file: add the page to the table and update "Next page".
 
 **Genes.** One new behaviour, visible at the overview zoom, that expresses the page's idea through the organism rather than decorating it. Name it with one lowercase word. Write the effect as one plain, literal sentence.
+
+**Genes held for a later page.** Ideas the owner liked that are waiting for the right page. Use one only when the page's core idea is what the gene does.
+- `pair`: now and then, two neighbouring cells trade a fragment of their pattern, and a brief hybrid glows between them. For a page whose core is recombination: sex and crossing-over, horizontal gene transfer, or combinatory creativity (Einstein's "combinatory play").
 
 ## Test before you ship
 
