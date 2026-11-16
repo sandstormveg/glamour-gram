@@ -49,6 +49,22 @@ ul.whys small{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:
 #fileIn{font-family:var(--mono);font-size:13px;color:var(--mute);max-width:100%;margin-top:6px}
 .suggest{display:inline-block;margin-top:6px;font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 14px;text-decoration:none}
 .suggest:hover{border-color:var(--dawn);color:var(--dawn)}
+.teach{margin:10px 0 4px}
+.teach blockquote{margin:0 0 8px;padding-left:14px;border-left:2px solid var(--dawn);font-style:italic;font-size:18px;line-height:1.5;color:var(--ink)}
+.teach cite{display:block;font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--mute);margin-top:4px}
+.teach cite a{color:var(--mute)}
+.teach p.about{font-size:15px;color:var(--mute);margin:0 0 6px;max-width:none}
+.teach ul{list-style:none;padding:0;margin:0;font-size:16px}
+.teach ul li{display:block;padding:2px 0;border:0}
+.teach span.tk{display:inline;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--sea);margin-right:8px}
+#briefT{display:block;width:100%;box-sizing:border-box;min-height:132px;margin:8px 0 4px;background:var(--deep);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;font-size:17px;line-height:1.5;resize:vertical}
+#briefT:focus{outline:none;border-color:var(--dawn)}
+.k-label{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-top:18px;display:block}
+.angles{display:flex;flex-direction:column;gap:8px;margin:10px 0 20px}
+.angles label{display:flex;gap:10px;align-items:flex-start;font-size:16px;line-height:1.45;cursor:pointer;padding:9px 12px;border:1px solid var(--line);border-radius:10px;overflow-wrap:anywhere}
+.angles label:has(input:checked){border-color:var(--dawn)}
+.angles input{margin-top:5px;accent-color:var(--dawn);flex:none}
+.angles small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--mute)}
 </style>
 </head>
 <body>
@@ -79,6 +95,13 @@ ul.whys small{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:
     <div class="chips" id="flChips"></div>
     <p class="caption" id="floorCap">The things you fought on the floor, in the order you met them. Each links to its Wikidata page.</p>
   </div>
+</div></section>
+
+<section id="people"><div class="wrap">
+  <div class="eyebrow">Who taught you</div>
+  <h2>The <em>Luminaries</em></h2>
+  <p id="peopleP"></p>
+  <ol class="floors" id="peopleList"></ol>
 </div></section>
 
 <section id="joined"><div class="wrap">
@@ -118,13 +141,6 @@ ul.whys small{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:
   </div>
 </div></section>
 
-<section id="people"><div class="wrap">
-  <div class="eyebrow">Who taught you</div>
-  <h2>The <em>Luminaries</em></h2>
-  <p id="peopleP"></p>
-  <ol class="floors" id="peopleList"></ol>
-</div></section>
-
 <section id="kept"><div class="wrap">
   <div class="eyebrow">What you kept</div>
   <h2>Into <em>your Dex</em></h2>
@@ -139,7 +155,18 @@ ul.whys small{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:
   <p class="closer" id="closer"></p>
   <div class="callout"><div class="eyebrow">Try this week</div><p id="tryP"></p></div>
   <p class="note" id="echoP"></p>
-  <p class="note">Was this a climb worth a whole Glamour Gram? <a class="suggest" id="suggestA" target="_blank" rel="noopener">Suggest it as a Glamour Gram</a><br>That opens a GitHub issue, already filled in. Submit it, and the next Thursday pitch session will consider the climb as one of its ideas. Issues are public, and this one carries the climb's link.</p>
+</div></section>
+
+<section id="seed"><div class="wrap">
+  <div class="eyebrow">Make it a Glamour Gram</div>
+  <h2>What should it <em>be about?</em></h2>
+  <p>This page is a record of your climb. A Glamour Gram is something else: short, true and extraordinary, a story with a turn in it and something to play with. If this climb holds one, say what it should be. Your words are the brief, and the Thursday session pitches from them first.</p>
+  <label class="k-label" for="briefT">Your brief</label>
+  <textarea id="briefT" rows="5" maxlength="1500" placeholder="What story should it tell? What should a reader get to play with? What should they walk away knowing?"></textarea>
+  <span class="k-label" id="anglesL">Angles from your climb · pick any</span>
+  <div class="angles" id="angles" role="group" aria-labelledby="anglesL"></div>
+  <a class="suggest" id="suggestA" target="_blank" rel="noopener">Send it to the Thursday session</a>
+  <p class="note">That opens a GitHub issue with your brief, the angles you picked and the climb, already filled in. Submit it there. Issues are public, and this one carries the climb's link.</p>
 </div></section>
 </main>
 
@@ -186,7 +213,7 @@ function rgba(v, a){ const n = parseInt(C(v).slice(1), 16); return `rgba(${n >> 
 function el(tag, text, attrs){ const n = document.createElement(tag); if(text != null) n.textContent = text; if(attrs) for(const k in attrs) n.setAttribute(k, attrs[k]); return n; }
 function hashStr(s){ let h = 2166136261; for(let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
 function rng(seed){ let a = seed || 1; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0)/4294967296; }; }
-const ROMAN = ["", "I", "II", "III", "IV", "V"];
+const ROMAN = ["", "I", "II", "III", "IV", "V", "VI"];
 const WORDS = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
 const num = n => n <= 10 ? WORDS[n] : n.toLocaleString("en");
 const Cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
@@ -237,22 +264,32 @@ async function encodeFrag(rec){   // the same packing Babel uses, for a climb op
   }
   return "v1u." + b64uEncode(raw);
 }
-// Babel's record, babel.climb/1 or /2, into the page's model. Bad entries are dropped; a record whose core is wrong is refused.
+// Babel's record, babel.climb/1 to /3, into the page's model. Bad entries are dropped; a record whose core is wrong is refused.
+// /3 adds each Luminary's lesson (teach: a Wikiquote quote, a Wikipedia line, what Wikidata says they gave the world), Legendary climbs and the last Archetype.
+const TEACH = {disc: "Discovered", work: "Known for", wrote: "Wrote", made: "Made", founded: "Founded", field: "Worked in", teacher: "Learned from", movement: "Part of", school: "Studied at", award: "Honoured with", team: "Life's work"};
+const MAXF = 6;
+function teachOf(t){
+  if(!t || typeof t !== "object") return null;
+  const lines = arr(t.lines, 5).filter(L => L && TEACH[L.g]).map(L => ({g: L.g, items: arr(L.items, 3).map(x => str(x, 80)).filter(Boolean)})).filter(L => L.items.length);
+  const o = {quote: str(t.quote, 400) || null, about: str(t.about, 360) || null, src: typeof t.src === "string" && t.src.length <= 200 && !/[\u0000-\u001f#?]/.test(t.src) ? t.src : null, lines};
+  return o.quote || o.about || lines.length ? o : null;
+}
 function normalize(R){
   if(!R || typeof R !== "object" || Array.isArray(R)) throw new Error("bad");
   const sm = /^babel\.climb\/(\d+)$/.exec(R.schema || "");
   if(!sm) throw new Error("bad");
-  if(+sm[1] > 2) throw new Error("newer");
+  if(+sm[1] > 3) throw new Error("newer");
   const time = v => typeof v === "string" && v.length <= 40 && !isNaN(Date.parse(v)) ? v : null;
-  const M = {v: +sm[1], win: R.win === true, mode: R.mode === "epic" ? "epic" : "classic", theme: str(R.theme, 60) || null,
+  const M = {v: +sm[1], win: R.win === true, mode: R.mode === "epic" || R.mode === "legendary" ? R.mode : "classic", theme: str(R.theme, 60) || null,
     made: time(R.made), started: time(R.started), galleries: int(R.galleries, 0, 9999)};
-  M.floors = arr(R.floors, 5).map(f => ({n: int(f && f.n, 1, 5), name: str(f && f.name, 60)})).filter(f => f.n && f.name);
-  M.luminaries = arr(R.luminaries, 5).filter(o => o && isQ(o.q)).map(o => ({q: o.q, l: str(o.l, 80) || o.q, work: str(o.work, 120) || null, floor: int(o.floor, 1, 5)}));
+  M.floors = arr(R.floors, MAXF).map(f => ({n: int(f && f.n, 1, MAXF), name: str(f && f.name, 60)})).filter(f => f.n && f.name);
+  M.luminaries = arr(R.luminaries, MAXF).filter(o => o && isQ(o.q)).map(o => ({q: o.q, l: str(o.l, 80) || o.q, work: str(o.work, 120) || null, floor: int(o.floor, 1, MAXF), teach: teachOf(o.teach)}));
+  const la = R.lastArch; M.lastArch = la && isQ(la.q) ? {q: la.q, l: str(la.l, 80) || la.q, won: la.won === true} : null;
   M.mentors = arr(R.mentors, 10).filter(o => o && isQ(o.q)).map(o => ({q: o.q, l: str(o.l, 80) || o.q}));
   M.deck = arr(R.deck, 120).filter(o => o && isQ(o.q)).map(o => ({q: o.q, l: str(o.l, 80) || o.q, type: TYPES[o.type] ? o.type : null}));
-  M.met = arr(R.met, 200).filter(o => o && isQ(o.q)).map((o, i) => ({q: o.q, l: str(o.l, 80) || o.q, f: int(o.f, 1, 5), i}));
+  M.met = arr(R.met, 200).filter(o => o && isQ(o.q)).map((o, i) => ({q: o.q, l: str(o.l, 80) || o.q, f: int(o.f, 1, MAXF), i}));
   M.links = M.v >= 2 ? arr(R.links, 60).filter(o => o && isQ(o.a) && isQ(o.b) && o.a !== o.b && BASES[o.basis]).map(o => ({a: o.a, b: o.b, al: str(o.al, 80) || o.a, bl: str(o.bl, 80) || o.b,
-    why: str(o.why, 200), basis: o.basis, lens: str(o.lens, 20) || null, floor: int(o.floor, 1, 5), times: int(o.times, 1, 99999) || 1})) : [];
+    why: str(o.why, 200), basis: o.basis, lens: str(o.lens, 20) || null, floor: int(o.floor, 1, MAXF), times: int(o.times, 1, 99999) || 1})) : [];
   M.discoveries = arr(R.discoveries, 30).map(d => str(d, 160)).filter(Boolean);
   M.proposed = arr(R.proposed, 30).filter(p => Array.isArray(p) && isQ(p[0]) && isQ(p[1]));
   M.caught = arr(R.caught, 60).filter(o => o && isQ(o.q)).map(o => ({q: o.q, l: str(o.l, 80) || o.q, fresh: o.n === true}));
@@ -545,22 +582,85 @@ function setRich(node, html){   // only for the bank's own hand-written headings
   node.textContent = ""; html.split(/(<em>.*?<\/em>)/).forEach(part => { const m = /^<em>(.*)<\/em>$/.exec(part); node.append(m ? el("em", m[1]) : document.createTextNode(part)); });
 }
 
-/* ---------- suggest as a Glamour Gram: a pre-filled GitHub issue, so nothing is copied or pasted ---------- */
-function suggestURL(M){
+/* ---------- make it a Glamour Gram: your brief, the angles you pick, and the climb, as a pre-filled GitHub issue ---------- */
+// Angles are inferred from the record, Luminaries' discoveries first: what they gave the world is what Glamour Grams are usually about.
+function gaveOf(L){
+  const t = L.teach, g = t && (["disc", "work", "wrote", "made", "founded"].map(k => t.lines.find(x => x.g === k)).find(Boolean));
+  return g ? TEACH[g.g].toLowerCase() + " " + g.items.join(", ") : L.work ? "known for " + L.work : null;
+}
+function anglesOf(M){
+  const out = [], top = summitOf(M), T = typeOf(M);
+  const lum = L => { const g = gaveOf(L); return {k: "lum", on: L === top, t: L.l + (g ? ": " + g : ""), s: (L === top ? "the summit's Luminary" : "Luminary of floor " + (ROMAN[L.floor] || "?")) + (isMentor(M, L.q) ? " · your Mentor" : "")}; };
+  const rest = M.luminaries.filter(L => L !== top).sort((a, b) => (b.floor || 0) - (a.floor || 0)), told = rest.filter(L => gaveOf(L)), named = rest.filter(L => !gaveOf(L));
+  if(top) out.push(lum(top));
+  told.slice(0, 3).forEach(L => out.push(lum(L)));
+  const own = M.links.filter(L => L.basis === "player"), cross = M.links.filter(L => L.basis !== "player" && T[L.a] && T[L.b] && T[L.a] !== T[L.b]).sort((a, b) => b.times - a.times);
+  own.slice(0, 2).forEach(L => out.push({k: "link", t: L.al + " and " + L.bl, s: "a link you made yourself, unchecked"}));
+  cross.slice(0, 3).forEach(L => out.push({k: "link", t: L.al + " and " + L.bl + (L.why ? ": " + L.why : ""), s: "across kinds, " + TYPES[T[L.a]] + " and " + TYPES[T[L.b]] + (L.times > 1 ? ", played " + num(L.times) + " times" : "")}));
+  if(M.lastArch) out.push({k: "arch", t: "What everything you met shares: " + M.lastArch.l, s: "the last Archetype"});
+  if(M.theme) out.push({k: "theme", t: "The theme: " + M.theme, s: "the climb's theme"});
+  told.slice(3).concat(named).forEach(L => out.push(lum(L)));   // the other Luminaries, by name
+  return out.slice(0, 12);
+}
+function suggestURL(M, brief, angles, picked){
   const top = summitOf(M), pick = M.links.slice().sort((a, b) => b.times - a.times).slice(0, 5);
-  const lines = ["A climb seed from a Babel climb page. The Thursday pitch session treats it as a topic, runs the pitch test, and verifies everything from primary sources if it's picked.", "",
-    "**" + titleOf(M) + "**", ""];
-  if(M.theme) lines.push("- Theme: " + M.theme);
-  lines.push("- Floors: " + M.floors.map(f => ROMAN[f.n] + " " + f.name).join(", "));
-  if(M.luminaries.length) lines.push("- Luminaries: " + M.luminaries.map(L => L.l + (L.work ? " (" + L.work + ")" : "") + " " + L.q).join("; "));
-  if(pick.length) lines.push("- Links played most: " + pick.map(L => L.why + " [" + L.basis + "]").join("; "));
-  if(M.discoveries.length) lines.push("- The climber's own links: " + M.discoveries.join("; "));
-  if(M.caught.length) lines.push("- Catalogued: " + M.caught.map(c => c.l).join(", "));
-  lines.push("- Climbed: " + M.made.slice(0, 10) + (top ? " · summit: " + top.l : ""));
+  const head = ["A climb seed from a Babel climb page. The Thursday pitch session reads the brief first, pitches from it, runs the pitch test, and verifies everything from primary sources if it's picked.", "",
+    "## The brief", brief.trim() || "(No brief. Pitch from the angles and the climb, the Luminaries' discoveries first.)", ""];
+  const chosen = angles.filter((a, i) => picked[i]), rest = angles.filter((a, i) => !picked[i]);
+  const ang = chosen.length ? ["## Angles the climber picked"].concat(chosen.map(a => "- " + a.t + " (" + a.s + ")"), [""]) : [];
+  const other = rest.length ? ["## Other angles in the climb"].concat(rest.map(a => "- " + a.t), [""]) : [];
+  const climb = ["## The climb", "**" + titleOf(M) + "**" + (M.mode === "legendary" ? " · a Legendary climb" : M.mode === "epic" ? " · an Epic climb" : "")];
+  if(M.theme) climb.push("- Theme: " + M.theme);
+  climb.push("- Floors: " + M.floors.map(f => ROMAN[f.n] + " " + f.name).join(", "));
+  if(M.luminaries.length) climb.push("- Luminaries: " + M.luminaries.map(L => L.l + " " + L.q + (gaveOf(L) ? ", " + gaveOf(L) : "")).join("; "));
+  if(pick.length) climb.push("- Links played most: " + pick.map(L => L.why + " [" + L.basis + "]").join("; "));
+  if(M.discoveries.length) climb.push("- The climber's own links: " + M.discoveries.join("; "));
+  if(M.lastArch) climb.push("- The last Archetype: " + M.lastArch.l + " " + M.lastArch.q + (M.lastArch.won ? ", understood" : ", not beaten"));
+  if(M.caught.length) climb.push("- Catalogued: " + M.caught.map(c => c.l).join(", "));
+  climb.push("- Climbed: " + M.made.slice(0, 10) + (top ? " · summit: " + top.l : ""));
   const base = "https://github.com/sandstormveg/glamour-gram/issues/new?title=" + encodeURIComponent("Climb seed: " + titleOf(M)) + "&body=";
-  let body = lines.join("\n"), url = base + encodeURIComponent(body + "\n\n- Climb page: " + location.href);
-  if(url.length > 7500) url = base + encodeURIComponent(body);   // keep under GitHub's URL limit; the page link is the long part
-  return url.length > 7500 ? base + encodeURIComponent(body.slice(0, 3000)) : url;
+  const link = "- Climb page: " + location.href, fit = parts => base + encodeURIComponent(parts.join("\n"));
+  // keep under GitHub's URL limit: drop the least needed first; the brief goes last, and is only ever shortened
+  const tries = [head.concat(ang, other, climb, [link]), head.concat(ang, climb, [link]), head.concat(ang, climb), head.concat(ang, climb.slice(0, 4)), head.concat(ang)];
+  for(const t of tries){ const u = fit(t); if(u.length <= 7500) return u; }
+  let b = brief.trim();
+  while(b.length > 40){ b = b.slice(0, Math.floor(b.length*0.8)); const u = fit(head.slice(0, 3).concat([b + "…", ""], ang)); if(u.length <= 7500) return u; }
+  return fit(head.slice(0, 3).concat(["(The brief was too long for a link; please paste it into the issue.)"]));
+}
+function seed(M){
+  const angles = anglesOf(M), box = $("angles"), ta = $("briefT"), key = "glamgram.brief." + M.made;
+  const picked = angles.map(a => !!a.on);
+  try { const d = JSON.parse(localStorage.getItem(key) || "null"); if(d && typeof d.b === "string") ta.value = d.b.slice(0, 1500); if(d && Array.isArray(d.p)) d.p.forEach((v, i) => { if(i < picked.length) picked[i] = v === true; }); } catch(e){}
+  function update(){
+    $("suggestA").href = suggestURL(M, ta.value, angles, picked);
+    try { localStorage.setItem(key, JSON.stringify({b: ta.value, p: picked})); } catch(e){}
+  }
+  angles.forEach((a, i) => {
+    const lab = el("label"), cb = el("input", null, {type: "checkbox"}), txt = el("span");
+    cb.checked = picked[i]; cb.addEventListener("change", () => { picked[i] = cb.checked; update(); });
+    txt.append(document.createTextNode(a.t)); txt.append(el("small", a.s));
+    lab.append(cb, txt); box.append(lab);
+  });
+  if(!angles.length) { $("anglesL").hidden = true; box.hidden = true; }
+  ta.addEventListener("input", update);
+  update();
+}
+
+/* ---------- what a Luminary taught: their words (Wikiquote), a line about them (Wikipedia), what they gave the world (Wikidata) ---------- */
+function teachEl(L){
+  const t = L.teach, box = el("div", null, {class: "teach"}), page = t.src ? encodeURIComponent(t.src.replace(/ /g, "_")) : null;
+  if(t.quote){
+    const q = el("blockquote", "“" + t.quote + "”"), c = el("cite", "— " + L.l + (page ? ", " : ""));
+    if(page) c.append(el("a", "Wikiquote", {href: "https://en.wikiquote.org/wiki/" + page}));
+    q.append(c); box.append(q);
+  }
+  if(t.about){ const p = el("p", t.about + " ", {class: "about"}); if(page) p.append(el("a", "Wikipedia", {href: "https://en.wikipedia.org/wiki/" + page})); box.append(p); }
+  if(t.lines.length){
+    const ul = el("ul");
+    t.lines.forEach(x => { const li = el("li"); li.append(el("span", TEACH[x.g], {class: "tk"})); li.append(document.createTextNode(x.items.join(", "))); ul.append(li); });
+    box.append(ul);
+  }
+  return box;
 }
 
 /* ---------- the page ---------- */
@@ -569,10 +669,11 @@ function render(M){
   const top = summitOf(M), T = typeOf(M), X = crossOf(M), nF = M.floors.length, title = titleOf(M);
   document.title = title + " · Glamour Gram";
   $("title").textContent = title;
-  const lede = ["You climbed " + num(nF) + " " + plural(nF, "floor") + (M.theme ? " of " + M.theme : "") + (top && M.deck[0] ? ", from " + Cap(M.deck[0].l) + " to " + top.l : "") + "."];
+  const lede = ["You climbed " + num(nF) + " " + plural(nF, "floor") + (M.theme ? " of " + M.theme : "") + (M.mode === "legendary" ? ", a Legendary climb" : "") + (top && M.deck[0] ? ", from " + Cap(M.deck[0].l) + " to " + top.l : "") + "."];
   if(M.luminaries.length){ const mm = M.luminaries.filter(L => isMentor(M, L.q)).length;
     lede.push("You met " + num(M.luminaries.length) + " " + plural(M.luminaries.length, "Luminary", "Luminaries") + (mm ? ", and " + (mm === M.luminaries.length && mm > 1 ? "all " + num(mm) : num(mm)) + " became your " + plural(mm, "Mentor") : "") + "."); }
   if(M.links.length) lede.push("You joined " + num(M.links.length) + " " + plural(M.links.length, "pair") + " of things" + (X.length ? ", " + num(X.length) + " of them across kinds" : "") + ".");
+  if(M.lastArch) lede.push(M.lastArch.won ? "Above the Crown, you understood the last Archetype: " + M.lastArch.l + "." : "Above the Crown, the last Archetype, " + M.lastArch.l + ", was too strong this time, and the summit held.");
   $("lede").textContent = lede.join(" ");
 
   // 1. the ascent
@@ -595,16 +696,12 @@ function render(M){
     const most = M.links.slice().sort((a, b) => b.times - a.times)[0];
     $("joinedTop").textContent = most.times > 1 ? "The pair you played together most was " + most.al + " and " + most.bl + ", " + num(most.times) + " times. Babel's reason: " + most.why + "." : "";
     if(M.links.length >= 2) web(M); else $("webBox").hidden = true;
-  } else {
-    $("joinedP").textContent = M.v < 2 ? "This climb was recorded before Babel kept the links you made, so there are none to show." : "This climb's record has no linked pairs.";
-    $("webBox").hidden = true;
-  }
+  } else $("joined").hidden = true;   // nothing to show: older records didn't keep links
 
   // 3. kinds
-  if(M.deck.some(d => d.type)){
+  if(X.length){
     const k = kinds(M);
-    $("kindsP").textContent = X.length ? num(X.length).replace(/^./, c => c.toUpperCase()) + " of your links joined two different kinds of card" + (k.top ? ", most often " + k.top.split("|").map(t => TYPES[t]).join(" and ") : "") + "." : "None of your recorded links crossed between kinds. Every pair joined two cards of the same kind.";
-    if(!X.length && !M.links.length) $("kindBox").hidden = true;
+    $("kindsP").textContent = Cap(num(X.length)) + " of your links joined two different kinds of card" + (k.top ? ", most often " + k.top.split("|").map(t => TYPES[t]).join(" and ") : "") + ".";
   } else $("kinds").hidden = true;
 
   // 4. Luminaries
@@ -616,8 +713,10 @@ function render(M){
       const li = el("li"), b = el("b"); b.append(el("a", L.l, {href: wdURL(L.q)}));
       li.append(el("div", L.floor ? ROMAN[L.floor] : "", {class: "n"}));
       const d = el("div"); d.append(b); d.append(el("span", (L.work ? L.work : "") + (isMentor(M, L.q) ? (L.work ? " · " : "") + "♛ your Mentor" : "")));
+      if(L.teach) d.append(teachEl(L));
       li.append(d); ol.append(li);
     });
+    if(!M.luminaries.some(L => L.teach)) $("peopleP").append(document.createTextNode(" This climb was recorded before Babel kept what each Luminary taught; climbs from now on carry their words and discoveries."));
   } else $("people").hidden = true;
 
   // 5. kept
@@ -632,7 +731,7 @@ function render(M){
   const t = turnOf(M); setRich($("turnH"), t.h); $("turnP").textContent = t.p; $("closer").textContent = t.closer; $("tryP").textContent = t.tryp;
   const E = ECHO[t.echo], ep = $("echoP"); ep.textContent = "This turn echoes "; ep.append(el("a", E[1], {href: E[0]})); ep.append(document.createTextNode("."));
   $("nextA").href = E[0]; $("nextA").textContent = E[1] + " →";
-  $("suggestA").href = suggestURL(M);
+  seed(M);
 
   // sources: every card on the page is a Wikidata item
   const seen = new Set(), src = $("sources"); src.textContent = "Sources: every card on this page is a Wikidata item. ";
@@ -640,6 +739,7 @@ function render(M){
   items.forEach((x, i) => { src.append(el("a", x.l, {href: wdURL(x.q)})); src.append(document.createTextNode(" (" + x.q + ")" + (i < items.length - 1 ? ", " : ". "))); });
   const day = d => new Date(d).toLocaleDateString("en-AU", {day: "numeric", month: "long", year: "numeric"});
   src.append(document.createTextNode("Labels are Wikidata's (CC0) as they stood when the climb was recorded. Made from a Babel climb on " + day(M.made) + ". Solid links are Wikidata statements, dotted ones are matching names, and dashed ones are the climber's own."));
+  if(M.luminaries.some(L => L.teach)) src.append(document.createTextNode(" Each Luminary's quote is from Wikiquote and the line about them from Wikipedia (both CC BY-SA 4.0), as Babel fetched them during the climb; what they discovered, wrote or made is from Wikidata."));
 
   hero(M);
 }
