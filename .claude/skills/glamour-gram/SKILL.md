@@ -97,8 +97,9 @@ Keep this table current: add a row whenever you add a page.
 | IX | `every-path.html` | Every Path at Once | dawn | ray | Least time and every path: the lifeguard, Feynman's mirror, ants and a corgi that refract |
 | X | `everyone-like-you.html` | Everyone Like You | sea | twin | Correlated choices: your twin, Hamilton's rule, Newcomb, the CHSH ceiling, tomorrow's you |
 | XI | `missing-rungs.html` | The Missing Rungs | ember | rung | Human to posthuman: superintelligence, superhappiness, superhealth, rung by rung |
+| XII | `way-out.html` | The Way Out Looks Wrong | dawn | stray | Deceptive problems: Einstein's combinatory play, Maxwell's top, Dijkstra's frontier, novelty search, evolution's play, can and can't |
 
-Next page: **XII**, hue **dawn**. From V onward the hues cycle ember, dawn, sea.
+Next page: **XIII**, hue **sea**. From V onward the hues cycle ember, dawn, sea.
 
 ## Accuracy
 

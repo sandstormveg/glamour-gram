@@ -128,7 +128,11 @@ const PAGES = [
   {n:"XI", slug:"missing-rungs.html", title:"The Missing Rungs", hue:"--ember", gene:"rung",
    hook:"The ladder from human to posthuman, zoomed in rung by rung: what's built, what's drawn but not built, and what nobody knows how to make.",
    effect:"The organism reaches past its own edge: rungs climb outward, and the highest ones aren't built yet.",
-   sections:[["three","The three supers"],["ladder","The ladder"],["health","Escape velocity"],["mind","Ten bits a second"],["mood","The treadmill inside"],["after","How big is a mind?"],["rungs","The lowest gap"]]}
+   sections:[["three","The three supers"],["ladder","The ladder"],["health","Escape velocity"],["mind","Ten bits a second"],["mood","The treadmill inside"],["after","How big is a mind?"],["rungs","The lowest gap"]]},
+  {n:"XII", slug:"way-out.html", title:"The Way Out Looks Wrong", hue:"--dawn", gene:"stray",
+   hook:"Some problems are deceptive: every step toward the answer leads into a trap. Einstein, Maxwell, Dijkstra and evolution itself found the way out by playing.",
+   effect:"A few explorers wander the organism, each steering toward wherever no explorer has been, so their trails slowly fill every gap.",
+   sections:[["played","Combinatory play"],["cafe","Dijkstra's café"],["maze","The deceptive maze"],["evolution","Evolution plays"],["stones","Stepping stones"]]}
 ];
 
 const css = getComputedStyle(document.documentElement);
@@ -360,6 +364,18 @@ const motif = {
     ctx.globalAlpha = 1; ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(x, cy, Math.max(1.5, R*0.06), 0, 7); ctx.fill();
     ctx.globalAlpha = 1;
   },
+  stray(x,y,R,t){   // a wall between a dot and the exit: the dot goes away, up and round, because the way out looks wrong
+    const P = [[x + R*0.25, y + R*0.4], [x + R*0.5, y + R*0.4], [x + R*0.5, y - R*0.35], [x - R*0.3, y - R*0.35]];
+    ctx.strokeStyle = C("--ink"); ctx.globalAlpha = 0.6; ctx.lineWidth = Math.max(1, R*0.03);
+    ctx.beginPath(); ctx.moveTo(x - R*0.55, y - R*0.08); ctx.lineTo(x + R*0.3, y - R*0.08); ctx.stroke();
+    ctx.globalAlpha = 0.35; ctx.setLineDash([R*0.04, R*0.05]); ctx.strokeStyle = C("--sea");
+    ctx.beginPath(); P.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke(); ctx.setLineDash([]);
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(P[3][0], P[3][1], Math.max(1.5, R*0.07), 0, 7); ctx.fill();
+    const L = [0, 1, 2].map(i => Math.hypot(P[i+1][0] - P[i][0], P[i+1][1] - P[i][1])), tot = L[0] + L[1] + L[2];
+    let d = ((t*0.22) % 1)*tot, k = 0; while(k < 2 && d > L[k]){ d -= L[k]; k++; }
+    const f = Math.min(1, d/L[k]), px = P[k][0] + (P[k+1][0] - P[k][0])*f, py = P[k][1] + (P[k+1][1] - P[k][1])*f;
+    ctx.fillStyle = C("--sea"); ctx.beginPath(); ctx.arc(px, py, Math.max(1.5, R*0.06), 0, 7); ctx.fill();
+  },
   glow(x,y,R,t){ ctx.fillStyle = C("--dawn"); ctx.globalAlpha = 0.5 + 0.3*Math.sin(t); ctx.beginPath(); ctx.arc(x,y,R*0.15,0,7); ctx.fill(); ctx.globalAlpha = 1; }
 };
 
@@ -501,6 +517,9 @@ function render(t, dt){
     if(R > 70 && !deep){ ctx.font = `italic ${Math.min(22, R*0.15)}px "Bodoni Moda", Georgia, serif`; ctx.fillStyle = hov ? C("--dawn") : C("--ink"); ctx.fillText(cl.p.title, x, y + R*0.78, R*1.6); }
     ctx.textAlign = "left";
   });
+
+  // stray gene: a few explorers wander the organism, each steering for wherever no explorer has been
+  if(has("stray")) strayGene(dt);
 
   // rung gene: the organism reaches past its own edge, growing ladders whose highest rungs aren't built yet
   if(has("rung")) rungsGene(t);
@@ -652,6 +671,50 @@ function rungsGene(t){
     ctx.beginPath(); ctx.arc(bx + ca*reach*f, by + sa*reach*f, Math.max(1.5, OR*0.012), 0, 7); ctx.fill();
   });
   ctx.globalAlpha = 1; ctx.lineWidth = 1;
+}
+
+/* ---------- stray gene: novelty search in miniature; each explorer turns toward the least-visited way ahead, so the trails fill every gap ---------- */
+const strays = (()=>{
+  const N = 24, R0 = 0.95, seen = new Float32Array(N*N);
+  const cellOf = (x, y) => { const i = Math.floor((x/R0*0.5 + 0.5)*N), j = Math.floor((y/R0*0.5 + 0.5)*N); return i < 0 || j < 0 || i >= N || j >= N ? -1 : j*N + i; };
+  const walkers = Array.from({length: 5}, (_, k)=>({x: 0.25*Math.cos(k*1.26), y: 0.25*Math.sin(k*1.26), a: k*1.26 + 1, next: k*0.1, trail: []}));
+  function step(dt){
+    walkers.forEach(w=>{
+      w.next -= dt;
+      if(w.next <= 0){   // look seven ways ahead and turn toward the one explorers have visited least
+        let best = w.a, bv = Infinity;
+        for(let k = 0; k < 7; k++){
+          const a = w.a + (k - 3)*0.45, x = w.x + Math.cos(a)*0.14, y = w.y + Math.sin(a)*0.14, c = cellOf(x, y);
+          const v = Math.hypot(x, y) > 0.84 || c < 0 ? Infinity : seen[c] + Math.random()*0.25;
+          if(v < bv){ bv = v; best = a; }
+        }
+        w.a = bv === Infinity ? Math.atan2(-w.y, -w.x) + (Math.random() - 0.5) : best; w.next = 0.45;
+      }
+      w.x += Math.cos(w.a)*0.1*dt; w.y += Math.sin(w.a)*0.1*dt;
+      const c = cellOf(w.x, w.y); if(c >= 0) seen[c] += dt;
+      w.trail.push([w.x, w.y]); if(w.trail.length > 700) w.trail.shift();
+    });
+  }
+  if(reduce) for(let i = 0; i < 600; i++) step(0.05);   // a still frame that already shows the trails
+  return {step, walkers};
+})();
+function strayGene(dt){
+  const fade = Math.max(0, Math.min(1, (240 - cells[0].r*cam.s)/130));
+  if(!reduce && dt > 0) strays.step(dt);
+  if(fade <= 0) return;
+  ctx.lineWidth = 1.6; ctx.strokeStyle = C("--sea"); ctx.lineCap = "round";
+  strays.walkers.forEach(w=>{
+    const n = w.trail.length;
+    for(let i = 1; i < n; i += 2){
+      const [x1, y1] = toScreen(...w.trail[i - 1]), [x2, y2] = toScreen(...w.trail[Math.min(n - 1, i + 1)]);
+      ctx.globalAlpha = 0.75*fade*Math.pow(i/n, 1.5); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    }
+    if(n){ const [hx, hy] = toScreen(...w.trail[n - 1]), halo = ctx.createRadialGradient(hx, hy, 0, hx, hy, 9);   // the explorer, lit
+      halo.addColorStop(0, "rgba(111,194,184,0.6)"); halo.addColorStop(1, "rgba(111,194,184,0)");
+      ctx.globalAlpha = fade; ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(hx, hy, 9, 0, 7); ctx.fill();
+      ctx.fillStyle = C("--ink"); ctx.beginPath(); ctx.arc(hx, hy, 2.2, 0, 7); ctx.fill(); }
+  });
+  ctx.globalAlpha = 1; ctx.lineWidth = 1; ctx.lineCap = "butt";
 }
 
 /* ---------- run ---------- */
