@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1016">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="GlamGram">
+<script>if("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
+<title>The Way Out Looks Wrong · Glamour Gram</title>
+<meta name="description" content="Some problems are deceptive: every step toward the answer leads into a trap. Einstein, Maxwell and Dijkstra played their way out, and evolution does it with no mind at all. Spin Maxwell's top, run Dijkstra's frontier through a cave, and race two kinds of evolution through a deceptive maze.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
+<style>
+/* Layout: the title is a deceptive maze, with two families of robots evolving to escape it: gold bred for getting closer to the exit,
+   teal bred only for ending up somewhere new. Gold crowds the pocket under the exit; teal floods the maze and finds the way round.
+   Then five sections, each ending in a short fable: the minds who played (Maxwell's top), Dijkstra's twenty-minute frontier through
+   a generated cave, the deceptive maze itself, evolution's own play and the can-and-can't of physics, and the turn: stepping stones
+   don't look like the goal. */
+[hidden]{display:none!important}
+.hero canvas{cursor:pointer}
+.say{font-size:17px;margin:14px 0 0;min-height:1.6em;max-width:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--mute)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.legend i.bar{border-radius:0;height:2px;width:16px;vertical-align:3px}
+blockquote{margin:22px 0;padding:4px 0 4px 18px;border-left:2px solid var(--dawn);font-family:var(--display);font-style:italic;font-size:clamp(20px,3vw,24px);line-height:1.4;max-width:58ch}
+blockquote cite{display:block;margin-top:8px;font-family:var(--mono);font-style:normal;font-size:12px;letter-spacing:.06em;color:var(--mute)}
+/* the fable: one short tale per section, clearly fiction */
+.fable{margin-top:30px;padding:2px 0 2px 18px;border-left:1px solid var(--line)}
+.fable .eyebrow{color:var(--mute)}
+.fable p{font-family:var(--display);font-style:italic;font-size:19px;line-height:1.55;color:var(--ink);max-width:56ch}
+.fable p:last-child{margin-bottom:0}
+.controls .seg{display:flex;gap:6px;flex-wrap:wrap}
+.match{color:var(--dawn)}
+/* can or can't: one card at a time */
+.card{border:1px solid var(--line);border-radius:6px;padding:18px;background:var(--night);min-height:150px}
+.card .task{font-family:var(--display);font-size:clamp(22px,3.6vw,28px);line-height:1.25;margin:4px 0 14px}
+.card .verdict{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.card .verdict.can{color:var(--sea)}
+.card .verdict.cant{color:var(--ember)}
+.card .why{font-size:17px;margin:8px 0 0}
+.card .why small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--mute);margin-top:6px}
+.pips{display:flex;gap:6px;margin-top:12px}
+.pips i{width:10px;height:10px;border-radius:50%;border:1px solid var(--line)}
+.pips i.ok{background:var(--sea);border-color:var(--sea)}
+.pips i.no{background:var(--ember);border-color:var(--ember)}
+.pips i.now{border-color:var(--dawn)}
+h3{margin-top:34px}
+#topCv,#caveCv,#mazeCv{cursor:pointer}
+</style>
+</head>
+<body>
+<header class="hero" id="hero" aria-label="A maze. Two families of little robots evolve to escape it. The gold family is bred for getting closer to the exit and crowds into a pocket just below it. The teal family is bred only for ending up somewhere new: it spreads through the whole maze and finds the way round. Tap to race again.">
+  <canvas id="heroCanvas"></canvas>
+  <a class="home corner" href="./">Glamour Gram</a>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">Glamour Gram · XII</div>
+    <h1>The Way Out Looks Wrong</h1>
+    <p class="lede">Some problems are deceptive: every step toward the answer leads into a trap. Einstein, Maxwell and Dijkstra played their way out. Evolution does it with no mind at all.</p>
+  </div></div>
+</header>
+
+<main>
+<section id="played"><div class="wrap">
+  <div class="eyebrow">They played</div>
+  <h2>Combinatory <em>play</em></h2>
+  <p>In 1945 the mathematician Jacques Hadamard asked scientists how their thinking felt from the inside. Einstein wrote back that his ideas came first as images, and as something like feelings in the muscles, and only later as words. Then he named the engine.</p>
+  <blockquote>“Combinatory play seems to be the essential feature in productive thought.”<cite>Albert Einstein, letter to Jacques Hadamard, 1945</cite></blockquote>
+  <p>Ninety years earlier, James Clerk Maxwell, aged 23, was studying colour vision with a spinning top. He laid discs of vermilion, emerald green and ultramarine paper over one another, spun them until they blurred, and slid the sectors until the blur matched a ring of some other colour. The same three could be balanced against every colour he tried, and the matches made by different people, in his words, “agree in a remarkable manner” (Maxwell 1855). His toy was showing that the eye reports every colour with just three kinds of sensation, as Thomas Young had proposed half a century before.</p>
+  <div class="instrument">
+    <canvas id="topCv" aria-label="Maxwell's top: an outer ring of red, green, blue and black sectors around an inner disc of a target colour. Spin it and the ring blurs into one colour. Move the sliders until the spinning ring matches the centre."></canvas>
+    <div class="controls">
+      <div class="seg" id="topTargets" role="group" aria-label="Target colour"></div>
+      <button type="button" class="primary" id="topSpin" aria-pressed="false">Spin</button>
+    </div>
+    <div class="controls">
+      <label>Red <input type="range" id="topR" min="0" max="100" value="30"> <output id="topRo">30</output></label>
+      <label>Green <input type="range" id="topG" min="0" max="100" value="30"> <output id="topGo">30</output></label>
+      <label>Blue <input type="range" id="topB" min="0" max="100" value="30"> <output id="topBo">30</output></label>
+    </div>
+    <div class="readout">
+      <div><div class="k">Black</div><div class="v" id="topK">10%</div></div>
+      <div><div class="k">Match</div><div class="v" id="topM">–</div></div>
+      <div><div class="k">Your equation</div><div class="v" id="topEq" style="font-size:15px">–</div></div>
+    </div>
+    <p class="say" id="topSay" aria-live="polite">Spin the top, then slide the colours until the ring matches the centre.</p>
+    <p class="caption">The outer ring is red, green and blue, with black filling the rest. Spun fast, the eye averages its sectors into one colour; the screen shows the average it would make (the Talbot–Plateau law). These are your screen's own three primaries, not Maxwell's papers, so the numbers differ from his, but the surprise is the same one. Red and green light make yellow, though red and green paint make mud. Three numbers match every centre here because your retina reports three numbers.</p>
+  </div>
+  <div class="fable">
+    <div class="eyebrow">A fable · I</div>
+    <p>Gilt and Wren were apprentices in a tower of books. Gilt copied the catalogue, a page an hour. Wren spun the inkwell lids on the table to watch their labels blur. By evening Gilt had eight pages. Wren had found that three lids, red, green and blue, could be spun into the colour of every book on the shelf.</p>
+  </div>
+</div></section>
+
+<section id="cafe"><div class="wrap">
+  <div class="eyebrow">Twenty minutes, no pencil</div>
+  <h2>Dijkstra's <em>café</em></h2>
+  <p>In 1956 Edsger Dijkstra needed a problem to show off a new computer, the ARMAC, to an audience who weren't computer people: the shortest road from Rotterdam to Groningen. He solved it sitting on a café terrace in Amsterdam with his fiancée, without pencil and paper. “It was a twenty-minute invention,” he said in 2001. He published it in 1959 (Dijkstra 1959; Frana 2001). Variations on it now route maps, networks, and the monsters chasing you in games.</p>
+  <p>The whole idea fits in one breath: always settle the nearest place you haven't settled yet. The cave below is grown from a recipe on RogueBasin, the roguelike makers' wiki. Scatter rock at random, then let each square turn to rock if most of its neighbours are rock, and repeat a few times. Tap the cave to stand somewhere else.</p>
+  <div class="instrument">
+    <canvas id="caveCv" aria-label="A cave grown from a few rules, seen from above. Dijkstra's frontier spreads from where you stand, settling the nearest place first and colouring each by its distance, until it finds the deepest room and draws the shortest path to it. Tap to stand elsewhere."></canvas>
+    <div class="controls">
+      <button type="button" class="primary" id="caveNew">New cave</button>
+      <button type="button" id="caveRun">Run Dijkstra</button>
+      <button type="button" id="caveMoss" aria-pressed="true">Moss is slow</button>
+    </div>
+    <div class="controls">
+      <label>Rock <input type="range" id="caveFill" min="38" max="52" value="45"> <output id="caveFillO">45%</output></label>
+      <label>Smoothing <input type="range" id="caveSmooth" min="0" max="6" value="4"> <output id="caveSmoothO">4</output></label>
+    </div>
+    <div class="readout">
+      <div><div class="k">Settled</div><div class="v" id="caveSet">–</div></div>
+      <div><div class="k">Frontier</div><div class="v" id="caveFront">–</div></div>
+      <div><div class="k">Deepest room</div><div class="v" id="caveDeep">–</div></div>
+    </div>
+    <p class="say" id="caveSay" aria-live="polite">Run Dijkstra to watch the frontier spread.</p>
+    <p class="caption">Each open square costs one step, and moss costs three. With moss slow, the frontier bends around it, which is what makes this Dijkstra's algorithm rather than a plain flood. Settled squares are coloured by their distance, from teal when near to gold when far. The rule that grows the cave: a square becomes rock if 5 or more of its 8 neighbours are rock, and stays rock if 4 or more are (RogueBasin). Small pockets cut off from the rest are filled in. Games usually run A*, which is Dijkstra's algorithm plus a guess at the remaining distance (Hart, Nilsson &amp; Raphael 1968).</p>
+  </div>
+  <div class="fable">
+    <div class="eyebrow">A fable · II</div>
+    <p>The tower's map was lost. Gilt took the first stair he saw and kept climbing. Wren tied a thread to the door and walked out one room at a time, always to the nearest room she hadn't yet reached, and chalked its distance on the wall. By supper she knew the shortest way to every room in the tower. Gilt knew one stair very well.</p>
+  </div>
+</div></section>
+
+<section id="maze"><div class="wrap">
+  <div class="eyebrow">The deceptive maze</div>
+  <h2>The way out <em>looks wrong</em></h2>
+  <p>In 2008 Joel Lehman and Kenneth Stanley put evolving robots in a maze whose exit lay just beyond a wall. Robots bred for getting closer to the exit crowded into the pocket beneath it, the nearest place they could reach. Robots bred only for ending up somewhere new, with no interest in the exit at all, found it in significantly fewer tries (Lehman &amp; Stanley 2011).</p>
+  <p>To reach this exit you have to move away from it first, and every step of the way round looks worse than the pocket. That is what makes a problem deceptive. Race the two kinds of evolution below. Both breed from the same kind of robot; only what they reward differs.</p>
+  <div class="instrument">
+    <canvas id="mazeCv" aria-label="A deceptive maze. Gold robots are bred for ending closer to the exit; teal robots are bred for ending somewhere no robot has ended before. Dots show where each robot of the current generation ended; faint teal dots are the places the teal family remembers."></canvas>
+    <div class="legend"><span><i style="background:var(--dawn)"></i>bred to get closer</span><span><i style="background:var(--sea)"></i>bred to be new</span><span><i style="background:rgba(111,194,184,.35)"></i>places teal remembers</span><span><i class="bar" style="background:var(--ink)"></i>wall</span></div>
+    <div class="controls">
+      <button type="button" class="primary" id="mazeGo" aria-pressed="true">Pause</button>
+      <button type="button" id="mazeAgain">Race again</button>
+      <button type="button" id="maze20">Run 20 races</button>
+      <label>Speed <input type="range" id="mazeSpeed" min="1" max="40" value="10"> <output id="mazeSpeedO">10/s</output></label>
+    </div>
+    <div class="readout">
+      <div><div class="k">Generation</div><div class="v" id="mzGen">0</div></div>
+      <div><div class="k">Closer · nearest</div><div class="v" id="mzObj">–</div></div>
+      <div><div class="k">New · nearest</div><div class="v" id="mzNov">–</div></div>
+    </div>
+    <p class="say" id="mazeSay" aria-live="polite">Both families start from random robots.</p>
+    <p class="caption">A toy of the experiment, not the experiment. Each robot is a point that follows 18 headings, and each generation keeps the best quarter and mutates them. Gold scores a robot by how near it ends to the exit. Teal scores it by how far it ends from the 15 nearest places any robot has ended, including a remembered sample of earlier ones. Lehman and Stanley evolved neural networks steering simulated robots with range-finders, in mazes of their own. The deceptive shape is the same idea. “Run 20 races” plays twenty fresh races, up to 300 generations each, and reports what actually happened.</p>
+  </div>
+  <p>Novelty has a trap of its own. An agent rewarded for surprise can get stuck staring at a television that shows random static, because noise is always new (Burda et al. 2018). The kinder kind of curiosity rewards what you are learning, not what surprises you, and so it loses interest in static, where there is nothing to learn (Oudeyer, Kaplan &amp; Hafner 2007). Babies seem to work this way already. At seven and eight months they look away from sequences that are too predictable, and from those that are too random (Kidd, Piantadosi &amp; Aslin 2012).</p>
+  <div class="fable">
+    <div class="eyebrow">A fable · III</div>
+    <p>Near the top, a window showed the summit, close enough to touch. Gilt pressed his nose to the glass and stayed there, nearer the summit than anyone, for a year. Wren wandered off down the one corridor nobody had walked, which led down, and away, and round. It came out on the summit.</p>
+  </div>
+</div></section>
+
+<section id="evolution"><div class="wrap">
+  <div class="eyebrow">Algorithms all the way down?</div>
+  <h2>Evolution <em>plays</em></h2>
+  <p>Evolution is a search with no goal but staying around, and it out-invents engineers. In 2006 three small NASA satellites, Space Technology 5, flew with an antenna evolved by a computer: a bent wire no engineer would have drawn, whose evolved designs beat the one drawn by hand. When the mission's orbit changed, the team evolved a new antenna in a few weeks (Hornby et al. 2011). On Picbreeder, people bred pictures by picking whatever looked interesting, and found a skull and a butterfly. When the same algorithm was set the goal of evolving that skull, it couldn't (Woolley &amp; Stanley 2011).</p>
+  <p>So is it algorithms all the way down? In 1985 David Deutsch conjectured that a single universal computer can simulate any physical system. If he is right, every process in nature is an algorithm in that sense (Deutsch 1985). It is a conjecture, not a theorem. He and Chiara Marletto have since asked a different question, which they call constructor theory: not what happens, but which transformations the laws of physics allow and which they forbid (Deutsch 2013; Marletto 2021). Page I's motto is its short form: anything not forbidden can be done, given the right knowledge. Constructor theory is a research programme, not settled physics. Sort these the way physics does.</p>
+  <div class="instrument">
+    <div class="card" id="cardBox" aria-live="polite"></div>
+    <div class="controls">
+      <button type="button" class="primary" id="cardCan">Can</button>
+      <button type="button" id="cardCant">Can't</button>
+      <button type="button" id="cardNext" hidden>Next</button>
+    </div>
+    <div class="pips" id="cardPips" aria-hidden="true"></div>
+    <div class="readout">
+      <div><div class="k">Sorted like physics</div><div class="v" id="cardScore">0 of 0</div></div>
+    </div>
+    <p class="caption">Each answer names the law, the theorem or the experiment that decides it. One of them rests on a conjecture, and it says so.</p>
+  </div>
+  <div class="fable">
+    <div class="eyebrow">A fable · IV</div>
+    <p>Every night the tower changed. Corridors split, and the ones nobody walked crumbled. No one designed it. Each morning the walked rooms were still there, with some new ones beside them. After a thousand years the tower held rooms no architect could have drawn, and every one of them had been walked.</p>
+  </div>
+</div></section>
+
+<section id="stones"><div class="wrap">
+  <div class="eyebrow">The turn</div>
+  <h2>Stepping stones <em>don't look like</em> the goal</h2>
+  <p>Stanley and Lehman turned the maze into a book, <i>Why Greatness Cannot Be Planned</i> (2015). Vacuum tubes were made for radios. ENIAC, the first general-purpose electronic computer, ran on nearly 18,000 of them. Their point is that someone aiming at computers would never have thought to work on radio valves. The stepping stone looked nothing like the place it led.</p>
+  <p>Play is how a mind takes steps that don't pay off yet. It needs a place where looking wrong for a while is safe. Johan Huizinga called the space set apart for play a magic circle (1938), and young rats stop play-fighting when a collar a cat has worn is nearby (Siviy et al. 2010). The paediatrician and psychoanalyst Donald Winnicott spent his working life watching children play, and put it plainly.</p>
+  <blockquote>“It is in playing and only in playing that the individual child or adult is able to be creative and to use the whole personality.”<cite>D. W. Winnicott, Playing and Reality, 1971</cite></blockquote>
+  <div class="callout">
+    <div class="eyebrow">Try this week</div>
+    <ul>
+      <li>Give one stuck problem twenty minutes with no pencil and no aim but “what happens if…”. Dijkstra's twenty minutes are still the most famous.</li>
+      <li>Cut a paper disc, colour half of it red and half green, and spin it on a pencil stub. Compare the colour with what the two paints make mixed in a saucer.</li>
+      <li>Follow one interest for no reason at all, and write down where it has led you in a month.</li>
+    </ul>
+  </div>
+  <div class="fable">
+    <div class="eyebrow">A fable · V</div>
+    <p>Years later, Gilt asked Wren how she always found the way. “I wasn't looking for it,” she said. “I was looking for somewhere I hadn't been.”</p>
+  </div>
+  <p class="closer">When every step toward the answer leads into the trap, the way out looks wrong. Play is how you take it anyway.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Sources: Albert Einstein, letter to Jacques Hadamard, in Hadamard, <i>An Essay on the Psychology of Invention in the Mathematical Field</i> (1945), reprinted in Einstein, <i>Ideas and Opinions</i>. Thomas Young, "On the theory of light and colours," <i>Philosophical Transactions of the Royal Society</i> 92 (1802). James Clerk Maxwell, "Experiments on colour, as perceived by the eye, with remarks on colour-blindness," <i>Transactions of the Royal Society of Edinburgh</i> 21 (1855). Edsger W. Dijkstra, "A note on two problems in connexion with graphs," <i>Numerische Mathematik</i> 1 (1959). Philip L. Frana, interview with Edsger W. Dijkstra (2001), published in <i>Communications of the ACM</i> 53 (2010). "Cellular Automata Method for Generating Random Cave-Like Levels," RogueBasin. Hart, Nilsson &amp; Raphael, "A formal basis for the heuristic determination of minimum cost paths," <i>IEEE Transactions on Systems Science and Cybernetics</i> 4 (1968). Joel Lehman &amp; Kenneth O. Stanley, "Exploiting open-endedness to solve problems through the search for novelty," <i>Artificial Life XI</i> (2008), and "Abandoning objectives: evolution through the search for novelty alone," <i>Evolutionary Computation</i> 19 (2011). Burda et al., "Large-scale study of curiosity-driven learning," arXiv 1808.04355 (2018). Oudeyer, Kaplan &amp; Hafner, "Intrinsic motivation systems for autonomous mental development," <i>IEEE Transactions on Evolutionary Computation</i> 11 (2007). Kidd, Piantadosi &amp; Aslin, "The Goldilocks effect: human infants allocate attention to visual sequences that are neither too simple nor too complex," <i>PLoS ONE</i> 7 (2012). Hornby, Lohn &amp; Linden, "Computer-automated evolution of an X-band antenna for NASA's Space Technology 5 mission," <i>Evolutionary Computation</i> 19 (2011). Secretan et al., "Picbreeder: a case study in collaborative evolutionary exploration of design space," <i>Evolutionary Computation</i> 19 (2011). Brian Woolley &amp; Kenneth O. Stanley, "On the deleterious effects of a priori objectives on evolution and representation," <i>GECCO</i> (2011), as discussed in Huizinga, Stanley &amp; Clune, <i>Artificial Life</i> 24 (2018). David Deutsch, "Quantum theory, the Church–Turing principle and the universal quantum computer," <i>Proceedings of the Royal Society A</i> 400 (1985). David Deutsch, "Constructor theory," <i>Synthese</i> 190 (2013). Chiara Marletto, <i>The Science of Can and Can't</i> (2021). ALICE Collaboration, "Proton emission in ultraperipheral Pb–Pb collisions," <i>Physical Review C</i> 111 (2025). William Wootters &amp; Wojciech Zurek, "A single quantum cannot be cloned," <i>Nature</i> 299 (1982). Kary Mullis and colleagues on the polymerase chain reaction (1983–1986). Julius Robert Mayer (1842), James Joule (1843) and Hermann von Helmholtz (1847) on the conservation of energy. Albert Einstein, "Zur Elektrodynamik bewegter Körper," <i>Annalen der Physik</i> 17 (1905). Ghirardi, Rimini &amp; Weber, "A general argument against superluminal transmission through the quantum mechanical measurement process," <i>Lettere al Nuovo Cimento</i> 27 (1980). Werner Heisenberg, <i>Zeitschrift für Physik</i> 43 (1927). Kenneth O. Stanley &amp; Joel Lehman, <i>Why Greatness Cannot Be Planned: The Myth of the Objective</i> (2015). Johan Huizinga, <i>Homo Ludens</i> (1938). Siviy et al., "Effects of chlordiazepoxide on predator odor-induced reductions of playfulness in juvenile rats," <i>Behavioural Brain Research</i> (2010). D. W. Winnicott, <i>Playing and Reality</i> (1971). This page grew from a climb in Babel, the deck-builder in the Infodex, whose Luminaries included Einstein, Maxwell and Dijkstra. The fables are fiction.</p>
+  <div class="next"><a href="missing-rungs.html">← XI · The Missing Rungs</a><a href="./">Back to Glamour Gram</a></div>
+</div></footer>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+function fit(cv, aspect){
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = aspect ? Math.round(w*aspect) : cv.clientHeight;
+  if(aspect) cv.style.height = h + "px";
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const smooth = (a, b, x) => { const u = clamp((x - a)/(b - a), 0, 1); return u*u*(3 - 2*u); };
+function onScreen(el){
+  const s = {v:true};
+  if("IntersectionObserver" in window) new IntersectionObserver(es => { s.v = es[es.length - 1].isIntersecting; }).observe(el);
+  return s;
+}
+function animate(frame, vis){
+  let last = performance.now();
+  (function loop(now){ const dt = clamp((now - last)/1000, 0, 0.05); last = now; if(!vis || vis.v) frame(dt); requestAnimationFrame(loop); })(last);
+}
+function local(cv, e){ const r = cv.getBoundingClientRect(); return {x: e.clientX - r.left, y: e.clientY - r.top}; }
+function rgba(v, a){ const n = parseInt(C(v).slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; }
+const tell = (el, m) => { if(el.textContent !== m) el.textContent = m; };
+function rng(seed){ let a = seed || 1; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0)/4294967296; }; }
+const newSeed = () => (Math.random()*2147483647) | 0;
+
+/* ---------- the deceptive maze: one engine for the hero and the race ---------- */
+// The unit square, y down. Start bottom right; the exit top left, just above a long shelf whose only way round is at the far right,
+// past a ledge that first turns you away from the exit. The pocket under the exit is the nearest you can get without going round.
+const MZ = {start: [0.9, 0.9], goal: [0.1, 0.1], r: 0.06,
+  walls: [[0,0,1,0],[1,0,1,1],[1,1,0,1],[0,1,0,0], [0,0.25,0.8,0.25], [0.62,0.45,1,0.45], [0.3,0.25,0.3,0.6], [0.5,0,0.5,0.14]]};
+const MZO = {N: 50, L: 18, step: 0.045, sub: 4, mut: 1.0, rate: 0.2, k: 15, keep: 0.25, add: 0.06, G: 300};   // calibrated offline: see the caption
+function cross(ax, ay, bx, by, cx, cy, dx, dy){
+  const d = (bx - ax)*(dy - cy) - (by - ay)*(dx - cx); if(Math.abs(d) < 1e-12) return false;
+  const u = ((cx - ax)*(dy - cy) - (cy - ay)*(dx - cx))/d, v = ((cx - ax)*(by - ay) - (cy - ay)*(bx - ax))/d;
+  return u >= 0 && u <= 1 && v >= 0 && v <= 1;
+}
+const toGoal = (x, y) => Math.hypot(x - MZ.goal[0], y - MZ.goal[1]);
+function walk(genome, trail){   // follow each heading for a few short steps; a step into a wall is lost
+  let x = MZ.start[0], y = MZ.start[1]; if(trail) trail.push([x, y]);
+  for(const h of genome) for(let k = 0; k < MZO.sub; k++){
+    const nx = x + Math.cos(h)*MZO.step, ny = y + Math.sin(h)*MZO.step;
+    if(!MZ.walls.some(w => cross(x, y, nx, ny, w[0], w[1], w[2], w[3]))){ x = nx; y = ny; }
+    if(trail) trail.push([x, y]);
+    if(toGoal(x, y) < MZ.r) return [x, y, true];
+  }
+  return [x, y, false];
+}
+const inPocket = (x, y) => x < 0.3 && y > 0.25 && y < 0.6;
+function breed(mode, seed){   // mode "closer": keep robots that end nearest the exit; "new": keep robots that end far from where others have
+  const R = rng(seed), o = MZO, gauss = () => Math.sqrt(-2*Math.log(R() + 1e-12))*Math.cos(6.2832*R());
+  const S = {mode, gen: 0, pop: Array.from({length: o.N}, () => Array.from({length: o.L}, () => R()*6.2832)), archive: [], ends: [], best: Infinity, bestEnd: null, done: false, at: -1, winner: null};
+  S.step = () => {
+    if(S.done) return;
+    S.ends = S.pop.map(g => walk(g));
+    S.ends.forEach(e => { const d = toGoal(e[0], e[1]); if(d < S.best){ S.best = d; S.bestEnd = e; } });
+    const hit = S.ends.findIndex(e => e[2]);
+    if(hit >= 0){ S.done = true; S.at = S.gen; S.winner = S.pop[hit]; S.best = 0; return; }
+    let score;
+    if(mode === "closer") score = S.ends.map(e => -toGoal(e[0], e[1]));
+    else {
+      const pts = S.ends.concat(S.archive);
+      score = S.ends.map((e, i) => {
+        const near = [];
+        for(let j = 0; j < pts.length; j++){
+          if(j === i) continue;
+          const d = Math.hypot(pts[j][0] - e[0], pts[j][1] - e[1]);
+          if(near.length < o.k){ near.push(d); near.sort((a, b) => a - b); } else if(d < near[o.k - 1]){ near[o.k - 1] = d; near.sort((a, b) => a - b); }
+        }
+        return near.reduce((s, v) => s + v, 0)/near.length;
+      });
+      S.ends.forEach(e => { if(R() < o.add) S.archive.push([e[0], e[1]]); });
+    }
+    const order = score.map((s, i) => i).sort((a, b) => score[b] - score[a]), parents = order.slice(0, Math.round(o.N*o.keep)).map(i => S.pop[i]);
+    const next = [parents[0].slice()];
+    while(next.length < o.N){ const p = parents[Math.floor(R()*parents.length)]; next.push(p.map(h => R() < o.rate ? h + gauss()*o.mut : h)); }
+    S.pop = next; S.gen++;
+    if(S.gen >= o.G) S.done = true;
+  };
+  return S;
+}
+// draw the maze, both families and any winner's path inside a rectangle
+function drawMaze(ctx, box, A, B, o){
+  o = o || {};
+  const X = x => box.x + (o.flip ? 1 - x : x)*box.w, Y = y => box.y + y*box.h;   // flip: mirrored, exit at the right
+  ctx.globalAlpha = 1;
+  B.archive.forEach(p => { ctx.fillStyle = rgba("--sea", 0.22); ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), 1.6, 0, 7); ctx.fill(); });
+  ctx.strokeStyle = C("--ink"); ctx.globalAlpha = o.faint ? 0.5 : 0.75; ctx.lineWidth = o.faint ? 1.5 : 2; ctx.lineCap = "round";
+  MZ.walls.forEach(w => { ctx.beginPath(); ctx.moveTo(X(w[0]), Y(w[1])); ctx.lineTo(X(w[2]), Y(w[3])); ctx.stroke(); });
+  ctx.globalAlpha = 1;
+  const gx = X(MZ.goal[0]), gy = Y(MZ.goal[1]), sx = X(MZ.start[0]), sy = Y(MZ.start[1]);
+  const halo = ctx.createRadialGradient(gx, gy, 0, gx, gy, 22); halo.addColorStop(0, rgba("--dawn", 0.55)); halo.addColorStop(1, rgba("--dawn", 0));
+  ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(gx, gy, 22, 0, 7); ctx.fill();
+  ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(gx, gy, 4.5, 0, 7); ctx.fill();
+  ctx.strokeStyle = C("--mute"); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(sx, sy, 6, 0, 7); ctx.stroke();
+  [[A, "--dawn"], [B, "--sea"]].forEach(([S, col]) => {
+    ctx.fillStyle = C(col); ctx.globalAlpha = 0.85;
+    S.ends.forEach(e => { ctx.beginPath(); ctx.arc(X(e[0]), Y(e[1]), o.small ? 1.9 : 2.4, 0, 7); ctx.fill(); });
+    ctx.globalAlpha = 1;
+    if(S.winner){   // the path that got out, drawn as far as `o.grow` allows
+      const tr = []; walk(S.winner, tr); const n = Math.max(2, Math.round(tr.length*(o.grow == null ? 1 : o.grow)));
+      ctx.strokeStyle = C(col); ctx.lineWidth = 2.4; ctx.beginPath();
+      tr.slice(0, n).forEach((p, i) => i ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1]))); ctx.stroke();
+    }
+  });
+  ctx.lineCap = "butt";
+}
+
+/* ---------- hero: the race, behind the title ---------- */
+(function(){
+  const cv = $("heroCanvas"), hero = $("hero"), copy = document.querySelector(".hero-copy .wrap"), home = document.querySelector(".home.corner");
+  let g, box, boxes = [], A, B, acc = 0, won = 0, grow = 0, t = 0;
+  function race(){ A = breed("closer", newSeed()); B = breed("new", newSeed()); acc = 0; won = 0; grow = 0; if(reduce){ while(!B.done || !A.done){ A.step(); B.step(); } grow = 1; } }
+  function text(){
+    const c = cv.getBoundingClientRect(), r = document.createRange(), walker = document.createTreeWalker(copy, NodeFilter.SHOW_TEXT), out = [];
+    const add = b => { if(b.width) out.push({l: b.left - c.left, r: b.right - c.left, t: b.top - c.top, b: b.bottom - c.top}); };
+    for(let n = walker.nextNode(); n; n = walker.nextNode()) if(n.textContent.trim()){ r.selectNodeContents(n); Array.from(r.getClientRects()).forEach(add); }
+    add(home.getBoundingClientRect());
+    return out;
+  }
+  function layout(){   // wide: the maze stands right of the words; narrow: below them, and the hero grows to hold it
+    const wide = cv.clientWidth >= 760;
+    hero.style.height = ""; boxes = text();
+    const textR = Math.max(...boxes.filter(b => b.t > 40).map(b => b.r), 0), textB = Math.max(...boxes.filter(b => b.t > 40).map(b => b.b), 0);
+    if(!wide) hero.style.height = Math.max(420, textB + Math.min(cv.clientWidth*0.82, 420) + 46) + "px";
+    g = fit(cv); boxes = text();
+    if(wide){ const W = Math.min(g.w*0.46, (g.h - 70)*1.3); box = {x: g.w - 24 - W, y: 46, w: W, h: Math.min(g.h - 70, W/1.3), flip: true}; }   // mirrored: the exit sits top right, clear of the title
+    else { const W = g.w - 40; box = {x: 20, y: textB + 24, w: W, h: Math.min(W*0.8, g.h - textB - 60)}; }
+  }
+  function clear(ctx, dpr){   // soft dark halos keep the words readable wherever a dot strays behind them
+    const off = 10000; ctx.save(); ctx.fillStyle = "#000"; ctx.shadowColor = C("--night"); ctx.shadowBlur = 14*dpr; ctx.shadowOffsetX = off*dpr;
+    for(let i = 0; i < 2; i++) boxes.forEach(b => ctx.fillRect(b.l - 10 - off, b.t - 6, b.r - b.l + 20, b.b - b.t + 12));
+    ctx.restore();
+  }
+  function draw(){
+    const {ctx, w, h} = g;
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    drawMaze(ctx, box, A, B, {faint: true, small: w < 600, grow, flip: box.flip});
+    if(B.winner && !reduce){   // a burst at the exit when teal gets out
+      const u = clamp(won/1.4, 0, 1), gx = box.x + (box.flip ? 1 - MZ.goal[0] : MZ.goal[0])*box.w, gy = box.y + MZ.goal[1]*box.h;
+      ctx.strokeStyle = C("--sea"); ctx.globalAlpha = 0.8*(1 - u); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(gx, gy, 8 + u*70, 0, 7); ctx.stroke(); ctx.globalAlpha = 1;
+    }
+    clear(ctx, cv.width/w);
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "right";
+    const msg = B.winner ? "teal, bred only to be new, got out in generation " + B.at + (A.winner ? "" : " · gold, bred to get closer, is still in the pocket") + " · tap to race again"
+      : w < 700 ? "gold aims at the exit · teal explores · tap to race again" : "gold robots are bred to get closer to the exit · teal robots only to end up somewhere new · generation " + B.gen + " · tap to race again";
+    ctx.fillText(w < 700 && B.winner ? "teal got out in generation " + B.at + " · tap to race again" : msg, w - 14, h - 10);
+    ctx.textAlign = "left";
+  }
+  race(); layout(); draw();
+  addEventListener("resize", () => { layout(); draw(); });
+  document.fonts && document.fonts.ready.then(() => { layout(); draw(); });
+  cv.addEventListener("pointerdown", () => { race(); draw(); });
+  if(!reduce) animate(dt => {
+    t += dt; acc += dt*8;   // eight generations a second
+    while(acc >= 1){ acc -= 1; if(!B.done) B.step(); if(!A.done && !B.winner) A.step(); }
+    if(B.winner){ won += dt; grow = clamp(won/1.6, 0, 1); if(won > 9) race(); }
+    else if(B.done) { won += dt; if(won > 4) race(); }
+    draw();
+  }, onScreen(cv));
+})();
+
+/* ---------- Maxwell's top: three colours and black, spun into one ---------- */
+(function(){
+  const cv = $("topCv"), TARGETS = [["Yellow paper", [0.5, 0.42, 0.02]], ["Grey card", [0.22, 0.22, 0.22]], ["Orange", [0.55, 0.16, 0.01]], ["Violet", [0.2, 0.06, 0.4]], ["Sky", [0.1, 0.3, 0.5]]];
+  const sl = {r: $("topR"), g: $("topG"), b: $("topB")}, out = {r: $("topRo"), g: $("topGo"), b: $("topBo")};
+  let g, ti = 0, spin = false, w8 = 0, th = 0, matched = false;
+  const toS = c => { c = clamp(c, 0, 1); return Math.round(255*(c <= 0.0031308 ? 12.92*c : 1.055*Math.pow(c, 1/2.4) - 0.055)); };
+  const css3 = v => `rgb(${toS(v[0])},${toS(v[1])},${toS(v[2])})`;
+  function oklab(v){   // linear sRGB to OKLab (Ottosson 2020), for a fair "how close does it look"
+    const l = Math.cbrt(0.4122214708*v[0] + 0.5363325363*v[1] + 0.0514459929*v[2]), m = Math.cbrt(0.2119034982*v[0] + 0.6806995451*v[1] + 0.1073969566*v[2]), s = Math.cbrt(0.0883024619*v[0] + 0.2817188376*v[1] + 0.6299787005*v[2]);
+    return [0.2104542553*l + 0.793617785*m - 0.0040720468*s, 1.9779984951*l - 2.428592205*m + 0.4505937099*s, 0.0259040371*l + 0.7827717662*m - 0.808675766*s];
+  }
+  const mix = () => [+sl.r.value/100, +sl.g.value/100, +sl.b.value/100];
+  const box = $("topTargets");
+  TARGETS.forEach((T, i) => { const b = document.createElement("button"); b.type = "button"; b.textContent = T[0]; b.setAttribute("aria-pressed", i === ti ? "true" : "false");
+    b.addEventListener("click", () => { ti = i; matched = false; box.querySelectorAll("button").forEach((x, j) => x.setAttribute("aria-pressed", j === i ? "true" : "false")); update(); }); box.append(b); });
+  function balance(k){   // the sectors can't add up to more than the whole ring: take the excess from the other two
+    const v = {r: +sl.r.value, g: +sl.g.value, b: +sl.b.value}, over = v.r + v.g + v.b - 100;
+    if(over > 0){ const others = Object.keys(v).filter(x => x !== k), tot = others.reduce((s, x) => s + v[x], 0) || 1; others.forEach(x => { sl[x].value = String(Math.max(0, Math.round(v[x] - over*v[x]/tot))); }); }
+    const s = +sl.r.value + +sl.g.value + +sl.b.value; if(s > 100) sl[k].value = String(+sl[k].value - (s - 100));
+  }
+  function update(){
+    Object.keys(sl).forEach(k => tell(out[k], sl[k].value));
+    const m = mix(), T = TARGETS[ti][1], k = Math.max(0, 100 - Math.round((m[0] + m[1] + m[2])*100)), a = oklab(m), b = oklab(T);
+    const dE = Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]), pct = Math.round(100*clamp(1 - dE/0.3, 0, 1));
+    tell($("topK"), k + "%"); tell($("topM"), pct + "%");
+    const ok = dE < 0.025;
+    if(ok && !matched){ matched = true; }
+    if(!ok) matched = false;
+    tell($("topEq"), ok ? TARGETS[ti][0] + " = " + sl.r.value + " red + " + sl.g.value + " green + " + sl.b.value + " blue + " + k + " black" : "–");
+    $("topEq").classList.toggle("match", ok);
+    let say;
+    if(ok) say = spin ? "A match. Maxwell wrote equations just like this one, and other people's agreed with his." : "That matches. Spin the top to see the blur match the centre.";
+    else if(!spin) say = "Spin the top, then slide the colours until the ring matches the centre.";
+    else {
+      const d = [T[0] - m[0], T[1] - m[1], T[2] - m[2]], names = ["red", "green", "blue"], i = [0, 1, 2].sort((x, y) => Math.abs(d[y]) - Math.abs(d[x]))[0];
+      say = (d[i] > 0 ? "More " : "Less ") + names[i] + "." + (ti === 0 && m[2] < 0.06 && m[0] > 0.2 && m[1] > 0.2 ? " Yellow, from red and green light: paints can't do that." : "");
+    }
+    tell($("topSay"), say);
+    if(reduce) draw();
+  }
+  function draw(){
+    const {ctx, w, h} = g, R = Math.min(w, h)*0.44, cx = w/2, cy = h/2, m = mix(), T = TARGETS[ti][1];
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const parts = [[m[0], "#ff0000"], [m[1], "#00ff00"], [m[2], "#0000ff"], [Math.max(0, 1 - m[0] - m[1] - m[2]), "#000000"]];
+    let a0 = th;
+    parts.forEach(([f, col]) => { if(f <= 0) return; ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, R, a0, a0 + f*6.2832); ctx.closePath(); ctx.fill(); a0 += f*6.2832; });
+    if(w8 > 0){ ctx.globalAlpha = w8; ctx.fillStyle = css3(m); ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.fill(); ctx.globalAlpha = 1; }   // spun fast, the eye sees the average
+    ctx.strokeStyle = C("--line"); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.stroke();
+    ctx.fillStyle = css3(T); ctx.beginPath(); ctx.arc(cx, cy, R*0.46, 0, 7); ctx.fill();
+    ctx.strokeStyle = C("--night"); ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = C("--ink"); ctx.beginPath(); ctx.arc(cx, cy, 3, 0, 7); ctx.fill();   // the spindle
+    ctx.font = "11px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute");
+    ctx.fillText("centre: " + TARGETS[ti][0].toLowerCase(), 12, h - 12);
+    ctx.textAlign = "right"; ctx.fillText(spin ? "spinning · tap to stop" : "tap to spin", w - 12, h - 12); ctx.textAlign = "left";
+  }
+  function setSpin(v){ spin = v; $("topSpin").setAttribute("aria-pressed", v ? "true" : "false"); $("topSpin").textContent = v ? "Stop" : "Spin"; if(reduce){ w8 = v ? 1 : 0; } update(); }
+  Object.keys(sl).forEach(k => sl[k].addEventListener("input", () => { balance(k); update(); }));
+  $("topSpin").addEventListener("click", () => setSpin(!spin));
+  cv.addEventListener("pointerdown", () => setSpin(!spin));
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.86 : 0.56); draw(); }
+  layout(); update();
+  addEventListener("resize", layout);
+  let om = 0;
+  if(!reduce) animate(dt => { om += ((spin ? 70 : 0) - om)*Math.min(1, dt*1.6); th += om*dt; w8 = smooth(6, 45, om); draw(); }, onScreen(cv));
+})();
+
+/* ---------- Dijkstra's café: a cave grown from a few rules, and the frontier that settles it ---------- */
+(function(){
+  const cv = $("caveCv");
+  let g, Cn, Rn, cell, rock, moss, start, dist, prev, order, shown, deep, seed = newSeed(), runAt = 0;
+  function grow(){   // the 4-5 rule, then fill in every pocket cut off from the largest cave
+    const R = rng(seed), p = +$("caveFill").value/100, n = +$("caveSmooth").value;
+    Cn = cv.clientWidth < 520 ? 36 : 56; Rn = cv.clientWidth < 520 ? 30 : 32;
+    const at = (a, x, y) => x < 0 || y < 0 || x >= Cn || y >= Rn ? 1 : a[y*Cn + x];
+    const step = (a, keep) => a.map((v, i) => { const x = i % Cn, y = (i/Cn) | 0; if(keep && keep[i]) return 0; let k = 0; for(let dy = -1; dy <= 1; dy++) for(let dx = -1; dx <= 1; dx++) if(dx || dy) k += at(a, x + dx, y + dy); return v ? (k >= 4 ? 1 : 0) : (k >= 5 ? 1 : 0); });
+    rock = Array.from({length: Cn*Rn}, (_, i) => { const x = i % Cn, y = (i/Cn) | 0; return x === 0 || y === 0 || x === Cn - 1 || y === Rn - 1 || R() < p ? 1 : 0; });
+    for(let i = 0; i < n; i++) rock = step(rock);
+    const lab = new Int32Array(Cn*Rn).fill(-1); let best = -1, bestN = 0, id = 0;
+    for(let i = 0; i < Cn*Rn; i++){ if(rock[i] || lab[i] >= 0) continue; const q = [i]; lab[i] = id; let c = 0; while(q.length){ const j = q.pop(); c++; const x = j % Cn, y = (j/Cn) | 0; [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx, dy]) => { const k = (y + dy)*Cn + x + dx; if(x + dx >= 0 && x + dx < Cn && y + dy >= 0 && y + dy < Rn && !rock[k] && lab[k] < 0){ lab[k] = id; q.push(k); } }); } if(c > bestN){ bestN = c; best = id; } id++; }
+    rock = rock.map((v, i) => v || lab[i] !== best ? 1 : 0);
+    moss = Array.from({length: Cn*Rn}, () => R() < 0.42 ? 1 : 0);
+    for(let i = 0; i < 3; i++) moss = step(moss);
+    moss = moss.map((v, i) => rock[i] ? 0 : v);
+    start = nearestOpen(Math.round(Cn*0.15), Math.round(Rn*0.5));
+  }
+  function nearestOpen(x, y){ let b = -1, d = Infinity; for(let i = 0; i < Cn*Rn; i++){ if(rock[i]) continue; const dd = Math.hypot(i % Cn - x, ((i/Cn) | 0) - y); if(dd < d){ d = dd; b = i; } } return b; }
+  function solve(){   // Dijkstra with a binary heap; remember the order squares are settled, to replay it
+    const slow = $("caveMoss").getAttribute("aria-pressed") === "true", cost = i => moss[i] && slow ? 3 : 1;
+    dist = new Float64Array(Cn*Rn).fill(Infinity); prev = new Int32Array(Cn*Rn).fill(-1); order = [];
+    const heap = [[0, start]], done = new Uint8Array(Cn*Rn); dist[start] = 0;
+    const push = e => { heap.push(e); let i = heap.length - 1; while(i){ const p = (i - 1) >> 1; if(heap[p][0] <= heap[i][0]) break; [heap[p], heap[i]] = [heap[i], heap[p]]; i = p; } };
+    const pop = () => { const top = heap[0], last = heap.pop(); if(heap.length){ heap[0] = last; let i = 0; for(;;){ const l = 2*i + 1, r = l + 1; let m = i; if(l < heap.length && heap[l][0] < heap[m][0]) m = l; if(r < heap.length && heap[r][0] < heap[m][0]) m = r; if(m === i) break; [heap[m], heap[i]] = [heap[i], heap[m]]; i = m; } } return top; };
+    while(heap.length){
+      const [d, i] = pop(); if(done[i]) continue; done[i] = 1; order.push(i);
+      const x = i % Cn, y = (i/Cn) | 0;
+      [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx, dy]) => { const k = (y + dy)*Cn + x + dx; if(rock[k] || done[k]) return; const nd = d + cost(k); if(nd < dist[k]){ dist[k] = nd; prev[k] = i; push([nd, k]); } });
+    }
+    deep = order.reduce((b, i) => dist[i] > dist[b] ? i : b, start);
+    shown = reduce ? order.length : 0; runAt = performance.now();
+  }
+  function frontierOf(n){   // squares reached but not yet settled, after n settlements
+    const set = new Uint8Array(Cn*Rn), out = []; for(let k = 0; k < n; k++) set[order[k]] = 1;
+    for(let k = 0; k < n; k++){ const i = order[k], x = i % Cn, y = (i/Cn) | 0; [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx, dy]) => { const j = (y + dy)*Cn + x + dx; if(!rock[j] && !set[j]){ set[j] = 2; out.push(j); } }); }
+    return out;
+  }
+  function draw(){
+    const {ctx, w, h} = g, maxD = dist[deep] || 1;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const sea = [111, 194, 184], dawn = [240, 168, 90];
+    for(let i = 0; i < Cn*Rn; i++){
+      const x = (i % Cn)*cell, y = ((i/Cn) | 0)*cell;
+      if(rock[i]){ ctx.fillStyle = "rgba(38,50,63,0.55)"; ctx.fillRect(x, y, cell, cell); continue; }
+      ctx.fillStyle = moss[i] ? (($("caveMoss").getAttribute("aria-pressed") === "true") ? "rgba(111,194,184,0.16)" : "rgba(111,194,184,0.07)") : "rgba(233,228,216,0.05)"; ctx.fillRect(x, y, cell, cell);
+    }
+    for(let k = 0; k < shown; k++){
+      const i = order[k], u = dist[i]/maxD, c = sea.map((v, j) => Math.round(v + (dawn[j] - v)*u));
+      ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},0.55)`; ctx.fillRect((i % Cn)*cell + 0.5, ((i/Cn) | 0)*cell + 0.5, cell - 1, cell - 1);
+    }
+    const front = shown < order.length ? frontierOf(shown) : [];
+    ctx.strokeStyle = C("--ink"); ctx.globalAlpha = 0.85; ctx.lineWidth = 1;
+    front.forEach(i => ctx.strokeRect((i % Cn)*cell + 1, ((i/Cn) | 0)*cell + 1, cell - 2, cell - 2));
+    ctx.globalAlpha = 1;
+    const cxy = i => [(i % Cn + 0.5)*cell, (((i/Cn) | 0) + 0.5)*cell];
+    if(shown >= order.length){   // the shortest path to the deepest room
+      ctx.strokeStyle = C("--dawn"); ctx.lineWidth = Math.max(1.5, cell*0.28); ctx.lineJoin = "round"; ctx.beginPath();
+      for(let i = deep, f = true; i >= 0; i = prev[i], f = false){ const [x, y] = cxy(i); f ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+      ctx.stroke();
+      const [dx, dy] = cxy(deep); ctx.fillStyle = C("--dawn"); ctx.beginPath(); for(let k = 0; k < 10; k++){ const r = k % 2 ? cell*0.45 : cell*1.1, a = -Math.PI/2 + k*Math.PI/5; ctx.lineTo(dx + Math.cos(a)*r, dy + Math.sin(a)*r); } ctx.fill();
+    }
+    const [sx, sy] = cxy(start), halo = ctx.createRadialGradient(sx, sy, 0, sx, sy, cell*2.4);
+    halo.addColorStop(0, rgba("--ink", 0.6)); halo.addColorStop(1, rgba("--ink", 0)); ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(sx, sy, cell*2.4, 0, 7); ctx.fill();
+    ctx.fillStyle = C("--ink"); ctx.beginPath(); ctx.arc(sx, sy, Math.max(2.5, cell*0.4), 0, 7); ctx.fill();
+    const open = rock.filter(v => !v).length, steps = (() => { let n = 0; for(let i = deep; prev[i] >= 0; i = prev[i]) n++; return n; })();
+    tell($("caveSet"), shown + " of " + open);
+    tell($("caveFront"), shown < order.length ? String(front.length) : "0");
+    tell($("caveDeep"), shown >= order.length ? dist[deep] + " away · " + steps + " squares" : "…");
+    tell($("caveSay"), shown >= order.length ? "Every square settled. The star is the deepest room: the farthest you can be from where you stand. The gold line is the shortest way there." + ($("caveMoss").getAttribute("aria-pressed") === "true" ? " Notice it skirts the moss." : "") : "The frontier, outlined, is every square reached but not yet settled. Each step settles the nearest one.");
+  }
+  function layout(){ const w = cv.clientWidth; Cn = w < 520 ? 36 : 56; Rn = w < 520 ? 30 : 32; cell = w/Cn; g = fit(cv, Rn/Cn); }
+  function fresh(){ layout(); grow(); solve(); draw(); }
+  $("caveNew").addEventListener("click", () => { seed = newSeed(); fresh(); });
+  $("caveRun").addEventListener("click", () => { solve(); draw(); });
+  $("caveMoss").addEventListener("click", () => { const b = $("caveMoss"), on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on ? "true" : "false"); b.textContent = on ? "Moss is slow" : "Moss is easy"; solve(); draw(); });
+  ["caveFill", "caveSmooth"].forEach(id => $(id).addEventListener("input", () => { tell($("caveFillO"), $("caveFill").value + "%"); tell($("caveSmoothO"), $("caveSmooth").value); grow(); solve(); draw(); }));
+  cv.addEventListener("pointerdown", e => { const {x, y} = local(cv, e), i = nearestOpen(x/cell - 0.5, y/cell - 0.5); if(i >= 0){ start = i; solve(); draw(); } });
+  addEventListener("resize", () => { const w0 = Cn; layout(); if(Cn !== w0){ grow(); solve(); } draw(); });
+  fresh();
+  if(!reduce) animate(dt => { if(shown < order.length){ shown = Math.min(order.length, shown + Math.max(1, Math.ceil(order.length*dt/3.2))); draw(); } }, onScreen(cv));
+})();
+
+/* ---------- the race: closer against new, in the same maze ---------- */
+(function(){
+  const cv = $("mazeCv");
+  let g, A, B, acc = 0, running = true, seed = newSeed(), batch = null;
+  function race(){ seed = newSeed(); A = breed("closer", seed); B = breed("new", seed + 1); acc = 0; if(reduce){ while(!A.done || !B.done){ A.step(); B.step(); } } report(); draw(); }
+  const fmt = S => S.winner ? "out at " + S.at : (S.ends.length ? S.best.toFixed(2) + (S.bestEnd && inPocket(S.bestEnd[0], S.bestEnd[1]) ? " · in the pocket" : "") : "–");
+  function report(){
+    tell($("mzGen"), String(Math.max(A.gen, B.gen)));
+    tell($("mzObj"), fmt(A)); tell($("mzNov"), fmt(B));
+    if(batch) return;
+    let say;
+    if(B.winner && (A.done)) say = "Teal, bred only to be new, got out in generation " + B.at + "." + (A.winner ? " Gold got out too, in generation " + A.at + ", which happens now and then." : " Gold spent all " + A.gen + " generations within " + A.best.toFixed(2) + " of the exit and never found the way round.");
+    else if(B.winner) say = "Teal got out in generation " + B.at + ". Gold is still trying to get closer.";
+    else if(A.gen > 20) say = "Gold has found the pocket under the exit, the nearest place it can reach. Teal is spreading everywhere it hasn't been.";
+    else say = "Both families start from random robots.";
+    tell($("mazeSay"), say);
+  }
+  function draw(){
+    const {ctx, w, h} = g; ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    drawMaze(ctx, {x: 14, y: 14, w: w - 28, h: h - 28}, A, B, {small: w < 520});
+  }
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.92 : 0.66); if(A) draw(); }
+  function setRun(v){ running = v; $("mazeGo").setAttribute("aria-pressed", v ? "true" : "false"); $("mazeGo").textContent = v ? "Pause" : "Play"; }
+  $("mazeGo").addEventListener("click", () => { if(A.done && B.done) race(); setRun(!running); });
+  $("mazeAgain").addEventListener("click", () => { race(); setRun(true); });
+  $("mazeSpeed").addEventListener("input", () => tell($("mazeSpeedO"), $("mazeSpeed").value + "/s"));
+  cv.addEventListener("pointerdown", () => $("mazeGo").click());
+  $("maze20").addEventListener("click", () => {   // twenty fresh races, computed in slices so the page stays responsive
+    if(batch) return;
+    setRun(false); batch = {k: 0, res: [], A: null, B: null}; $("maze20").disabled = true;
+    (function slice(){
+      const t0 = performance.now();
+      while(performance.now() - t0 < 30){
+        if(!batch.A){ const s = newSeed(); batch.A = breed("closer", s); batch.B = breed("new", s + 1); }
+        if(!batch.A.done) batch.A.step(); else if(!batch.B.done) batch.B.step();
+        if(batch.A.done && batch.B.done){ batch.res.push([batch.A.winner ? batch.A.at : -1, batch.B.winner ? batch.B.at : -1]); batch.A = null; if(++batch.k >= 20) break; }
+      }
+      if(batch.k < 20){ tell($("mazeSay"), "Racing… " + batch.k + " of 20 done."); return setTimeout(slice, 0); }
+      const a = batch.res.filter(r => r[0] >= 0).length, bs = batch.res.filter(r => r[1] >= 0).map(r => r[1]).sort((x, y) => x - y), med = bs.length ? bs[(bs.length - 1) >> 1] : null;
+      tell($("mazeSay"), "In 20 fresh races of up to 300 generations, gold (bred to get closer) got out " + a + " time" + (a === 1 ? "" : "s") + ", and teal (bred to be new) got out " + bs.length + " time" + (bs.length === 1 ? "" : "s") + (med != null ? ", in a median of " + med + " generations." : "."));
+      batch = null; $("maze20").disabled = false;
+    })();
+  });
+  layout(); race();
+  addEventListener("resize", layout);
+  if(!reduce) animate(dt => {
+    if(!running || batch) return;
+    acc += dt*(+$("mazeSpeed").value);
+    let moved = false;
+    while(acc >= 1){ acc -= 1; if(!A.done) A.step(); if(!B.done) B.step(); moved = true; }
+    if(moved){ report(); draw(); }
+    if(A.done && B.done) setRun(false);
+  }, onScreen(cv));
+})();
+
+/* ---------- can or can't: physics as a list of what can and can't be made to happen ---------- */
+(function(){
+  const CARDS = [
+    ["Turn lead into gold.", true, "In near-miss collisions at CERN, a lead nucleus can lose three protons and become gold. ALICE measured up to about 89,000 gold nuclei a second, each smashed apart almost at once.", "ALICE Collaboration 2025"],
+    ["Copy an unknown quantum state exactly.", false, "The no-cloning theorem: quantum theory forbids a machine that makes a perfect copy of a state it doesn't already know.", "Wootters & Zurek 1982"],
+    ["Make a billion copies of a gene in an afternoon.", true, "The polymerase chain reaction doubles the DNA in each cycle. Thirty cycles make about a billion copies.", "Mullis and colleagues, 1983–1986"],
+    ["Build an engine that runs forever with no fuel.", false, "Energy is conserved. A machine can't give out more energy than goes into it: the first law of thermodynamics.", "Joule, Mayer, Helmholtz, 1840s"],
+    ["Send a message faster than light.", false, "Relativity forbids it, and entanglement can't be used to cheat: the no-signalling theorem.", "Einstein 1905; Ghirardi, Rimini & Weber 1980"],
+    ["Evolve an antenna better than an engineer can draw.", true, "NASA's evolved designs beat the hand-drawn one, and one flew on Space Technology 5 in 2006.", "Hornby et al. 2011"],
+    ["Simulate any physical system on one universal computer.", true, "Can, if David Deutsch is right. It is his conjecture from 1985, and nobody has proved it.", "Deutsch 1985"],
+    ["Know a particle's exact position and exact momentum at once.", false, "The uncertainty principle: the more sharply one is defined, the less sharply the other can be.", "Heisenberg 1927"]
+  ];
+  let deck, k, got, res;
+  const box = $("cardBox"), pips = $("cardPips");
+  function deal(){ deck = CARDS.map((c, i) => i).sort(() => Math.random() - 0.5); k = 0; got = 0; res = []; show(); }
+  function show(){
+    box.textContent = "";
+    const head = document.createElement("div"); head.className = "eyebrow"; head.textContent = k < deck.length ? "Card " + (k + 1) + " of " + deck.length : "Sorted";
+    box.append(head);
+    if(k >= deck.length){
+      const p = document.createElement("p"); p.className = "task"; p.textContent = "You sorted " + got + " of " + deck.length + " the way physics does."; box.append(p);
+      const q = document.createElement("p"); q.className = "why"; q.textContent = got === deck.length ? "Every one. Notice how many of the surprises were cans." : "The surprises tend to be the cans: gold from lead, a billion copies, an antenna nobody drew."; box.append(q);
+      $("cardCan").hidden = $("cardCant").hidden = true; $("cardNext").hidden = false; $("cardNext").textContent = "Deal again";
+    } else {
+      const p = document.createElement("p"); p.className = "task"; p.textContent = CARDS[deck[k]][0]; box.append(p);
+      $("cardCan").hidden = $("cardCant").hidden = false; $("cardCan").disabled = $("cardCant").disabled = false; $("cardNext").hidden = true;
+    }
+    pips.textContent = ""; deck.forEach((_, i) => { const d = document.createElement("i"); if(i < res.length) d.className = res[i] ? "ok" : "no"; else if(i === k) d.className = "now"; pips.append(d); });
+    tell($("cardScore"), got + " of " + res.length);
+  }
+  function answer(can){
+    const c = CARDS[deck[k]], right = can === c[1]; if(right) got++; res.push(right);
+    const v = document.createElement("div"); v.className = "verdict " + (c[1] ? "can" : "cant"); v.textContent = (c[1] ? "Can" : "Can't") + (right ? " · you said so too" : " · you said " + (can ? "can" : "can't"));
+    const why = document.createElement("p"); why.className = "why"; why.textContent = c[2]; const s = document.createElement("small"); s.textContent = c[3]; why.append(s);
+    box.append(v, why);
+    $("cardCan").disabled = $("cardCant").disabled = true; $("cardNext").hidden = false; $("cardNext").textContent = k + 1 < deck.length ? "Next" : "See how you did";
+    pips.children[k].className = right ? "ok" : "no"; tell($("cardScore"), got + " of " + res.length);
+  }
+  $("cardCan").addEventListener("click", () => answer(true));
+  $("cardCant").addEventListener("click", () => answer(false));
+  $("cardNext").addEventListener("click", () => { if(k >= deck.length) return deal(); k++; show(); });
+  deal();
+})();
+</script>
+</body>
+</html>
