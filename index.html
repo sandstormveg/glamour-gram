@@ -126,9 +126,9 @@ const PAGES = [
    effect:"Cells pair off across the organism and light up in the same instant, though nothing passes between them.",
    sections:[["twin","Your twin"],["evolution","Selection"],["omega","Two boxes"],["forecast","A forecast you hear"],["ceiling","Nature's ceiling"],["everywhere","Everywhere"],["nearest","The nearest copy"]]},
   {n:"XI", slug:"missing-rungs.html", title:"The Missing Rungs", hue:"--ember", gene:"rung",
-   hook:"The ladder from human to posthuman, zoomed in rung by rung: what's built, what's drawn but not built, and what nobody knows how to make.",
-   effect:"The organism reaches past its own edge: rungs climb outward, and the highest ones aren't built yet.",
-   sections:[["three","The three supers"],["ladder","The ladder"],["health","Escape velocity"],["mind","Ten bits a second"],["mood","The treadmill inside"],["after","How big is a mind?"],["rungs","The lowest gap"]]},
+   hook:"The road from human to posthuman as it stands: a living timeline of what's built, what's drawn but not built, and what nobody knows how to make.",
+   effect:"The organism reaches past its own edge: tendrils grow outward, beaded with what's been built, and their tips aren't grown yet.",
+   sections:[["timeline","So far, and next"],["health","Escape velocity"],["mind","Ten bits a second"],["mood","The treadmill inside"],["rungs","The lowest gap"]]},
   {n:"XII", slug:"way-out.html", title:"The Way Out Looks Wrong", hue:"--dawn", gene:"stray",
    hook:"Some problems are deceptive: every step toward the answer leads into a trap. Einstein, Maxwell, Dijkstra and evolution itself found the way out by playing.",
    effect:"A few explorers wander the organism, each steering toward wherever no explorer has been, so their trails slowly fill every gap.",
@@ -353,20 +353,16 @@ const motif = {
     });
     ctx.globalAlpha = 1;
   },
-  rung(x,y,R,t){   // a little ladder: the low rungs solid, the high ones dashed then missing, and a light that climbs to the lowest gap
-    const w = R*0.42, x0 = x - w/2, x1 = x + w/2, y0 = y + R*0.5, y1 = y - R*0.5, N = 6;
-    ctx.strokeStyle = C("--ember"); ctx.globalAlpha = 0.5; ctx.lineWidth = Math.max(1, R*0.02);
-    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0, y1); ctx.moveTo(x1, y0); ctx.lineTo(x1, y1); ctx.stroke();
-    for(let k=0;k<N;k++){
-      const ry = y0 + (y1 - y0)*k/(N-1), kind = k < 3 ? 0 : k < 5 ? 1 : 2;   // built, drawn, missing
-      ctx.globalAlpha = kind === 0 ? 0.85 : kind === 1 ? 0.6 : 0.3;
-      ctx.setLineDash(kind === 0 ? [] : kind === 1 ? [R*0.05, R*0.04] : [R*0.02, R*0.05]);
-      ctx.beginPath(); ctx.moveTo(x0, ry); ctx.lineTo(x1, ry); ctx.stroke();
+  rung(x,y,R,t){   // a little beaded tendril: solid beads near the root, hollow then faint ones toward the tip, and a light that climbs to the lowest gap
+    const P = f => [x + Math.sin(f*2.2 + 0.4*Math.sin(t*0.6))*R*0.22*f, y + R*0.5 - f*R*1.0];
+    ctx.strokeStyle = C("--ember"); ctx.globalAlpha = 0.5; ctx.lineWidth = Math.max(1, R*0.025); ctx.beginPath();
+    for(let k=0;k<=16;k++){ const [px, py] = P(k/16); k ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.stroke();
+    for(let k=1;k<6;k++){
+      const [bx, by] = P(k/6), kind = k < 3 ? 0 : k < 5 ? 1 : 2; ctx.beginPath(); ctx.arc(bx, by, Math.max(1.2, R*0.05), 0, 7);
+      if(kind === 0){ ctx.globalAlpha = 0.85; ctx.fillStyle = C("--ember"); ctx.fill(); } else { ctx.globalAlpha = kind === 1 ? 0.6 : 0.25; ctx.stroke(); }
     }
-    ctx.setLineDash([]);
-    const climb = 2 + (Math.sin(t*0.9)*0.5 + 0.5)*0.6, cy = y0 + (y1 - y0)*climb/(N-1);   // sits just below the first missing rung
-    ctx.globalAlpha = 1; ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(x, cy, Math.max(1.5, R*0.06), 0, 7); ctx.fill();
-    ctx.globalAlpha = 1;
+    const [cx, cy] = P((2.3 + (Math.sin(t*0.9)*0.5 + 0.5)*0.6)/6);   // sits just below the first missing bead
+    ctx.globalAlpha = 1; ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(cx, cy, Math.max(1.5, R*0.06), 0, 7); ctx.fill();
   },
   stray(x,y,R,t){   // a wall between a dot and the exit: the dot goes away, up and round, because the way out looks wrong
     const P = [[x + R*0.25, y + R*0.4], [x + R*0.5, y + R*0.4], [x + R*0.5, y - R*0.35], [x - R*0.3, y - R*0.35]];
@@ -537,7 +533,7 @@ function render(t, dt){
   // stray gene: a few explorers wander the organism, each steering for wherever no explorer has been
   if(has("stray")) strayGene(dt);
 
-  // rung gene: the organism reaches past its own edge, growing ladders whose highest rungs aren't built yet
+  // rung gene: the organism reaches past its own edge, growing beaded tendrils whose tips aren't grown yet
   if(has("rung")) rungsGene(t);
 
   // twin gene: two far-apart cells light up in the same instant, with no link between them
@@ -704,32 +700,40 @@ function twins(t){
   ctx.globalAlpha = 1; ctx.lineWidth = 1;
 }
 
-/* ---------- rung gene: ladders climb outward from the rim; low rungs solid, high ones dashed, the top missing, with a light that stops at the lowest gap ---------- */
-const ladders = (()=>{   // a few directions, spread around, each a short ladder reaching out past the membrane
+/* ---------- rung gene: tendrils grow out past the membrane, beaded with what's built; the beads near the tip are drawn, then missing, and a light climbs to the lowest gap ---------- */
+const tendrils = (()=>{   // a few, spread around the rim, each curling its own way
   const hue = ["--sea", "--dawn", "--ember"];
-  return Array.from({length: 3}, (_, i)=>({ a: -Math.PI/2 + (i - 1)*0.72, col: hue[i], phase: i*1.3 }));
+  return Array.from({length: 3}, (_, i)=>({ a: -Math.PI/2 + (i - 1)*0.78, col: hue[i], phase: i*1.7, curl: i === 1 ? -0.5 : 0.55*(i - 1) || 0.4 }));
 })();
 function rungsGene(t){
   const fade = Math.max(0, Math.min(1, (260 - cells[0].r*cam.s)/140));   // fades as a cell fills the view
   if(fade <= 0) return;
-  const [ox, oy] = toScreen(0, 0), OR = 0.95*cam.s, N = 7, reach = OR*0.42, half = OR*0.12;
-  ladders.forEach(L=>{
-    const ca = Math.cos(L.a), sa = Math.sin(L.a), px = -sa, py = ca;   // along the ladder, and across it
-    const bx = ox + ca*OR, by = oy + sa*OR;                            // foot on the rim
-    ctx.strokeStyle = C(L.col); ctx.lineWidth = 1.2;
-    [-1, 1].forEach(s=>{ ctx.globalAlpha = 0.35*fade; ctx.beginPath(); ctx.moveTo(bx + px*half*s, by + py*half*s); ctx.lineTo(bx + ca*reach + px*half*s, by + sa*reach + py*half*s); ctx.stroke(); });
-    for(let k=0;k<N;k++){
-      const f = k/(N-1), rx = bx + ca*reach*f, ry = by + sa*reach*f, kind = k < 3 ? 0 : k < 5 ? 1 : 2;
-      ctx.globalAlpha = (kind === 0 ? 0.8 : kind === 1 ? 0.5 : 0.25)*fade;
-      ctx.setLineDash(kind === 0 ? [] : kind === 1 ? [5, 4] : [2, 5]);
-      ctx.beginPath(); ctx.moveTo(rx + px*half, ry + py*half); ctx.lineTo(rx - px*half, ry - py*half); ctx.stroke();
+  const [ox, oy] = toScreen(0, 0), OR = 0.95*cam.s, N = 7, reach = OR*0.46, tt = reduce ? 0 : t;
+  tendrils.forEach(T=>{
+    const sway = 0.12*Math.sin(tt*0.5 + T.phase), a = T.a + sway*0.3, ca = Math.cos(a), sa = Math.sin(a), px = -sa, py = ca;
+    const P = f => {   // a point a fraction f of the way out: a curve that bends sideways as it grows, and sways
+      const bend = (T.curl + sway)*f*f*reach*0.55, d = reach*f;
+      return [ox + ca*(OR + d) + px*bend, oy + sa*(OR + d) + py*bend];
+    };
+    ctx.strokeStyle = C(T.col); ctx.lineCap = "round";
+    for(let k = 0; k < 24; k++){   // the stem, thinning toward the tip
+      const f0 = k/24, f1 = (k + 1)/24, [x0, y0] = P(f0), [x1, y1] = P(f1);
+      ctx.globalAlpha = (0.55 - 0.35*f0)*fade; ctx.lineWidth = Math.max(0.6, 2.6*(1 - f0)); ctx.setLineDash(f0 > 0.72 ? [2, 4] : []);
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
     }
     ctx.setLineDash([]);
-    const climb = 2 + (reduce ? 0.3 : (Math.sin(t*0.8 + L.phase)*0.5 + 0.5))*0.7, f = climb/(N-1);   // the climber waits just below the first missing rung
-    ctx.globalAlpha = fade; ctx.fillStyle = C("--dawn");
-    ctx.beginPath(); ctx.arc(bx + ca*reach*f, by + sa*reach*f, Math.max(1.5, OR*0.012), 0, 7); ctx.fill();
+    for(let k = 1; k < N; k++){   // beads: built, then drawn, then missing
+      const f = k/N, [bx, by] = P(f), kind = k < 4 ? 0 : k < 6 ? 1 : 2, r = Math.max(1.5, OR*(0.016 - 0.0012*k));
+      ctx.beginPath(); ctx.arc(bx, by, r, 0, 7);
+      if(kind === 0){ ctx.globalAlpha = 0.85*fade; ctx.fillStyle = C(T.col); ctx.fill(); }
+      else { ctx.globalAlpha = (kind === 1 ? 0.6 : 0.25)*fade; ctx.lineWidth = 1; ctx.setLineDash(kind === 1 ? [] : [1.5, 2.5]); ctx.stroke(); ctx.setLineDash([]); }
+    }
+    const climb = (3 + (reduce ? 0.3 : (Math.sin(tt*0.8 + T.phase)*0.5 + 0.5))*0.7)/N, [lx, ly] = P(climb);   // the light waits just below the first missing bead
+    const halo = ctx.createRadialGradient(lx, ly, 0, lx, ly, 8); halo.addColorStop(0, "rgba(240,168,90,0.55)"); halo.addColorStop(1, "rgba(240,168,90,0)");
+    ctx.globalAlpha = fade; ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(lx, ly, 8, 0, 7); ctx.fill();
+    ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(lx, ly, Math.max(1.5, OR*0.011), 0, 7); ctx.fill();
   });
-  ctx.globalAlpha = 1; ctx.lineWidth = 1;
+  ctx.globalAlpha = 1; ctx.lineWidth = 1; ctx.lineCap = "butt";
 }
 
 /* ---------- stray gene: novelty search in miniature; each explorer turns toward the least-visited way ahead, so the trails fill every gap ---------- */
