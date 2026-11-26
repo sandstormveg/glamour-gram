@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1016">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="GlamGram">
+<script>if("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js"));</script>
+<title>The Editable Body · Glamour Gram</title>
+<meta name="description" content="How editable is a living body, easiest to hardest? Flip one DNA letter to mend a baby's liver, lift a brake to wake a sleeping gene in the blood, paint the voltage that tells a flatworm where to grow a head, push ten thousand tiny dials for height, and meet the genes that keep a cell alive without anyone knowing how.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="glam.css">
+<style>
+/* Layout: the title is a body whose shape is set by a voltage pattern, not only by its genes. A gradient runs head to tail; when it
+   inverts, a second head grows where the tail was, then flips back. Tap to invert it. Then a climb of five rungs, easiest edit to
+   hardest: one letter (a base-editor you aim at the right site), one gene in reach (lift the BCL11A brake and watch fetal haemoglobin
+   round out sickled cells), the shape layer (paint the voltage that sets a flatworm's head, cut it, and watch the pattern persist),
+   thousands at once (push ten thousand tiny height dials into shrinking returns), and the parts we can't read (delete genes from the
+   smallest living cell and hit the ones that are essential and unknown). Then the turn: the tablet, and knowledge as the real limit. */
+[hidden]{display:none!important}
+.hero canvas{cursor:pointer}
+.say{font-size:17px;margin:14px 0 0;min-height:1.6em;max-width:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--mute)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.legend i.sq{border-radius:2px}
+.legend i.ring{background:transparent;border:2px solid var(--sea)}
+.rungtag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--night);background:var(--sea);border-radius:999px;padding:3px 10px;display:inline-block;margin-bottom:10px}
+.rungtag.done{background:var(--sea)}
+.rungtag.shown{background:var(--dawn)}
+.rungtag.mapped{background:var(--ember);color:var(--ink)}
+.rungtag.dark{background:var(--line);color:var(--ink)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+#b1Cv,#b2Cv,#b3Cv,#b4Cv,#b5Cv{cursor:pointer}
+h3{margin-top:34px}
+</style>
+</head>
+<body>
+<header class="hero" id="hero" aria-label="A worm-shaped body whose form follows a pattern of voltage. A gradient runs from its head to its tail. When the pattern inverts, a second head slowly grows where the tail was; when it inverts back, the body returns to one head. Tap to invert the pattern.">
+  <canvas id="heroCanvas"></canvas>
+  <a class="home corner" href="./">Glamour Gram</a>
+  <div class="hero-copy"><div class="wrap">
+    <div class="eyebrow">Glamour Gram · XIII</div>
+    <h1>The Editable Body</h1>
+    <p class="lede">We can already mend a single DNA letter in a baby and wake a sleeping gene in the blood. Climb from the edits we have made to the ones nothing but our own ignorance forbids.</p>
+  </div></div>
+</header>
+
+<main>
+<section id="one-letter"><div class="wrap">
+  <div class="eyebrow">Easiest to edit</div>
+  <span class="rungtag done">Rung 1 · done, in a baby</span>
+  <h2>One <em>letter</em></h2>
+  <p>In February 2025 a baby known as KJ was given a medicine built for him alone. He was born with CPS1 deficiency: a single wrong letter in one gene left his liver unable to clear ammonia, which is toxic as it builds. A team designed a <b>base editor</b>, a protein that flips one DNA letter to another without cutting the strand, and delivered it to his liver inside fat droplets. The therapy was designed and made within about six months of his diagnosis. Since the infusions he has tolerated more dietary protein and needed less medication (Musunuru et al. 2025). This is one infant, with short follow-up, and the first personalized gene-editing treatment of its kind.</p>
+  <p>A base editor only works if it is aimed at the right letter. Find the mutation below, line up the editor, and flip it.</p>
+  <div class="instrument">
+    <canvas id="b1Cv" aria-label="A short stretch of DNA, letter by letter. One letter is wrong and shown in red. Choose a site to aim the base editor at, then edit. Only the right site mends the enzyme; aiming elsewhere changes a letter that does nothing, or breaks a letter that worked."></canvas>
+    <div class="controls">
+      <div class="seg" id="b1Sites" role="group" aria-label="Aim the base editor"></div>
+    </div>
+    <div class="controls">
+      <button type="button" class="primary" id="b1Edit">Base-edit the aimed letter</button>
+      <button type="button" id="b1Reset">Reset the strand</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Aimed at</div><div class="v" id="b1Aim">–</div></div>
+      <div><div class="k">CPS1 enzyme</div><div class="v" id="b1Enz">broken</div></div>
+      <div><div class="k">Ammonia</div><div class="v" id="b1Amm">high</div></div>
+    </div>
+    <p class="say" id="b1Say" aria-live="polite">One letter is red: that is the mutation. Aim at it and edit.</p>
+    <p class="caption">A toy of the idea, not KJ's real gene. A base editor changes one letter (here the red C to a T) at the site it is guided to, and nothing elsewhere when it is precise. Aiming at a letter that already reads correctly makes a silent change; aiming at the wrong working letter breaks it, which is the real risk of an off-target edit. The enzyme shown is a stand-in for CPS1, which turns ammonia into urea. Source: Musunuru et al., <i>New England Journal of Medicine</i> (2025); one infant, early follow-up.</p>
+  </div>
+</div></section>
+
+<section id="one-gene"><div class="wrap">
+  <div class="eyebrow">Still in reach</div>
+  <span class="rungtag shown">Rung 2 · approved</span>
+  <h2>One gene, lift the <em>brake</em></h2>
+  <p>Sickle-cell disease is also one letter, in the haemoglobin gene, but the first approved CRISPR cure never touches it. Casgevy, approved in the United States in December 2023, edits a different gene: a brake called BCL11A, in a patient's own blood stem cells. Lift the brake and the body switches on the fetal haemoglobin gene, the one we all run on before birth, and the red cells stop sickling. In the trial, 15 of 16 patients went at least a year without a pain crisis (FDA 2023). One patient in the wider programme later developed a blood cancer, a known risk of the procedure.</p>
+  <p>Drag the brake down and watch the fetal gene wake.</p>
+  <div class="instrument">
+    <canvas id="b2Cv" aria-label="A field of red blood cells, many of them sickled into crescents. As you lower the BCL11A brake, fetal haemoglobin rises and the crescents round out into healthy discs."></canvas>
+    <div class="controls">
+      <label>Lower the BCL11A brake <input type="range" id="b2Brake" min="0" max="100" value="0"> <output id="b2BrakeO">0%</output></label>
+    </div>
+    <div class="readout">
+      <div><div class="k">Fetal haemoglobin</div><div class="v" id="b2Hbf">1%</div></div>
+      <div><div class="k">Cells sickled</div><div class="v" id="b2Sick">—</div></div>
+      <div><div class="k">Pain crises / year</div><div class="v" id="b2Cri">—</div></div>
+    </div>
+    <p class="say" id="b2Say" aria-live="polite">The brake is on: little fetal haemoglobin, and most cells sickle.</p>
+    <p class="caption">A toy of the mechanism, not a dosing curve. The edit disables a spot in the BCL11A enhancer, which otherwise silences fetal haemoglobin in adults; with the brake off, fetal haemoglobin rises and dilutes the sickling adult form, so cells keep their round shape. The numbers here are illustrative. The cure edits blood stem cells outside the body, which are then returned. Source: U.S. FDA approval of Casgevy (exagamglogene autotemcel), December 2023; 15 of 16 trial patients free of crises for a year; one case of a blood cancer reported.</p>
+  </div>
+</div></section>
+
+<section id="shape"><div class="wrap">
+  <div class="eyebrow">A different control layer</div>
+  <span class="rungtag shown">Rung 3 · shown, not in people</span>
+  <h2>The <em>shape</em> layer</h2>
+  <p>Climb to the shape of the body and the control changes. It is not only in the genes. It is partly held in a pattern of voltage across the cells, the same kind of electrical difference a nerve uses, but standing still and marking out the plan. Michael Levin's group briefly disrupted that pattern in cut planarian flatworms. About a quarter grew two heads, and with their DNA untouched they kept regrowing two heads when cut again months later. Inverting the voltage set them back to one head (Durant et al. 2017). In a separate study, a 24-hour dose of drugs and signals under a wearable cap started an adult frog regrowing a working leg over 18 months (Murugan et al. 2022). These are flatworms and frogs, not people.</p>
+  <p>Paint the voltage at each end, then cut the worm and let it regrow. The shape follows the pattern, and the pattern remembers.</p>
+  <div class="instrument">
+    <canvas id="b3Cv" aria-label="A flatworm seen from above. You set the voltage at the head end and the tail end: a depolarised end grows a head, a hyperpolarised end grows a tail. Set both ends to grow heads and a cut fragment regrows with two heads. Cutting again keeps the pattern you set."></canvas>
+    <div class="controls">
+      <label>Left end <input type="range" id="b3L" min="0" max="100" value="80"> <output id="b3Lo">head</output></label>
+      <label>Right end <input type="range" id="b3R" min="0" max="100" value="20"> <output id="b3Ro">tail</output></label>
+    </div>
+    <div class="controls">
+      <button type="button" class="primary" id="b3Cut">Cut and regrow</button>
+      <button type="button" id="b3Reset">Reset to normal</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Body plan</div><div class="v" id="b3Form">one head</div></div>
+      <div><div class="k">Stored pattern</div><div class="v" id="b3Mem">normal</div></div>
+      <div><div class="k">Cuts made</div><div class="v" id="b3Cuts">0</div></div>
+    </div>
+    <p class="say" id="b3Say" aria-live="polite">A normal worm: one head, one tail. Change an end's voltage, then cut and regrow.</p>
+    <p class="caption">A toy of the idea, not the experiment. A real depolarised wound tends toward a head and a hyperpolarised one toward a tail; here a high slider means "grow a head". The stored pattern is what makes this remarkable: once set, the altered plan survives further cuts with no change to the DNA, until the voltage is inverted again, which the paper calls a rewritable pattern memory. Planaria and frogs only. Sources: Durant et al., <i>Biophysical Journal</i> (2017); Murugan et al., <i>Science Advances</i> (2022).</p>
+  </div>
+</div></section>
+
+<section id="thousands"><div class="wrap">
+  <div class="eyebrow">Harder: spread too thin to switch</div>
+  <span class="rungtag mapped">Rung 4 · mapped, barely editable</span>
+  <h2>Ten thousand <em>tiny dials</em></h2>
+  <p>Some traits are not one edit, or ten. Height is smeared across the whole genome. It took a study of 5.4 million people to map 12,111 common DNA variants that, taken together, still explain under half of the variation in height, and far less outside European-ancestry groups (Yengo et al. 2022). To edit height you would not flip a switch. You would nudge ten thousand tiny dials, each worth a fraction of a millimetre, and the gains would shrink as you went, because the biggest dials are used up first and much of the variation isn't in these variants at all.</p>
+  <p>Push the dials toward tall and watch the returns fall away.</p>
+  <div class="instrument">
+    <canvas id="b4Cv" aria-label="A grid of thousands of tiny dials, one per height variant, each shaded by how much it is pushed toward tall. A bar on the side shows the predicted change in height, and a box shows how much of the variation stays unexplained."></canvas>
+    <div class="controls">
+      <label>Edit this share toward tall <input type="range" id="b4Push" min="0" max="100" value="0"> <output id="b4PushO">0%</output></label>
+      <button type="button" id="b4Anc" aria-pressed="false">Other ancestry</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Variants edited</div><div class="v" id="b4Var">0</div></div>
+      <div><div class="k">Predicted change</div><div class="v" id="b4Shift">+0.0 cm</div></div>
+      <div><div class="k">Still unexplained</div><div class="v" id="b4Un">—</div></div>
+    </div>
+    <p class="say" id="b4Say" aria-live="polite">No dials pushed yet. Each one is worth a fraction of a millimetre.</p>
+    <p class="caption">A toy model. The 12,111 variants are real; here they stand in as 12,000 dials whose effects taper the way real height variants do, so the first edits buy the most and later ones almost nothing. The unexplained box reflects that these common variants capture under half of height's variation, and less in non-European ancestries, because the same variants tag different nearby DNA in different groups. This is prediction, not a recipe, and it carries the field's own warning against ranking people. Source: Yengo et al., <i>Nature</i> (2022).</p>
+  </div>
+</div></section>
+
+<section id="unread"><div class="wrap">
+  <div class="eyebrow">Hardest: not yet read</div>
+  <span class="rungtag dark">Rung 5 · the known unknowns</span>
+  <h2>The parts we <em>can't read</em></h2>
+  <p>The top rung is not a trait at all. It is the gap in the manual. The simplest cell that lives and copies itself on its own, built by stripping a bacterium to the bone, runs on 473 genes. And 149 of them are essential with no known function (Hutchison et al. 2016). We keep the cell alive without knowing what keeps it alive. A separate effort, the Unknome, ranks the genes we understand least and keeps finding that many still matter for survival and fertility (Rocha et al. 2023). You cannot edit with intent what you have not yet learned to read.</p>
+  <p>Delete genes from the smallest living cell. The dark ones are essential, and some of those are still a mystery.</p>
+  <div class="instrument">
+    <canvas id="b5Cv" aria-label="The 473 genes of the smallest self-replicating cell, laid out as a grid of tiles. Click a tile to delete that gene. Deleting an essential gene kills the cell. Some essential genes are marked with a question mark: they are needed, but no one knows what they do."></canvas>
+    <div class="legend"><span><i class="sq" style="background:var(--sea)"></i>can be removed</span><span><i class="sq" style="background:var(--dawn)"></i>essential</span><span><i class="sq" style="background:var(--ember)"></i>essential, unknown</span><span><i class="sq" style="background:var(--line)"></i>deleted</span></div>
+    <div class="controls">
+      <button type="button" class="primary" id="b5Rand">Delete a random gene</button>
+      <button type="button" id="b5Reset">Rebuild the cell</button>
+    </div>
+    <div class="readout">
+      <div><div class="k">Genes left</div><div class="v" id="b5Left">473</div></div>
+      <div><div class="k">Cell</div><div class="v" id="b5State">alive</div></div>
+      <div><div class="k">Essential &amp; unknown</div><div class="v" id="b5Unk">149</div></div>
+    </div>
+    <p class="say" id="b5Say" aria-live="polite">473 genes, the fewest known to run a free-living cell. Try removing one.</p>
+    <p class="caption">A toy of JCVI-syn3.0, the minimal cell. Its real genes aren't laid out in a grid, and which single genes are dispensable depends on the others, but the counts are the paper's: 473 genes, of which 149 are essential with unknown function. Removing an essential gene here kills the cell at once; real essential genes are found by the cell's failure to grow without them. Sources: Hutchison et al., <i>Science</i> (2016); Rocha et al., <i>PLoS Biology</i> (2023), the Unknome.</p>
+  </div>
+</div></section>
+
+<section id="tablet"><div class="wrap">
+  <div class="eyebrow">The turn</div>
+  <h2>The <em>tablet</em>, and the real limit</h2>
+  <p>In the television series <i>Westworld</i>, a character named Maeve rewrites herself by pulling up a tablet: every part labelled, every setting a slider she can slide. That is the top of this ladder, and the climb toward it is real, not fiction. But look at what changes as you climb. Low down, the obstacle is mechanical: can we cut the letter, can we deliver it. We can. Higher up it stops being about cutting and becomes about control: is the trait in one place or ten thousand, does the shape live in the genes or in the voltage above them, and have we read the part at all.</p>
+  <p>So, to your question: if we knew everything about biology, could we do almost everything? The laws of physics permit a great deal. Page I's motto is the short form: anything not forbidden can be done, given the right knowledge. The hardest edits on this ladder are not forbidden by physics. Most are waiting on understanding. Knowing the biology is not quite the same as being able to steer it, but it is most of the distance, and we are early in the reading.</p>
+  <div class="callout">
+    <div class="eyebrow">Speculation, flagged</div>
+    <p>Would full knowledge grant near-total control? Not certainly. "Knowing everything" is a limit no field has reached, and some systems may be easier to understand than to steer without harm: a brain mid-thought, an ecosystem, a body that fights the change. There is also a gap between knowing what a part does and being able to set it safely in a living person. That is a conjecture, not a finding.</p>
+  </div>
+  <div class="callout">
+    <div class="eyebrow">Try this week</div>
+    <ul>
+      <li>Look up one gene you carry and read what it is for, and whether anyone actually knows. The Unknome database ranks the least understood.</li>
+      <li>Read why the sickle-cell cure lifts a brake on a backup gene instead of mending the broken one. The backup is the body's own, switched off at birth.</li>
+      <li>Watch a time-lapse of a planarian regrowing a head, and ask where the plan for "head" is stored.</li>
+    </ul>
+  </div>
+  <p class="closer">The body is already editable. The limit isn't the cell. It's how much of it we have learned to read.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Sources: Kiran Musunuru, Rebecca C. Ahrens-Nicklas et al., "Patient-specific in vivo gene editing to treat a rare genetic disease," <i>New England Journal of Medicine</i> (2025). U.S. Food and Drug Administration, "FDA approves first gene therapies to treat patients with sickle cell disease" (8 December 2023), on Casgevy (exagamglogene autotemcel, exa-cel), developed by Vertex Pharmaceuticals and CRISPR Therapeutics. Fallon Durant, Junji Morokuma, Christopher Fields, Katherine Williams, Dany Spencer Adams &amp; Michael Levin, "Long-term, stochastic editing of regenerative anatomy via targeting endogenous bioelectric gradients," <i>Biophysical Journal</i> 112 (2017). Nirosha J. Murugan et al., "Acute multidrug delivery via a wearable bioreactor facilitates long-term limb regeneration and functional recovery in adult <i>Xenopus laevis</i>," <i>Science Advances</i> 8 (2022). Loïc Yengo et al., "A saturated map of common genetic variants associated with human height," <i>Nature</i> 610 (2022). Clyde A. Hutchison III et al., "Design and synthesis of a minimal bacterial genome," <i>Science</i> 351 (2016), on JCVI-syn3.0. João J. Rocha, Satish Arcot Jayaram, Tim J. Stevens et al., "Functional unknomics: Systematic screening of conserved genes of unknown function," <i>PLoS Biology</i> 21 (2023). David Deutsch, <i>The Fabric of Reality</i> (1997), for page I's motto. <i>Westworld</i> (HBO, 2016) is named as an image only. The instruments are toy models, described in each caption; the medical results are early and are flagged where they rest on one patient, one lab, or non-human animals.</p>
+  <div class="next"><a href="way-out.html">← XII · The Way Out Looks Wrong</a><a href="./">Back to Glamour Gram</a></div>
+</div></footer>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const C = k => css.getPropertyValue(k).trim();
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+function fit(cv, aspect){
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = aspect ? Math.round(w*aspect) : cv.clientHeight;
+  if(aspect) cv.style.height = h + "px";
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const smooth = (a, b, x) => { const u = clamp((x - a)/(b - a), 0, 1); return u*u*(3 - 2*u); };
+function onScreen(el){
+  const s = {v:true};
+  if("IntersectionObserver" in window) new IntersectionObserver(es => { s.v = es[es.length - 1].isIntersecting; }).observe(el);
+  return s;
+}
+function animate(frame, vis){
+  let last = performance.now();
+  (function loop(now){ const dt = clamp((now - last)/1000, 0, 0.05); last = now; if(!vis || vis.v) frame(dt); requestAnimationFrame(loop); })(last);
+}
+function local(cv, e){ const r = cv.getBoundingClientRect(); return {x: e.clientX - r.left, y: e.clientY - r.top}; }
+const tell = (el, m) => { if(el && el.textContent !== m) el.textContent = m; };
+const hex = v => { const n = parseInt(C(v).slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+function mix(a, b, u){ const p = hex(a), q = hex(b); return `rgb(${Math.round(p[0]+(q[0]-p[0])*u)},${Math.round(p[1]+(q[1]-p[1])*u)},${Math.round(p[2]+(q[2]-p[2])*u)})`; }
+const rgba = (v, a) => { const n = hex(v); return `rgba(${n[0]},${n[1]},${n[2]},${a})`; };
+
+/* ---------- hero: a body whose shape follows the voltage pattern ---------- */
+(function(){
+  const cv = $("heroCanvas"); let g, invert = 0, target = 0, t = 0, auto = 0;
+  function head(ctx, x, cy, th, dir, hn){   // a head bump with two eyespots, or a pointed tail, by head-ness hn
+    if(hn > 0.5){
+      const r = th*1.35*smooth(0.5, 0.9, hn);
+      ctx.fillStyle = mix("--sea", "--ember", clamp((hn - 0.5)*2, 0, 1)); if(dir < 0) ctx.fillStyle = C("--dawn");
+      ctx.globalAlpha = 0.95; ctx.beginPath(); ctx.arc(x, cy, Math.max(2, r), 0, 7); ctx.fill();
+      ctx.fillStyle = C("--night"); ctx.globalAlpha = 1;
+      [-1, 1].forEach(s => { ctx.beginPath(); ctx.arc(x + dir*r*0.2, cy + s*r*0.38, Math.max(1, r*0.16), 0, 7); ctx.fill(); });
+    } else {
+      ctx.fillStyle = C("--sea"); ctx.globalAlpha = 0.9; ctx.beginPath();
+      ctx.moveTo(x - dir*th*0.2, cy - th*0.9); ctx.lineTo(x + dir*th*1.6, cy); ctx.lineTo(x - dir*th*0.2, cy + th*0.9); ctx.closePath(); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  function draw(){
+    if(!g) return;
+    const {ctx, w, h} = g;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const cx0 = w*0.15, cx1 = w*0.85, cy = h*0.66, th = Math.min(h*0.085, (cx1 - cx0)*0.07);
+    const grad = ctx.createLinearGradient(cx0, 0, cx1, 0);
+    grad.addColorStop(0, C("--dawn")); grad.addColorStop(0.5, C("--deep")); grad.addColorStop(1, mix("--sea", "--ember", invert));
+    ctx.strokeStyle = grad; ctx.lineWidth = th*2; ctx.lineCap = "round"; ctx.globalAlpha = 0.92;
+    ctx.beginPath(); ctx.moveTo(cx0, cy); ctx.lineTo(cx1, cy); ctx.stroke();
+    ctx.globalAlpha = 0.5; ctx.strokeStyle = rgba("--ink", 0.5); ctx.lineWidth = 1;   // the voltage band along the body
+    ctx.beginPath(); for(let k = 0; k <= 40; k++){ const u = k/40, x = cx0 + (cx1 - cx0)*u, y = cy - th*0.5 + Math.sin(u*9 - t*1.4)*th*0.12; k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
+    ctx.globalAlpha = 1; ctx.lineCap = "butt";
+    head(ctx, cx0, cy, th, -1, 1); head(ctx, cx1, cy, th, 1, invert);
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.textAlign = "right"; ctx.fillStyle = C("--mute");
+    ctx.fillText((invert > 0.5 ? "two heads · the voltage pattern was inverted" : "one head · the normal voltage pattern") + " · tap to invert", w - 14, h - 10);
+    ctx.textAlign = "left";
+  }
+  function layout(){ g = fit(cv); draw(); }
+  layout(); if(reduce){ invert = 1; draw(); }
+  addEventListener("resize", layout);
+  document.fonts && document.fonts.ready.then(draw);
+  cv.addEventListener("pointerdown", () => { target = target > 0.5 ? 0 : 1; auto = 0; if(reduce){ invert = target; draw(); } });
+  if(!reduce) animate(dt => { t += dt; auto += dt; if(auto > 6){ auto = 0; target = target > 0.5 ? 0 : 1; } invert += (target - invert)*Math.min(1, dt*1.3); draw(); }, onScreen(cv));
+})();
+
+/* ---------- rung 1: a base editor aimed at one letter ---------- */
+(function(){
+  const cv = $("b1Cv"); let g;
+  const base = "ATGCCAGTCATGCAGT".split(""), MUT = 6, OFF = 11, SIL = 3;   // mutation site, a working site, a silent site
+  base[MUT] = "C"; base[OFF] = "A"; base[SIL] = "C";
+  const flip = {A:"G", G:"A", C:"T", T:"C"};
+  let cur, aim = MUT;
+  const works = () => cur[MUT] === "T" && cur[OFF] === "A";
+  const box = $("b1Sites");
+  [[SIL, "site 4"], [MUT, "site 7"], [OFF, "site 12"]].sort((a, b) => a[0] - b[0]).forEach(([i, lab]) => {
+    const b = document.createElement("button"); b.type = "button"; b.textContent = lab; b.dataset.i = i; b.setAttribute("aria-pressed", i === aim ? "true" : "false");
+    b.addEventListener("click", () => { aim = i; box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", +x.dataset.i === aim ? "true" : "false")); update(); });
+    box.append(b);
+  });
+  function reset(){ cur = base.slice(); draw(); update("Reset. One letter is red: that is the mutation."); }
+  function edit(){
+    cur[aim] = flip[cur[aim]];
+    let msg;
+    if(aim === MUT) msg = works() ? "You mended the mutation. The enzyme folds, and the liver clears ammonia." : "You changed the mutation site, but another letter is now broken.";
+    else if(aim === SIL) msg = "A silent change: that letter did nothing, and still does. No harm, no help.";
+    else msg = "Off target. You broke a letter that was working. This is the real danger of an imprecise edit.";
+    draw(); update(msg);
+  }
+  function update(msg){
+    tell($("b1Aim"), "site " + (aim + 1));
+    tell($("b1Enz"), works() ? "working" : "broken"); $("b1Enz").style.color = works() ? C("--sea") : C("--ember");
+    tell($("b1Amm"), works() ? "cleared" : "high"); $("b1Amm").style.color = works() ? C("--sea") : C("--ember");
+    if(msg) tell($("b1Say"), msg);
+    draw();
+  }
+  function draw(){
+    if(!g) return;
+    const {ctx, w, h} = g, n = base.length, gap = w/(n + 1), y = h*0.44;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    ctx.font = `${Math.min(22, gap*0.9)}px "JetBrains Mono", monospace`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    for(let i = 0; i < n; i++){
+      const x = gap*(i + 1);
+      if(i === aim){ ctx.strokeStyle = C("--dawn"); ctx.lineWidth = 2; ctx.strokeRect(x - gap*0.42, y - gap*0.6, gap*0.84, gap*1.2); }
+      const bad = (i === MUT && cur[i] !== "T") || (i === OFF && cur[i] !== "A");
+      ctx.fillStyle = bad ? C("--ember") : (i === MUT || i === OFF) && !bad ? C("--sea") : C("--ink");
+      ctx.fillText(cur[i], x, y);
+    }
+    const ex = w/2, ey = h*0.82, ok = works();   // the enzyme, folded or broken
+    ctx.strokeStyle = ok ? C("--sea") : C("--ember"); ctx.lineWidth = 2.4; ctx.beginPath();
+    if(ok){ ctx.arc(ex, ey, h*0.1, 0.3, Math.PI*2 - 0.3); } else { for(let k = -3; k <= 3; k++){ const px = ex + k*7, py = ey + (k % 2 ? -8 : 8); k === -3 ? ctx.moveTo(px, py) : ctx.lineTo(px, py); } }
+    ctx.stroke();
+    ctx.font = "11px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textBaseline = "alphabetic"; ctx.textAlign = "center";
+    ctx.fillText(ok ? "CPS1 enzyme: folded" : "CPS1 enzyme: misfolded", ex, ey + h*0.17);
+    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+  }
+  $("b1Edit").addEventListener("click", edit);
+  $("b1Reset").addEventListener("click", reset);
+  cv.addEventListener("pointerdown", e => { const p = local(cv, e), gap = cv.clientWidth/(base.length + 1), i = Math.round(p.x/gap) - 1; if(i >= 0 && i < base.length){ aim = i; box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", +x.dataset.i === aim ? "true" : "false")); update(); } });
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.62 : 0.42); draw(); }
+  cur = base.slice(); layout(); update();
+  addEventListener("resize", layout);
+})();
+
+/* ---------- rung 2: lift the BCL11A brake ---------- */
+(function(){
+  const cv = $("b2Cv"); let g;
+  const N = 120, cells = Array.from({length: N}, () => ({x: Math.random(), y: Math.random(), frail: 0.1 + Math.random()*0.85, a: Math.random()*6.28}));
+  function vals(){ const br = +$("b2Brake").value; const hbf = Math.round(1 + br*0.44); return {br, hbf}; }
+  function draw(){
+    if(!g) return;
+    const {ctx, w, h} = g, {br, hbf} = vals(), heal = hbf/50;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const pad = 16;
+    cells.forEach(c => {
+      const x = pad + c.x*(w - 2*pad), y = pad + c.y*(h - 2*pad), round = heal > c.frail, r = Math.min(w, h)*0.028;
+      ctx.save(); ctx.translate(x, y); ctx.rotate(c.a);
+      ctx.fillStyle = round ? C("--ember") : rgba("--ember", 0.8);
+      ctx.beginPath();
+      if(round){ ctx.arc(0, 0, r, 0, 7); }
+      else { for(let k = 0; k <= 16; k++){ const a = k/16*Math.PI*2, rr = r*(1 - 0.75*Math.max(0, Math.cos(a))); k ? ctx.lineTo(Math.cos(a)*rr*1.5, Math.sin(a)*rr) : ctx.moveTo(rr*1.5, 0); } }
+      ctx.closePath(); ctx.fill();
+      if(round){ ctx.fillStyle = rgba("--night", 0.5); ctx.beginPath(); ctx.arc(0, 0, r*0.5, 0, 7); ctx.fill(); }
+      ctx.restore();
+    });
+  }
+  function update(){
+    const {br, hbf} = vals();
+    const sick = Math.round(clamp(90*(1 - smooth(6, 40, hbf)), 4, 90));
+    const cri = clamp(3.6*(1 - smooth(4, 34, hbf)), 0, 3.6);
+    tell($("b2BrakeO"), br + "%"); tell($("b2Hbf"), hbf + "%"); tell($("b2Sick"), sick + "%"); tell($("b2Cri"), cri.toFixed(1));
+    tell($("b2Say"), br < 8 ? "The brake is on: little fetal haemoglobin, and most cells sickle." : hbf >= 34 ? "Fetal haemoglobin is high. The cells stay round, and the crises stop." : "The brake lifts, fetal haemoglobin rises, and fewer cells sickle.");
+    draw();
+  }
+  $("b2Brake").addEventListener("input", update);
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.72 : 0.5); draw(); }
+  layout(); update();
+  addEventListener("resize", layout);
+})();
+
+/* ---------- rung 3: paint the voltage, cut, and watch the pattern persist ---------- */
+(function(){
+  const cv = $("b3Cv"); let g, grow = 1, growing = false, cuts = 0, memo = "normal";
+  const endName = v => v > 60 ? "head" : v < 40 ? "tail" : "mixed";
+  function planOf(L, R){ const lh = L > 60, rh = R > 60, lt = L < 40, rt = R < 40;
+    if(lh && rh) return "two heads"; if(lt && rt) return "no head"; if((lh && rt) || (rh && lt)) return "one head"; return "unsettled"; }
+  function vals(){ return {L: +$("b3L").value, R: +$("b3R").value}; }
+  function draw(){
+    if(!g) return;
+    const {ctx, w, h} = g, {L, R} = vals(), cy = h*0.5, cx0 = w*0.14, cx1 = w*0.86, th = Math.min(h*0.15, (cx1 - cx0)*0.08);
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const grad = ctx.createLinearGradient(cx0, 0, cx1, 0);
+    grad.addColorStop(0, mix("--sea", "--ember", L/100)); grad.addColorStop(1, mix("--sea", "--ember", R/100));
+    const xr = cx0 + (cx1 - cx0)*clamp(grow, 0.05, 1);
+    ctx.strokeStyle = grad; ctx.lineWidth = th*2; ctx.lineCap = "round"; ctx.globalAlpha = 0.9;
+    ctx.beginPath(); ctx.moveTo(cx0, cy); ctx.lineTo(xr, cy); ctx.stroke(); ctx.globalAlpha = 1; ctx.lineCap = "butt";
+    const end = (x, dir, v) => {
+      if(v > 60){ const r = th*1.3; ctx.fillStyle = mix("--sea", "--ember", v/100); ctx.beginPath(); ctx.arc(x, cy, r, 0, 7); ctx.fill();
+        ctx.fillStyle = C("--night"); [-1, 1].forEach(s => { ctx.beginPath(); ctx.arc(x + dir*r*0.2, cy + s*r*0.4, r*0.16, 0, 7); ctx.fill(); }); }
+      else if(v < 40){ ctx.fillStyle = C("--sea"); ctx.beginPath(); ctx.moveTo(x - dir*th*0.2, cy - th); ctx.lineTo(x + dir*th*1.7, cy); ctx.lineTo(x - dir*th*0.2, cy + th); ctx.closePath(); ctx.fill(); }
+    };
+    end(cx0, -1, L); if(grow > 0.85) end(xr, 1, R);
+    if(growing){ ctx.strokeStyle = rgba("--ink", 0.5); ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(xr, cy - th*1.6); ctx.lineTo(xr, cy + th*1.6); ctx.stroke(); ctx.setLineDash([]); }
+    ctx.font = "11px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "center";
+    ctx.fillText("◀ left end: " + endName(L) + "        right end: " + endName(R) + " ▶", w/2, h - 10); ctx.textAlign = "left";
+  }
+  function update(msg){
+    const {L, R} = vals(); tell($("b3Lo"), endName(L)); tell($("b3Ro"), endName(R));
+    const plan = grow >= 1 ? planOf(L, R) : "regrowing…";
+    tell($("b3Form"), plan); tell($("b3Mem"), memo); tell($("b3Cuts"), String(cuts));
+    if(msg) tell($("b3Say"), msg); draw();
+  }
+  function cut(){
+    if(growing) return; cuts++; growing = true; grow = 0.08;
+    const {L, R} = vals(); memo = planOf(L, R) === "two heads" ? "two-headed" : planOf(L, R) === "no head" ? "headless" : planOf(L, R) === "one head" ? "normal" : "unsettled";
+    update("Cut. It regrows to the voltage pattern you set, and keeps it when cut again.");
+    if(reduce){ grow = 1; growing = false; update("Regrown to the stored pattern. Cut again and it stays."); }
+  }
+  function reset(){ $("b3L").value = 80; $("b3R").value = 20; grow = 1; growing = false; cuts = 0; memo = "normal"; update("Back to a normal worm: one head, one tail."); }
+  $("b3L").addEventListener("input", () => update()); $("b3R").addEventListener("input", () => update());
+  $("b3Cut").addEventListener("click", cut); $("b3Reset").addEventListener("click", reset);
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.5 : 0.36); draw(); }
+  layout(); update();
+  addEventListener("resize", layout);
+  if(!reduce) animate(dt => { if(growing){ grow = Math.min(1, grow + dt*0.9); if(grow >= 1){ growing = false; update("Regrown. The plan held, with no change to the DNA."); } draw(); } }, onScreen(cv));
+})();
+
+/* ---------- rung 4: ten thousand tiny height dials ---------- */
+(function(){
+  const cv = $("b4Cv"); let g, other = false;
+  const TOTAL = 12000, COLS = 60, ROWS = 20, SHOWN = COLS*ROWS;
+  function vals(){
+    const f = +$("b4Push").value/100, cap = other ? 0.4 : 1;
+    const shift = 20*Math.sqrt(f)*cap, edited = Math.round(TOTAL*f), un = other ? 80 : 55;
+    return {f, shift, edited, un};
+  }
+  function draw(){
+    if(!g) return;
+    const {ctx, w, h} = g, {f, shift, un} = vals();
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    const gw = w*0.7, pad = 14, cw = (gw - pad)/COLS, ch = (h - 2*pad)/ROWS, cap = other ? 0.4 : 1;
+    for(let i = 0; i < SHOWN; i++){
+      const col = i % COLS, row = (i/COLS) | 0, x = pad + col*cw, y = pad + row*ch;
+      const edited = (i/SHOWN) < f, weight = 1 - i/SHOWN;   // earliest dials carry the most
+      ctx.fillStyle = edited ? mix("--deep", "--dawn", 0.3 + 0.7*weight*cap) : rgba("--line", 0.5);
+      ctx.fillRect(x, y, cw - 1.2, ch - 1.2);
+    }
+    const bx = w*0.76, bw = w*0.2, by = pad, bh = h - 2*pad;   // height bar
+    ctx.strokeStyle = C("--line"); ctx.strokeRect(bx, by, bw, bh);
+    const fillH = bh*smooth(0, 20, shift);
+    ctx.fillStyle = C("--dawn"); ctx.fillRect(bx, by + bh - fillH, bw, fillH);
+    ctx.fillStyle = rgba("--ink", 0.08); ctx.fillRect(bx, by, bw, bh*un/100);   // unexplained cap, from the top
+    ctx.font = "10px JetBrains Mono, monospace"; ctx.fillStyle = C("--mute"); ctx.textAlign = "center";
+    ctx.fillText("height", bx + bw/2, by + bh + 12); ctx.textAlign = "left";
+    ctx.fillStyle = rgba("--ink", 0.4); ctx.fillText(un + "% unexplained", bx - w*0.02, by + bh*un/200);
+  }
+  function update(){
+    const {shift, edited, un} = vals();
+    tell($("b4PushO"), $("b4Push").value + "%"); tell($("b4Var"), edited.toLocaleString() + " of 12,000");
+    tell($("b4Shift"), "+" + shift.toFixed(1) + " cm"); tell($("b4Un"), un + "%");
+    tell($("b4Say"), edited === 0 ? "No dials pushed yet. Each one is worth a fraction of a millimetre." : edited > 8000 ? "Most dials pushed, and the bar has nearly stopped rising. The first edits bought the most." + (other ? " In this ancestry the prediction is weaker still." : "") : "Pushing more dials. The returns shrink as you go." + (other ? " Weaker here: the same variants tag different DNA." : ""));
+    draw();
+  }
+  $("b4Push").addEventListener("input", update);
+  $("b4Anc").addEventListener("click", () => { other = !other; $("b4Anc").setAttribute("aria-pressed", other ? "true" : "false"); $("b4Anc").textContent = other ? "European ancestry" : "Other ancestry"; update(); });
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.7 : 0.46); draw(); }
+  layout(); update();
+  addEventListener("resize", layout);
+})();
+
+/* ---------- rung 5: delete genes from the smallest living cell ---------- */
+(function(){
+  const cv = $("b5Cv"); let g;
+  const N = 473, UNK = 149, REMOVABLE = 24;   // essential-unknown, and the few that can be thinned
+  let kind, dead, deadI;   // kind: 0 removable, 1 essential-known, 2 essential-unknown, 3 deleted
+  function build(){
+    kind = new Array(N).fill(1);
+    let r = rng(20260226);
+    const pick = (count, val) => { let placed = 0; while(placed < count){ const i = (r()*N) | 0; if(kind[i] === 1){ kind[i] = val; placed++; } } };
+    pick(UNK, 2); pick(REMOVABLE, 0);
+    dead = false; deadI = -1; update("473 genes, the fewest known to run a free-living cell. Try removing one.");
+  }
+  function rng(seed){ let a = seed || 1; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0)/4294967296; }; }
+  function cols(){ return Math.min(32, Math.max(18, Math.floor(cv.clientWidth/16))); }
+  function remove(i){
+    if(dead || kind[i] === 3) return;
+    if(kind[i] === 0){ kind[i] = 3; update("Removed. The cell is one of the few that can be thinned, and it lives on."); }
+    else { dead = true; deadI = i; update(kind[i] === 2 ? "Dead. That gene was essential, and no one knows what it does. You could not have known not to cut it." : "Dead. That gene was essential. In the minimal cell, almost every gene is."); }
+    draw();
+  }
+  function counts(){ let left = 0, unk = 0; for(let i = 0; i < N; i++){ if(kind[i] !== 3) left++; if(kind[i] === 2) unk++; } return {left, unk}; }
+  function draw(){
+    if(!g) return;
+    const {ctx, w, h} = g, cl = cols(), rows = Math.ceil(N/cl), s = Math.min((w - 8)/cl, (h - 8)/rows), ox = (w - s*cl)/2, oy = (h - s*rows)/2;
+    ctx.fillStyle = C("--night"); ctx.fillRect(0, 0, w, h);
+    for(let i = 0; i < N; i++){
+      const x = ox + (i % cl)*s, y = oy + ((i/cl) | 0)*s, k = kind[i];
+      ctx.globalAlpha = dead && k !== 3 ? 0.3 : 1;
+      ctx.fillStyle = k === 3 ? C("--line") : k === 0 ? C("--sea") : k === 1 ? C("--dawn") : C("--ember");
+      ctx.fillRect(x + 1, y + 1, s - 2, s - 2);
+      if(i === deadI){ ctx.globalAlpha = 1; ctx.strokeStyle = C("--ink"); ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, s - 2, s - 2); }
+    }
+    ctx.globalAlpha = 1;
+  }
+  function update(msg){ const {left, unk} = counts(); tell($("b5Left"), String(left)); tell($("b5State"), dead ? "dead" : "alive");
+    $("b5State").style.color = dead ? C("--ember") : C("--sea"); tell($("b5Unk"), String(unk)); if(msg) tell($("b5Say"), msg); draw(); }
+  cv.addEventListener("pointerdown", e => { const p = local(cv, e), cl = cols(), rows = Math.ceil(N/cl), s = Math.min((cv.clientWidth - 8)/cl, (cv.clientHeight - 8)/rows), ox = (cv.clientWidth - s*cl)/2, oy = (cv.clientHeight - s*rows)/2, i = (Math.floor((p.y - oy)/s))*cl + Math.floor((p.x - ox)/s); if(i >= 0 && i < N) remove(i); });
+  $("b5Rand").addEventListener("click", () => { if(dead) return; const live = []; for(let i = 0; i < N; i++) if(kind[i] !== 3) live.push(i); remove(live[(Math.random()*live.length) | 0]); });
+  $("b5Reset").addEventListener("click", build);
+  function layout(){ g = fit(cv, cv.clientWidth < 520 ? 0.66 : 0.42); draw(); }
+  build(); layout();
+  addEventListener("resize", layout);
+})();
+</script>
+</body>
+</html>

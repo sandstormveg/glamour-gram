@@ -132,7 +132,11 @@ const PAGES = [
   {n:"XII", slug:"way-out.html", title:"The Way Out Looks Wrong", hue:"--dawn", gene:"stray",
    hook:"Some problems are deceptive: every step toward the answer leads into a trap. Einstein, Maxwell, Dijkstra and evolution itself found the way out by playing.",
    effect:"A few explorers wander the organism, each steering toward wherever no explorer has been, so their trails slowly fill every gap.",
-   sections:[["played","Combinatory play"],["cafe","Dijkstra's café"],["maze","The deceptive maze"],["evolution","Evolution plays"],["stones","Stepping stones"]]}
+   sections:[["played","Combinatory play"],["cafe","Dijkstra's café"],["maze","The deceptive maze"],["evolution","Evolution plays"],["stones","Stepping stones"]]},
+  {n:"XIII", slug:"editable-body.html", title:"The Editable Body", hue:"--sea", gene:"morph",
+   hook:"How editable is a body, easiest to hardest? Flip one letter to mend a baby's liver, lift a brake to wake a sleeping gene, paint the voltage that grows a flatworm's head, push ten thousand dials for height, and meet the genes that keep a cell alive with no one knowing how.",
+   effect:"Now and then a cell settles into a second stable form and holds it, until a neighbour's signal flips it back.",
+   sections:[["one-letter","One letter"],["one-gene","Lift the brake"],["shape","The shape layer"],["thousands","Ten thousand dials"],["unread","The parts we can't read"],["tablet","The tablet"]]}
 ];
 
 const css = getComputedStyle(document.documentElement);
@@ -376,6 +380,18 @@ const motif = {
     const f = Math.min(1, d/L[k]), px = P[k][0] + (P[k+1][0] - P[k][0])*f, py = P[k][1] + (P[k+1][1] - P[k][1])*f;
     ctx.fillStyle = C("--sea"); ctx.beginPath(); ctx.arc(px, py, Math.max(1.5, R*0.06), 0, 7); ctx.fill();
   },
+  morph(x,y,R,t){   // a little body that flips between one head and two: its shape is set by a voltage pattern, not only its genes
+    const two = Math.sin(t*0.5) > 0;
+    ctx.strokeStyle = C("--sea"); ctx.globalAlpha = 0.55; ctx.lineWidth = Math.max(1.5, R*0.1); ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(x - R*0.45, y); ctx.lineTo(x + R*0.45, y); ctx.stroke(); ctx.lineCap = "butt"; ctx.globalAlpha = 1;
+    ctx.fillStyle = C("--dawn"); ctx.beginPath(); ctx.arc(x - R*0.45, y, Math.max(1.5, R*0.17), 0, 7); ctx.fill();
+    if(two){
+      ctx.fillStyle = C("--ember"); ctx.beginPath(); ctx.arc(x + R*0.45, y, Math.max(1.5, R*0.17), 0, 7); ctx.fill();
+      ctx.strokeStyle = C("--ember"); ctx.globalAlpha = 0.4; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, y - R*0.28); ctx.lineTo(x, y + R*0.28); ctx.stroke(); ctx.globalAlpha = 1;
+    } else {
+      ctx.fillStyle = C("--sea"); ctx.beginPath(); ctx.moveTo(x + R*0.32, y - R*0.15); ctx.lineTo(x + R*0.56, y); ctx.lineTo(x + R*0.32, y + R*0.15); ctx.closePath(); ctx.fill();
+    }
+  },
   glow(x,y,R,t){ ctx.fillStyle = C("--dawn"); ctx.globalAlpha = 0.5 + 0.3*Math.sin(t); ctx.beginPath(); ctx.arc(x,y,R*0.15,0,7); ctx.fill(); ctx.globalAlpha = 1; }
 };
 
@@ -530,6 +546,9 @@ function render(t, dt){
   // ray gene: light crosses the organism and bends in every cell
   if(has("ray")) rays(t, dt);
 
+  // morph gene: now and then a cell settles into a second stable form and holds it, until a neighbour's signal flips it back
+  if(has("morph")) morphGene(t, dt);
+
   // daydream gene: while it dreams, a haze closes in around it
   if(dream > 0){
     const vg = ctx.createRadialGradient(ox, oy, OR, ox, oy, OR + 0.5*Math.hypot(W, H));
@@ -633,6 +652,46 @@ const pairs = (()=>{   // each cell in turn takes the farthest cell still unpair
   while(left.length > 1){ const i = left.shift(); let k = 0; left.forEach((j, m)=>{ if(dist(i, j) > dist(i, left[k])) k = m; }); out.push([i, left.splice(k, 1)[0]]); }
   return out;
 })();
+/* ---------- morph gene: a cell's shape plan is bistable; it settles into a second stable form and holds, until a neighbour's signal resets it ---------- */
+let morphState = null, morphTimer = 1.6, morphSig = null;
+function morphGene(t, dt){
+  const fade = Math.max(0, Math.min(1, (260 - cells[0].r*cam.s)/140));   // fades as a cell fills the view
+  if(fade <= 0) return;
+  if(!morphState || morphState.length !== cells.length) morphState = cells.map(() => 0);
+  if(reduce){ morphState = cells.map((_, i) => i % 6 === 3 ? 1 : 0); }
+  else {
+    morphTimer -= dt;
+    if(morphTimer <= 0){
+      morphTimer = 2.4 + Math.random()*2.2;
+      const flipped = []; morphState.forEach((s, i) => { if(s) flipped.push(i); });
+      if(!morphSig && (flipped.length >= 3 || (flipped.length && Math.random() < 0.5))){   // a neighbour signals a flipped cell back to normal
+        const i = flipped[(Math.random()*flipped.length) | 0], pi = cellXY(cells[i]);
+        let j = -1, bd = Infinity;
+        cells.forEach((c, k) => { if(k === i || morphState[k]) return; const p = cellXY(c), d = Math.hypot(p[0] - pi[0], p[1] - pi[1]); if(d < bd){ bd = d; j = k; } });
+        if(j >= 0) morphSig = {from: j, to: i, u: 0};
+      } else {                                                                              // or a fresh cell settles into its second form
+        const cand = []; morphState.forEach((s, i) => { if(!s) cand.push(i); });
+        if(cand.length) morphState[cand[(Math.random()*cand.length) | 0]] = 1;
+      }
+    }
+    if(morphSig){ morphSig.u += dt*1.3; if(morphSig.u >= 1){ morphState[morphSig.to] = 0; morphSig = null; } }
+  }
+  cells.forEach((cl, i) => {
+    if(!morphState[i]) return;
+    const [x, y] = toScreen(...cellXY(cl)), R = cl.r*cam.s;
+    ctx.globalAlpha = 0.4*fade; ctx.strokeStyle = C("--ember"); ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(x, y, R + 3, 0, 7); ctx.stroke();                                   // the second stable state, held
+    ctx.globalAlpha = 0.85*fade; ctx.fillStyle = C("--ember");
+    ctx.beginPath(); ctx.arc(x + R*0.5, y - R*0.5, Math.max(1.5, R*0.18), 0, 7); ctx.fill();      // a second head buds
+  });
+  if(morphSig){
+    const a = toScreen(...cellXY(cells[morphSig.from])), b = toScreen(...cellXY(cells[morphSig.to])), u = morphSig.u;
+    ctx.globalAlpha = 0.9*fade; ctx.fillStyle = C("--sea");
+    ctx.beginPath(); ctx.arc(a[0] + (b[0] - a[0])*u, a[1] + (b[1] - a[1])*u, Math.max(1.5, cam.s*0.012), 0, 7); ctx.fill();
+  }
+  ctx.globalAlpha = 1; ctx.lineWidth = 1;
+}
+
 function twins(t){
   const fade = Math.max(0, Math.min(1, (220 - cells[0].r*cam.s)/120));
   if(fade <= 0 || !pairs.length) return;

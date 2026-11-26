@@ -98,8 +98,9 @@ Keep this table current: add a row whenever you add a page.
 | X | `everyone-like-you.html` | Everyone Like You | sea | twin | Correlated choices: your twin, Hamilton's rule, Newcomb, the CHSH ceiling, tomorrow's you |
 | XI | `missing-rungs.html` | The Missing Rungs | ember | rung | Human to posthuman: superintelligence, superhappiness, superhealth, rung by rung |
 | XII | `way-out.html` | The Way Out Looks Wrong | dawn | stray | Deceptive problems: Einstein's combinatory play, Maxwell's top, Dijkstra's frontier, novelty search, evolution's play, can and can't |
+| XIII | `editable-body.html` | The Editable Body | sea | morph | Editing the body, easiest to hardest: one-letter base edit (baby KJ), the BCL11A brake (Casgevy), bioelectric shape (planaria, frog), polygenic height, the minimal cell's 149 unknown essential genes; the turn: knowledge is the limit |
 
-Next page: **XIII**, hue **sea**. From V onward the hues cycle ember, dawn, sea.
+Next page: **XIV**, hue **ember**. From V onward the hues cycle ember, dawn, sea.
 
 ## Accuracy
 
